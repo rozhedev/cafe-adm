@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --background: #ffffff;
+    --foreground: #171717;
+}
+
+body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}
+
+.btn {
+    @apply text-lg px-6 py-3 rounded-lg text-white outline outline-2 transition-all cursor-pointer;
+}
+
+.btn--auth {
+    @apply flex w-full justify-center bg-indigo-600 text-base font-semibold leading-6 text-white shadow-lg hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-gray-600
+}
+
+.btn--primary-blue {
+    @apply bg-blue-700 border-2 border-blue-800 hover:bg-blue-600 hover:border-blue-700;
+}
+
+.btn--primary-red {
+    @apply bg-red-700 border-2 border-red-800 hover:bg-red-600 hover:border-red-700;
+}
+
+.btn--gray {
+    @apply bg-gray-800 border-2 border-gray-900 hover:bg-gray-700 hover:border-gray-800;
+}
+
+.btn--disabled {
+    @apply disabled:bg-gray-600 disabled:border-2 disabled:border-gray-600 disabled:cursor-not-allowed;
+}
+
+.burger-btn {
+    @apply inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer;
+}
+
+.link {
+    @apply block font-semibold py-2 px-3 md:p-0 text-gray-900 rounded cursor-pointer hover:text-blue-500 md:hover:bg-transparent md:border-0
+}
+
+.navlink {
+    @apply md:hover:text-blue-700 cursor-pointer;
+}
+
+.navlink--red {
+    @apply hover:text-red-700 dark:hover:text-red-500 cursor-pointer;
+}
+
+.inp {
+    @apply w-full border border-gray-200 py-3 px-4 bg-zinc-100/40 block rounded-lg p-3 text-gray-900 shadow-md ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-600 focus:ring-indigo-600 !text-lg sm:text-sm sm:leading-6 cursor-text;
+}
+
+.form-elem-size {
+    @apply md:min-w-[420px] min-w-[330px];
+}
