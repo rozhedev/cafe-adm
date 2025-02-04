@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/nextauth";
 
 export default async function Register() {
     const session = await getServerSession(authOptions);
-    if (session) redirect("/dashboard");
+    if (session) redirect("/dashboard/orders");
 
     return (
         <main>

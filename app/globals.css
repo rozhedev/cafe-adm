@@ -48,15 +48,7 @@ body {
 }
 
 .link {
-    @apply block font-semibold py-2 px-3 md:p-0 text-gray-900 rounded cursor-pointer hover:text-blue-500 md:hover:bg-transparent md:border-0
-}
-
-.navlink {
-    @apply md:hover:text-blue-700 cursor-pointer;
-}
-
-.navlink--red {
-    @apply hover:text-red-700 dark:hover:text-red-500 cursor-pointer;
+    @apply block py-2 px-3 md:p-0 rounded cursor-pointer md:border-0;
 }
 
 .inp {

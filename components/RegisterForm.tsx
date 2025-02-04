@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthForm } from "@/ui";
 import { AuthWrapper } from "@/ui/AuthWrapper";
-import { UI_CONTENT } from '../data/init-data';
+import { UI_CONTENT } from "../data/init-data";
 
 const INIT_FORM_VALUES = {
     name: "",
@@ -69,21 +69,24 @@ export const RegisterForm: FC<{}> = ({}) => {
                     passwordOnChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
                     passwordVal={formData.password}
                 />
-                <button
-                    className="btn btn--auth"
-                    disabled={isLoading}
-                >
-                    {isLoading ? UI_CONTENT.btn.register.loading : UI_CONTENT.btn.register.default}
-                </button>
+                <div>
+                    <button
+                        type="submit"
+                        className="btn btn--auth"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? UI_CONTENT.btn.register.loading : UI_CONTENT.btn.register.default}
+                    </button>
 
-                {error && <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">{error}</div>}
+                    {error && <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">{error}</div>}
 
-                <Link
-                    href={"/"}
-                    className="block mt-4 text-center"
-                >
-                    Уже есть аккаунт? <span className="underline font-semibold cursor-pointer">Войти</span>
-                </Link>
+                    <Link
+                        href={"/"}
+                        className="block mt-4 text-center"
+                    >
+                        Уже есть аккаунт? <span className="underline font-semibold cursor-pointer">Войти</span>
+                    </Link>
+                </div>
             </form>
         </AuthWrapper>
     );

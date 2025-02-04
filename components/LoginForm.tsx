@@ -4,6 +4,7 @@ import React, { ChangeEvent, FC, useState, FormEvent } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 // import { NEXT_PUBLIC_ADMIN_LOG_CHANNEL, NEXT_PUBLIC_TG_BOT_TOKEN } from "@/data/env";
+import Link from "next/link";
 import { UI_CONTENT } from "@/data/init-data";
 import { AuthForm } from "@/ui";
 import { AuthWrapper } from "@/ui/AuthWrapper";
@@ -67,6 +68,12 @@ export const LoginForm: FC<TLoginForm> = ({}) => {
                     >
                         {isLoading ? UI_CONTENT.btn.login.loading : UI_CONTENT.btn.login.default}
                     </button>
+                    {/* <Link
+                        href={"/register"}
+                        className="block mt-4 text-center"
+                    >
+                        Ещё нету аккаунта? <span className="underline font-semibold cursor-pointer">Зарегистрироватся</span>
+                    </Link> */}
                 </div>
             </form>
         </AuthWrapper>
