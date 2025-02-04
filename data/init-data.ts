@@ -1,18 +1,5 @@
-
-export const TG_METHOD_NAMES = {
-    updates: "getUpdates",
-    sendMessage: "sendMessage",
-};
-
 export const APP_NAME = "Cafe Admin";
-
-// * Data for TG logger
-export const logMessages = {
-    authorized: `Клиент <b>вошёл в кабинет</b>`,
-    searchStarted: `Клиент <b>начал поиск</b>`,
-    searchStopped: `Клиент <b>закончил поиск</b>`,
-    logouted: `Клиент <b>вышел из кабинета</b>`,
-};
+export const orderStatuses = ["Оплачено", "Приготовлено", "Выдано"];
 
 export const UI_CONTENT = {
     btn: {
@@ -47,11 +34,4 @@ export const tailwindMailConfig = {
             },
         },
     },
-};
-
-export const INIT_MAIL_FORM = {
-    // ! Don't delete default value
-    subject: "",
-    email: "",
-    content: "",
 };

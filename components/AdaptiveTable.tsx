@@ -1,28 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
+import { ActionDropdown } from "./ActionDropdown";
 
-export type TTableColumn<T> = {
+export interface TableColumn<T> {
     key: keyof T;
     header: string;
     width?: string;
     render?: (value: T[keyof T], item: T) => React.ReactNode;
 }
 
-export type TResponsiveTableProps<T> = {
-    columns: TTableColumn<T>[];
+interface ResponsiveTableProps<T> {
+    columns: TableColumn<T>[];
     data: T[];
     className?: string;
+    onAction?: (action: string, item: T) => void;
 }
 
-export function ResponsiveTable<T extends Record<string, any>>({ columns, data, className = "" }: TResponsiveTableProps<T>) {
+export function ResponsiveTable<T extends Record<string, any>>({ columns, data, className = "", onAction }: ResponsiveTableProps<T>) {
     return (
-        <div className="w-full overflow-x-auto shadow-sm rounded-lg">
-            <table className={`w-full min-w-[640px] table-auto ${className}`}>
-                <thead className="bg-gray-50">
-                    <tr>
+        <div className="w-full overflow-x-auto rounded-lg bg-white shadow">
+            <table className={`w-full min-w-[920px] table-auto ${className}`}>
+                <thead>
+                    <tr className="border-b border-gray-200">
                         {columns.map((column) => (
                             <th
                                 key={String(column.key)}
-                                className="px-4 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider"
+                                className="px-3 py-3 text-left text-sm font-medium text-gray-900"
                                 style={column.width ? { width: column.width } : undefined}
                             >
                                 {column.header}
@@ -30,7 +32,7 @@ export function ResponsiveTable<T extends Record<string, any>>({ columns, data, 
                         ))}
                     </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200">
                     {data.map((item, index) => (
                         <tr
                             key={index}
@@ -39,11 +41,14 @@ export function ResponsiveTable<T extends Record<string, any>>({ columns, data, 
                             {columns.map((column) => (
                                 <td
                                     key={String(column.key)}
-                                    className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap"
+                                    className="px-3 py-3 text-sm text-gray-700"
                                 >
                                     {column.render ? column.render(item[column.key], item) : String(item[column.key])}
                                 </td>
                             ))}
+                            <td className="px-3 py-3">
+                                <ActionDropdown onSelect={(action) => onAction?.(action, item)} />
+                            </td>
                         </tr>
                     ))}
                 </tbody>
