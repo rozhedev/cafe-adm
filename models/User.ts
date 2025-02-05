@@ -1,4 +1,4 @@
-import { COLLECTION_NAME } from "@/data/env";
+import { COL_USERS } from "@/data/env";
 import { TUser } from "@/types";
 import mongoose, { models } from "mongoose";
 
@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
             required: true,
         },
     },
-    { timestamps: true, collection: COLLECTION_NAME }
+    { timestamps: true, collection: COL_USERS }
 );
 
 const User = mongoose.models?.User || mongoose.model<TUser>("User", userSchema);

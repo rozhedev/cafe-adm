@@ -16,7 +16,7 @@ export default function Orders() {
     const orders: TOrder[] = [
         {
             client: "Дима ИФ",
-            dish: "бутерброд",
+            name: "бутерброд",
             quantity: "1шт.",
             price: 100,
             status: "Оплачено",
@@ -24,7 +24,7 @@ export default function Orders() {
         },
         {
             client: "Даша ТИ",
-            dish: "сок",
+            name: "сок",
             quantity: "1шт.",
             price: 40,
             status: "Оплачено",

@@ -1,19 +1,22 @@
 "use client";
 
 import React, { ChangeEvent, FC, useState, FormEvent } from "react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { AuthForm } from "@/ui";
 import { UI_CONTENT } from "@/data/init-data";
 
-type TLoginForm = {};
+type TLoginForm = {
+    registerRoute?: string;
+};
 
 const FORM_INIT_VALUES = {
     name: "",
     password: "",
 };
 
-export const LoginForm: FC<TLoginForm> = ({}) => {
+export const LoginForm: FC<TLoginForm> = ({ registerRoute = "" }) => {
     const router = useRouter();
     const pathname = usePathname();
 
@@ -39,7 +42,6 @@ export const LoginForm: FC<TLoginForm> = ({}) => {
                 return;
             }
 
-            console.log(pathname);
             pathname === "/admin/auth" ? router.push("/admin/dashboard") : router.push("/dashboard");
             router.refresh();
         } catch (error) {
@@ -68,12 +70,15 @@ export const LoginForm: FC<TLoginForm> = ({}) => {
                 >
                     {isLoading ? UI_CONTENT.btn.login.loading : UI_CONTENT.btn.login.default}
                 </button>
-                {/* <Link
-                        href={"/register"}
+
+                {registerRoute && (
+                    <Link
+                        href={registerRoute}
                         className="block mt-4 text-center"
                     >
                         Ещё нету аккаунта? <span className="underline font-semibold cursor-pointer">Зарегистрироватся</span>
-                    </Link> */}
+                    </Link>
+                )}
             </div>
         </form>
     );

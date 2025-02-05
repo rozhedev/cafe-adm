@@ -10,8 +10,12 @@ const INIT_FORM_VALUES = {
     name: "",
     password: "",
 };
+type RegisterFormProps = {
+    apiRoute: string;
+    authRoute?: string;
+};
 
-export const RegisterForm: FC<{}> = ({}) => {
+export const RegisterForm: FC<RegisterFormProps> = ({ apiRoute, authRoute = "/" }) => {
     const [formData, setFormData] = useState<Record<"name" | "password", string>>(INIT_FORM_VALUES);
     const [error, setError] = useState<string>("");
     const router = useRouter();
@@ -26,7 +30,7 @@ export const RegisterForm: FC<{}> = ({}) => {
         try {
             setIsLoading(true);
             // * Register responce
-            const registerRes = await fetch("api/register", {
+            const registerRes = await fetch(apiRoute, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -46,7 +50,7 @@ export const RegisterForm: FC<{}> = ({}) => {
                 setFormData(INIT_FORM_VALUES);
                 setError("");
                 setIsLoading(false);
-                router.push("/");
+                router.push(authRoute);
             } else {
                 console.log("User registartion failed.");
             }
@@ -56,35 +60,37 @@ export const RegisterForm: FC<{}> = ({}) => {
     };
 
     return (
-            <form
-                className="space-y-6"
-                method="POST"
-                onSubmit={handleSubmit}
-            >
-                <AuthForm
-                    loginOnChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, name: e.target.value })}
-                    loginVal={formData.name}
-                    passwordOnChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
-                    passwordVal={formData.password}
-                />
-                <div>
-                    <button
-                        type="submit"
-                        className="btn btn--auth"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? UI_CONTENT.btn.register.loading : UI_CONTENT.btn.register.default}
-                    </button>
+        <form
+            className="space-y-6"
+            method="POST"
+            onSubmit={handleSubmit}
+        >
+            <AuthForm
+                loginOnChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, name: e.target.value })}
+                loginVal={formData.name}
+                passwordOnChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
+                passwordVal={formData.password}
+            />
+            <div>
+                <button
+                    type="submit"
+                    className="btn btn--auth"
+                    disabled={isLoading}
+                >
+                    {isLoading ? UI_CONTENT.btn.register.loading : UI_CONTENT.btn.register.default}
+                </button>
 
-                    {error && <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">{error}</div>}
+                {error && <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">{error}</div>}
 
+                {authRoute && (
                     <Link
-                        href={"/"}
+                        href={authRoute}
                         className="block mt-4 text-center"
                     >
                         Уже есть аккаунт? <span className="underline font-semibold cursor-pointer">Войти</span>
                     </Link>
-                </div>
-            </form>
+                )}
+            </div>
+        </form>
     );
 };

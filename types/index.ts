@@ -9,11 +9,19 @@ export type TUser = {
 export type TOrder = {
     _id?: ObjectId;
     client: string;
-    dish: string;
+    name: string;
     quantity: string;
     price: number;
     status: string;
     date: string;
+};
+
+export type TDish = {
+    _id?: ObjectId;
+    name: string;
+    ingridients: string;
+    price: string;
+    availableCount: string;
 };
 
 export type TUserInfo = {

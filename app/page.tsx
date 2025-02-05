@@ -11,7 +11,7 @@ export default async function Home() {
     return (
         <main>
             <AuthWrapper title="Welcome to the Cafe">
-                <LoginForm />
+                <LoginForm registerRoute="/register" />
             </AuthWrapper>
         </main>
     );
