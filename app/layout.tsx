@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { APP_NAME } from '../data/init-data';
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -15,8 +16,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-    title: "Cafe Admin",
-    description: "Cafe Admin dashboard",
+    title: APP_NAME,
+    description: `${APP_NAME} dashboard`,
 };
 
 export default function RootLayout({

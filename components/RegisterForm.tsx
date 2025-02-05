@@ -4,8 +4,7 @@ import React, { useState, ChangeEvent, SyntheticEvent, FC } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthForm } from "@/ui";
-import { AuthWrapper } from "@/ui/AuthWrapper";
-import { UI_CONTENT } from "../data/init-data";
+import { UI_CONTENT } from "@/data/init-data";
 
 const INIT_FORM_VALUES = {
     name: "",
@@ -57,7 +56,6 @@ export const RegisterForm: FC<{}> = ({}) => {
     };
 
     return (
-        <AuthWrapper>
             <form
                 className="space-y-6"
                 method="POST"
@@ -88,6 +86,5 @@ export const RegisterForm: FC<{}> = ({}) => {
                     </Link>
                 </div>
             </form>
-        </AuthWrapper>
     );
 };

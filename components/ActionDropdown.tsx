@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { orderStatuses } from '@/data/init-data';
 
-interface ActionDropdownProps {
+type ActionDropdownProps = {
     onSelect: (action: string) => void;
 }
 

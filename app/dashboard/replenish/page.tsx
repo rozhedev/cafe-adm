@@ -2,10 +2,10 @@
 import React from "react";
 import { ResponsiveTable } from "@/components/AdaptiveTable";
 
-export default function Orders() {
+export default function Replenish() {
     return (
         <div>
-            orders
+            replenish
         </div>
     );
 }

@@ -4,22 +4,12 @@ import React, { FC, useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { APP_NAME } from "@/data/init-data";
 
-const linksArr = [
-    {
-        href: "/dashboard/orders",
-        label: "Заказы",
-    },
-    {
-        href: "/dashboard/users",
-        label: "Пользователи",
-    },
-    {
-        href: "/dashboard/edit-menu",
-        label: "Изменить меню",
-    },
-];
+type TLinksArr = { href: string; label: string }[];
+type NavlinkProps = {
+    title: string;
+    linksArr: TLinksArr;
+};
 
 const Navlink = ({ href, label }: { href: string; label: string }) => {
     const pathname = usePathname();
@@ -36,13 +26,13 @@ const Navlink = ({ href, label }: { href: string; label: string }) => {
     );
 };
 
-export const Navbar: FC<{}> = ({}) => {
+export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     return (
         <nav className="border-gray-200 bg-gray-50">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 md:border-b-2 md:border-gray-200">
                 <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                    <span className="self-center text-2xl font-semibold whitespace-nowrap">{APP_NAME}</span>
+                    <span className="self-center text-2xl font-semibold whitespace-nowrap">{title}</span>
                 </div>
                 <button
                     onClick={() => setIsOpen(!isOpen)}

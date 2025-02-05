@@ -1,11 +1,10 @@
 "use client";
 import React from "react";
-import { ResponsiveTable } from "@/components/AdaptiveTable";
-import { TableColumn } from "@/components/AdaptiveTable";
 import { TUserInfo } from "@/types/index";
+import { ResponsiveTable, TableColumnProps } from "@/components/AdaptiveTable";
 
 export default function Users() {
-    const columns: TableColumn<TUserInfo>[] = [
+    const columns: TableColumnProps<TUserInfo>[] = [
         { key: "name", header: "Имя" },
         { key: "balance", header: "Баланс" },
         { key: "activeOrders", header: "Активных заказов" },
@@ -23,7 +22,7 @@ export default function Users() {
         },
     ];
     const handleAction = (action: string, content: TUserInfo) => {
-        console.log(`Action ${action} for order from ${content.name}`);
+        console.log(`Action ${action} for user from ${content.name}`);
     };
     return (
         <div>

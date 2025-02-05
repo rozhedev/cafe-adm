@@ -1,5 +1,5 @@
 import { Navbar } from "@/ui";
-import { userLinksArr, APP_NAME } from "@/data/init-data";
+import { APP_NAME, adminLinksArr } from "@/data/init-data";
 
 export default function RootLayout({
     children,
@@ -8,7 +8,7 @@ export default function RootLayout({
 }>) {
     return (
         <div className="min-h-screen bg-gray-50">
-            <Navbar title={APP_NAME} linksArr={userLinksArr} />
+            <Navbar title={"Cafe Admin"} linksArr={adminLinksArr} />
 
             <div className="max-w-screen-xl mx-auto">
                 <div className="my-12">
