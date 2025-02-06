@@ -1,6 +1,22 @@
-// ! Middleware must export default f(x)
-export { default } from "next-auth/middleware";
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
+
+export default withAuth(
+    function middleware(req) {
+        const { token } = req.nextauth;
+        const { pathname } = req.nextUrl;
+
+        if (pathname.startsWith("/admin") && token?.role !== "admin") {
+            return NextResponse.redirect(new URL("/auth/signin", req.url));
+        }
+    },
+    {
+        callbacks: {
+            authorized: ({ token }) => !!token,
+        },
+    }
+);
 
 export const config = {
-    matcher: ["/dashboard/:path*", "/admin/dashboard/:path*"],
+    matcher: ["/admin/:path*"],
 };

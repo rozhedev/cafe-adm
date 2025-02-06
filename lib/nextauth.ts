@@ -1,65 +1,66 @@
-import { AuthOptions } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import Admin from "@/models/Admin";
-import { NEXTAUTH_SECRET } from "@/data/env";
+import { connectDB } from "@/lib/mongodb";
 
-export const authOptions: AuthOptions = {
+export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
-            name: "credentials",
-            credentials: {},
-
-            // * credentials - library arg. Use any for prevent errors
-            async authorize(credentials: any) {
-                const { name, password } = credentials;
-                if (!name || !password) return null;
-
-                try {
-                    await connectDB();
-
-                    const [user, admin] = await Promise.all([User.findOne({ name }).select("+password"), Admin.findOne({ name }).select("+password")]);
-
-                    if (!user && !admin) return null;
-
-                    if (user) {
-                        const isValidPassword = await bcrypt.compare(password, user.password);
-
-                        if (isValidPassword) {
-                            // * Add role for define user type
-                            const userWithRole = {
-                                ...user.toObject(),
-                                role: "user",
-                            };
-                            return userWithRole;
-                        }
-                    }
-                    if (admin) {
-                        const isValidPassword = await bcrypt.compare(password, admin.password);
-                        if (isValidPassword) {
-                            const adminWithRole = {
-                                ...admin.toObject(),
-                                role: "admin",
-                            };
-                            return adminWithRole;
-                        }
-                    }
-                    return null;
-                } catch (error) {
-                    console.error("Authorization error:", error);
-                    throw new Error("Authentication failed");
+            name: "Credentials",
+            credentials: {
+                name: { label: "Username", type: "text" },
+                password: { label: "Password", type: "password" },
+            },
+            async authorize(credentials) {
+                if (!credentials?.name || !credentials?.password) {
+                    throw new Error("Please provide all required fields");
                 }
+
+                await connectDB();
+
+                const user = await User.findOne({ name: credentials.name });
+
+                if (!user) {
+                    throw new Error("User not found");
+                }
+
+                const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+
+                if (!isPasswordValid) {
+                    throw new Error("Invalid password");
+                }
+
+                return {
+                    id: user._id.toString(),
+                    name: user.name,
+                    role: user.role,
+                };
             },
         }),
     ],
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.role = user.role;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            return {
+                ...session,
+                user: {
+                    ...session.user,
+                    role: token.role,
+                },
+            };
+        },
+    },
+    pages: {
+        signIn: "/auth/signin",
+    },
     session: {
         strategy: "jwt",
     },
-    secret: NEXTAUTH_SECRET,
-    pages: {
-        signIn: "/",
-        signOut: "/",
-    },
+    secret: process.env.NEXTAUTH_SECRET,
 };
