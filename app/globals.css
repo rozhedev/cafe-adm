@@ -19,8 +19,9 @@ body {
     }
 }
 
+/* Don't forget add modificators for add color */
 .btn {
-    @apply text-lg px-6 py-3 rounded-lg text-white outline outline-2 transition-all cursor-pointer;
+    @apply text-lg px-6 shadow-md py-3 rounded-lg text-white outline outline-2 transition-all cursor-pointer;
 }
 
 .btn--auth {
@@ -35,10 +36,6 @@ body {
     @apply bg-red-700 border-2 border-red-800 hover:bg-red-600 hover:border-red-700;
 }
 
-.btn--gray {
-    @apply bg-gray-800 border-2 border-gray-900 hover:bg-gray-700 hover:border-gray-800;
-}
-
 .btn--disabled {
     @apply disabled:bg-gray-600 disabled:border-2 disabled:border-gray-600 disabled:cursor-not-allowed;
 }
@@ -48,7 +45,7 @@ body {
 }
 
 .link {
-    @apply block py-2 px-3 md:p-0 rounded cursor-pointer md:border-0;
+    @apply block py-2 px-3 md:p-0 cursor-pointer;
 }
 
 .inp {

@@ -5,7 +5,7 @@ import mongoose, { models } from "mongoose";
 const orderSchema = new mongoose.Schema(
     {
         // * For get username from session in next-auth, use "name" instead username or fullname field
-        name: {
+        dish: {
             type: String,
             required: true,
         },
@@ -25,5 +25,4 @@ const orderSchema = new mongoose.Schema(
     { timestamps: true, collection: COL_ORDERS }
 );
 
-const Order = mongoose.models?.Order || mongoose.model<TOrder>("Order", orderSchema);
-export default Order;
+export const Order = mongoose.models?.Order || mongoose.model<TOrder>("Order", orderSchema);

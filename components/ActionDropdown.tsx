@@ -55,10 +55,10 @@ export const ActionDropdown: FC<ActionDropdownProps> = ({ onSelect }) => {
             <button
                 ref={buttonRef}
                 onClick={() => setIsOpen(!isOpen)}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none flex items-center"
+                className="text-sm text-blue-700 font-medium focus:outline-none flex items-center"
             >
                 Сменить статус
-                <RiArrowDropDownLine className="ml-2 h-8 w-8" />
+                <RiArrowDropDownLine className="ml-0.5 h-8 w-8" />
             </button>
 
             {isOpen &&

@@ -5,11 +5,11 @@ import mongoose, { models } from "mongoose";
 const dishSchema = new mongoose.Schema(
     {
         // * For get username from session in next-auth, use "name" instead username or fullname field
-        name: {
+        dish: {
             type: String,
             required: true,
         },
-        ingridients: {
+        ingredients: {
             type: String,
             required: true,
         },
@@ -17,7 +17,7 @@ const dishSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        availableCount: {
+        quantity: {
             type: String,
             required: true,
         },
@@ -25,5 +25,4 @@ const dishSchema = new mongoose.Schema(
     { timestamps: true, collection: COL_DISHES }
 );
 
-const Dish = mongoose.models?.Dish || mongoose.model<TDish>("Dish", dishSchema);
-export default Dish;
+export const Dish = mongoose.models?.Dish || mongoose.model<TDish>("Dish", dishSchema);

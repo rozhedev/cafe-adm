@@ -11,12 +11,12 @@ export default function Orders() {
         { key: "quantity", header: "Количество" },
         { key: "price", header: "Цена" },
         { key: "status", header: "Статус" },
-        { key: "date", header: "Дата" },
+        { key: "date", header: "Дата создания" },
     ];
     const orders: TOrder[] = [
         {
             client: "Дима ИФ",
-            name: "бутерброд",
+            dish: "бутерброд",
             quantity: "1шт.",
             price: 100,
             status: "Оплачено",
@@ -24,7 +24,7 @@ export default function Orders() {
         },
         {
             client: "Даша ТИ",
-            name: "сок",
+            dish: "сок",
             quantity: "1шт.",
             price: 40,
             status: "Оплачено",
@@ -36,7 +36,7 @@ export default function Orders() {
         console.log(`Action ${action} for order from ${order.client}`);
     };
     return (
-        <div>
+        <div className="min-w-full">
             <ResponsiveTable
                 columns={columns}
                 data={orders}

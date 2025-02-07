@@ -87,7 +87,7 @@ export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
                         ))}
                         {session && (
                             <>
-                                <span className="font-bold">{session.user?.name || "User"}</span>
+                                <span className="font-bold py-2 px-3 md:p-0">{session.user?.name || "User"}</span>
                                 <li className="flex md:justify-start justify-center">
                                     <button
                                         onClick={() => signOut({ callbackUrl: ROUTES.signin })}

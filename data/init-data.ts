@@ -24,12 +24,12 @@ export const ROUTES = {
     registerUser: "/auth/register/user",
     signin: "/auth/signin",
     // --> Protected
-    // * User
+    // * User role
     dash: "/dashboard",
     dashOrders: "/dashboard/orders",
     dashBusket: "/dashboard/busket",
     dashReplenish: "/dashboard/replenish",
-    // * Admin
+    // * Admin role
     admDash: "/admin/dashboard",
     admDashUsers: "/admin/dashboard/users",
     admDashEditMenu: "/admin/dashboard/edit-menu",
@@ -86,6 +86,13 @@ export const adminLinksArr = [
 export const AUTH_FORM_INIT = {
     name: "",
     password: "",
+};
+
+export const ADD_ORDER_FORM_INIT = {
+    dish: "",
+    ingredients: "",
+    price: "",
+    quantity: "",
 };
 
 export const UI_CONTENT = {

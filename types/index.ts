@@ -10,7 +10,8 @@ export type TUser = {
 export type TOrder = {
     _id?: ObjectId;
     client: string;
-    name: string;
+    // * Don't change key prop from "dish" to "name" for prevent render bug
+    dish: string;
     quantity: string;
     price: number;
     status: string;
@@ -19,10 +20,10 @@ export type TOrder = {
 
 export type TDish = {
     _id?: ObjectId;
-    name: string;
-    ingridients: string;
+    dish: string;
+    ingredients: string;
     price: string;
-    availableCount: string;
+    quantity: string;
 };
 
 export type TUserInfo = {

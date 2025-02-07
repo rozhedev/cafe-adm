@@ -21,11 +21,11 @@ export function ResponsiveTable<T extends Record<string, any>>({ columns, data, 
         <div className="w-full overflow-x-auto rounded-lg bg-white shadow">
             <table className={`w-full table-auto ${className}`}>
                 <thead>
-                    <tr className="border-b border-gray-200">
+                    <tr className="border-b border-gray-400">
                         {columns.map((column) => (
                             <th
                                 key={column.key}
-                                className="px-3 py-3 text-sm text-center font-medium text-gray-900"
+                                className="font-semibold px-3 py-3 text-sm text-center  text-gray-700"
                                 style={column.width ? { width: column.width } : undefined}
                             >
                                 {column.header}
@@ -42,7 +42,7 @@ export function ResponsiveTable<T extends Record<string, any>>({ columns, data, 
                             {columns.map((column) => (
                                 <td
                                     key={column.key}
-                                    className="px-3 py-3 text-sm text-center text-gray-700"
+                                    className="px-3 py-3 text-sm text-center text-gray-900"
                                 >
                                     {column.render ? column.render(item[column.key], item) : item[column.key]}
                                 </td>

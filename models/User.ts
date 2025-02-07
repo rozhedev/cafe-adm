@@ -21,5 +21,4 @@ const userSchema = new mongoose.Schema(
     { timestamps: true, collection: COL_USERS }
 );
 
-const User = mongoose.models?.User || mongoose.model<TUser>("User", userSchema);
-export default User;
+export const User = mongoose.models?.User || mongoose.model<TUser>("User", userSchema);
