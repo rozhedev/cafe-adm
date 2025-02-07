@@ -26,11 +26,12 @@ export default function Users() {
     };
     return (
         <div>
-            <ResponsiveTable
+            Users
+            {/* <ResponsiveTable
                 columns={columns}
                 data={users}
                 onAction={handleAction}
-            />
+            /> */}
         </div>
     );
 }

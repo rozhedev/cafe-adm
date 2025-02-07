@@ -1,51 +1,43 @@
 "use client";
-
-import React, { ChangeEvent, FC, useState, FormEvent } from "react";
-import Link from "next/link";
+import React, { ChangeEvent, FC, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, usePathname } from "next/navigation";
-import { AuthForm } from "@/ui";
-import { UI_CONTENT } from "@/data/init-data";
+import { useRouter } from "next/navigation";
+import { AuthForm, AuthSwitch } from "@/ui";
+import { UI_CONTENT, INIT_FORM_DATA } from "@/data/init-data";
 
 type TLoginForm = {
     registerRoute?: string;
 };
 
-const FORM_INIT_VALUES = {
-    name: "",
-    password: "",
-};
-
 export const LoginForm: FC<TLoginForm> = ({ registerRoute = "" }) => {
     const router = useRouter();
-    const pathname = usePathname();
-
-    const [formData, setFormData] = useState<Record<"name" | "password", string>>(FORM_INIT_VALUES);
-    const [error, setError] = useState<string>("");
+    const [error, setError] = useState("");
+    const [formData, setFormData] = useState(INIT_FORM_DATA);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { name, password } = formData;
         setIsLoading(true);
-
         try {
             const res = await signIn("credentials", {
-                name,
-                password,
+                name: formData.name,
+                password: formData.password,
                 redirect: false,
             });
 
             if (res?.error) {
-                setError("Invalid credentials");
+                setError(res.error);
+                setFormData(INIT_FORM_DATA);
                 setIsLoading(false);
                 return;
             }
 
-            pathname === "/admin/auth" ? router.push("/admin/dashboard") : router.push("/dashboard");
+            router.push("/");
             router.refresh();
         } catch (error) {
-            console.log(error);
+            setFormData(INIT_FORM_DATA);
+            setIsLoading(false);
+            console.error("Login error:", error);
         }
     };
 
@@ -61,7 +53,7 @@ export const LoginForm: FC<TLoginForm> = ({ registerRoute = "" }) => {
                 passwordOnChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
                 passwordVal={formData.password}
             />
-            {error && <small className="text-red-600 font-semibold">{UI_CONTENT.err.invalidAuthCredentials}</small>}
+            {error && <small className="err-output">{UI_CONTENT.err.invalidAuthCredentials}</small>}
             <div>
                 <button
                     type="submit"
@@ -72,12 +64,11 @@ export const LoginForm: FC<TLoginForm> = ({ registerRoute = "" }) => {
                 </button>
 
                 {registerRoute && (
-                    <Link
-                        href={registerRoute}
-                        className="block mt-4 text-center"
-                    >
-                        Ещё нету аккаунта? <span className="underline font-semibold cursor-pointer">Зарегистрироватся</span>
-                    </Link>
+                    <AuthSwitch
+                        ctaLabel={"Ещё нету аккаунта?"}
+                        authLabel={"Зарегистрироватся"}
+                        route={registerRoute}
+                    />
                 )}
             </div>
         </form>

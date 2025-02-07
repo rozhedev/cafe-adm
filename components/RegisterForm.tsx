@@ -1,61 +1,51 @@
 "use client";
-
-import React, { useState, ChangeEvent, SyntheticEvent, FC } from "react";
-import Link from "next/link";
+import React, { useState, ChangeEvent, FC } from "react";
 import { useRouter } from "next/navigation";
-import { AuthForm } from "@/ui";
-import { UI_CONTENT } from "@/data/init-data";
+import { UI_CONTENT, INIT_FORM_DATA, RolesUnion } from "@/data/init-data";
+import { AuthForm, AuthSwitch } from "@/ui";
 
-const INIT_FORM_VALUES = {
-    name: "",
-    password: "",
-};
 type RegisterFormProps = {
-    apiRoute: string;
     authRoute?: string;
+    role: RolesUnion;
 };
 
-export const RegisterForm: FC<RegisterFormProps> = ({ apiRoute, authRoute = "/" }) => {
-    const [formData, setFormData] = useState<Record<"name" | "password", string>>(INIT_FORM_VALUES);
-    const [error, setError] = useState<string>("");
+export const RegisterForm: FC<RegisterFormProps> = ({ role, authRoute = "" }) => {
     const router = useRouter();
+    const [formData, setFormData] = useState(INIT_FORM_DATA);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>("");
 
-    const handleSubmit = async (e: SyntheticEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.name || !formData.password) {
-            setError(UI_CONTENT.err.requiredFields);
-            return;
-        }
+        setIsLoading(true);
         try {
-            setIsLoading(true);
-            // * Register responce
-            const registerRes = await fetch(apiRoute, {
+            const res = await fetch("/api/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    role: role,
+                }),
             });
 
-            const { existUser } = await registerRes.json();
-
-            // * Check exist user
-            if (existUser) {
+            if (res?.status === 409) {
                 setError(UI_CONTENT.err.userExist);
                 setIsLoading(false);
+                setFormData(INIT_FORM_DATA);
                 return;
             }
-            if (registerRes.ok || !existUser) {
-                setFormData(INIT_FORM_VALUES);
-                setError("");
+            if (res.ok) {
                 setIsLoading(false);
-                router.push(authRoute);
-            } else {
-                console.log("User registartion failed.");
+                setFormData(INIT_FORM_DATA);
+                router.push("/auth/signin");
             }
         } catch (error) {
-            console.error("Error during registration: ", error);
+            setError("Возникла ошибка, попробуйте снова");
+            setFormData(INIT_FORM_DATA);
+            setIsLoading(false);
+            console.error("Registration error:", error);
         }
     };
 
@@ -71,6 +61,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ apiRoute, authRoute = "/" 
                 passwordOnChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
                 passwordVal={formData.password}
             />
+            {error && <small className="err-output">{error}</small>}
             <div>
                 <button
                     type="submit"
@@ -80,15 +71,12 @@ export const RegisterForm: FC<RegisterFormProps> = ({ apiRoute, authRoute = "/" 
                     {isLoading ? UI_CONTENT.btn.register.loading : UI_CONTENT.btn.register.default}
                 </button>
 
-                {error && <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">{error}</div>}
-
                 {authRoute && (
-                    <Link
-                        href={authRoute}
-                        className="block mt-4 text-center"
-                    >
-                        Уже есть аккаунт? <span className="underline font-semibold cursor-pointer">Войти</span>
-                    </Link>
+                    <AuthSwitch
+                        ctaLabel={"Уже есть аккаунт?"}
+                        authLabel={"Войти"}
+                        route={authRoute}
+                    />
                 )}
             </div>
         </form>

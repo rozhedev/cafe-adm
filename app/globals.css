@@ -55,6 +55,10 @@ body {
     @apply w-full border border-gray-200 py-3 px-4 bg-zinc-100/40 block rounded-lg p-3 text-gray-900 shadow-md ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-600 focus:ring-indigo-600 !text-lg sm:text-sm sm:leading-6 cursor-text;
 }
 
+.err-output {
+    @apply text-red-600 font-semibold;
+}
+
 .form-elem-size {
     @apply md:min-w-[420px] min-w-[330px];
 }

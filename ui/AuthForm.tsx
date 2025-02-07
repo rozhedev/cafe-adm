@@ -18,6 +18,7 @@ export const AuthForm: FC<TAuthForm> = ({ loginOnChange, loginVal, passwordOnCha
                 placeholder="Логин"
                 onChange={loginOnChange}
                 value={loginVal}
+                minLength={5}
                 className="inp form-elem-size"
             />
             <input
@@ -25,10 +26,11 @@ export const AuthForm: FC<TAuthForm> = ({ loginOnChange, loginVal, passwordOnCha
                 name="password"
                 type="password"
                 required
-                className="inp form-elem-size mt-4"
+                minLength={8}
                 placeholder="Пароль"
                 onChange={passwordOnChange}
                 value={passwordVal}
+                className="inp form-elem-size mt-4"
             />
         </div>
     );

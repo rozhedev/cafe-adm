@@ -1,6 +1,17 @@
 export const APP_NAME = "Teiwaz Cafe";
 export const orderStatuses = ["Оплачено", "Приготовлено", "Выдано"];
 
+export const INIT_FORM_DATA = {
+    name: "",
+    password: "",
+};
+
+export enum ROLES {
+    user = "user",
+    admin = "admin",
+}
+export type RolesUnion = `${ROLES}`;
+
 export const userLinksArr = [
     {
         href: "/dashboard",
@@ -18,7 +29,6 @@ export const userLinksArr = [
         href: "/dashboard/replenish",
         label: "Пополнить",
     },
-
 ];
 
 export const adminLinksArr = [
@@ -46,20 +56,14 @@ export const UI_CONTENT = {
             default: "Зарегистрироватся",
             loading: "Регистрация...",
         },
-        send: {
-            default: "Отправить",
-            loading: "Отправка...",
-        },
     },
     err: {
         invalidAuthCredentials: "Логин или пароль введён неверно",
-        invalidMailRes: "Ошибка отправки. Очисти куки и попробуй снова или обратись к тимлиду",
-        userExist: "Пользователь с такими данными уже существует",
-        requiredFields: "Все поля обязательны",
+        userExist: "Пользователь с таким именём уже существует",
     },
 };
 
-export const tailwindMailConfig = {
+export const tailwindConfig = {
     theme: {
         extend: {
             colors: {

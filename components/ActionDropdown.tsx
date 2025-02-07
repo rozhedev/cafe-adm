@@ -1,3 +1,4 @@
+"use client"
 import React, { FC, useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";

@@ -73,7 +73,7 @@ export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
                         ))}
                         <li className="flex md:justify-start justify-center">
                             <button
-                                onClick={() => signOut()}
+                                onClick={() => signOut({ callbackUrl: "/auth/signin" })}
                                 className="link"
                             >
                                 <span>Выйти</span>
