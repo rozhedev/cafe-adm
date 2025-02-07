@@ -1,10 +1,15 @@
+import { APP_NAME, publicLinksArr } from "@/data/init-data";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/nextauth";
-import { ROLES, APP_NAME, publicLinksArr } from "@/data/init-data";
 import { Navbar } from "@/ui/Navbar";
+import { ROLES } from "@/data/init-data";
+import { authOptions } from "@/lib/nextauth";
 
-export default async function Home() {
+export default async function AuthLayout({
+    children,
+}: Readonly<{
+    children: React.ReactNode;
+}>) {
     const session = await getServerSession(authOptions);
 
     if (session) {
@@ -17,11 +22,11 @@ export default async function Home() {
                 title={APP_NAME}
                 linksArr={publicLinksArr}
             />
-            <main className="mx-auto my-12 px-12 py-6">
-                <div className="m-auto flex flex-col items-center mt-6">
-                    <h1 className="font-bold leading-snug tracking-normal text-slate-800 my-3 w-full text-lg lg:max-w-xl lg:text-2xl">Меню</h1>
+            <div className="mx-auto">
+                <div className="my-12">
+                    <div className="m-auto flex flex-col items-center mt-16 xl:mt-32 lg:mt-24 md:mt-20">{children}</div>
                 </div>
-            </main>
+            </div>
         </div>
     );
 }

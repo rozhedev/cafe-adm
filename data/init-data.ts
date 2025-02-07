@@ -1,10 +1,16 @@
 export const APP_NAME = "Teiwaz Cafe";
-export const orderStatuses = ["Оплачено", "Приготовлено", "Выдано"];
 
-export const INIT_FORM_DATA = {
-    name: "",
-    password: "",
-};
+export enum OrderStatuses {
+    ordered = "ordered",
+    payed = "payed",
+    completed = "completed",
+}
+export enum OrderStatusesLabels {
+    ordered = "Заказано",
+    payed = "Оплачено",
+    completed = "Выдано",
+}
+export const orderStatusesLabelsArr: string[] = ["Заказано", "Оплачено", "Выдано"];
 
 export enum ROLES {
     user = "user",
@@ -12,39 +18,75 @@ export enum ROLES {
 }
 export type RolesUnion = `${ROLES}`;
 
+export const ROUTES = {
+    // --> Public
+    registerAdmin: "/auth/register/admin",
+    registerUser: "/auth/register/user",
+    signin: "/auth/signin",
+    // --> Protected
+    // * User
+    dash: "/dashboard",
+    dashOrders: "/dashboard/orders",
+    dashBusket: "/dashboard/busket",
+    dashReplenish: "/dashboard/replenish",
+    // * Admin
+    admDash: "/admin/dashboard",
+    admDashUsers: "/admin/dashboard/users",
+    admDashEditMenu: "/admin/dashboard/edit-menu",
+    //  --> API
+    apiRegister: "/api/auth/register",
+    apiSignin: "/api/auth/signin",
+};
+
+export const publicLinksArr = [
+    {
+        href: ROUTES.signin,
+        label: "Войти",
+    },
+    {
+        href: ROUTES.registerUser,
+        label: "Зарегистрироватся",
+    },
+];
+
 export const userLinksArr = [
     {
-        href: "/dashboard",
+        href: ROUTES.dash,
         label: "Меню блюд",
     },
     {
-        href: "/dashboard/orders",
+        href: ROUTES.dashOrders,
         label: "Мои заказы",
     },
     {
-        href: "/dashboard/busket",
+        href: ROUTES.dashBusket,
         label: "Корзина",
     },
     {
-        href: "/dashboard/replenish",
+        href: ROUTES.dashReplenish,
         label: "Пополнить",
     },
 ];
 
 export const adminLinksArr = [
     {
-        href: "/admin/dashboard",
+        href: ROUTES.admDash,
         label: "Заказы",
     },
     {
-        href: "/admin/dashboard/users",
+        href: ROUTES.admDashUsers,
         label: "Пользователи",
     },
     {
-        href: "/admin/dashboard/edit-menu",
+        href: ROUTES.admDashEditMenu,
         label: "Изменить меню",
     },
 ];
+
+export const AUTH_FORM_INIT = {
+    name: "",
+    password: "",
+};
 
 export const UI_CONTENT = {
     btn: {
@@ -60,6 +102,7 @@ export const UI_CONTENT = {
     err: {
         invalidAuthCredentials: "Логин или пароль введён неверно",
         userExist: "Пользователь с таким именём уже существует",
+        unknownError: "Возникла ошибка, попробуйте снова",
     },
 };
 

@@ -1,6 +1,6 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import { ROLES } from '@/data/init-data';
+import { ROLES, ROUTES } from '@/data/init-data';
 
 export default withAuth(
     function middleware(req) {
@@ -8,7 +8,7 @@ export default withAuth(
         const { pathname } = req.nextUrl;
 
         if (pathname.startsWith("/admin") && token?.role !== ROLES.admin) {
-            return NextResponse.redirect(new URL("/auth/signin", req.url));
+            return NextResponse.redirect(new URL(ROUTES.signin, req.url));
         }
     },
     {

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, ChangeEvent, FC } from "react";
 import { useRouter } from "next/navigation";
-import { UI_CONTENT, INIT_FORM_DATA, RolesUnion } from "@/data/init-data";
+import { UI_CONTENT, ROUTES, AUTH_FORM_INIT, RolesUnion } from "@/data/init-data";
 import { AuthForm, AuthSwitch } from "@/ui";
 
 type RegisterFormProps = {
@@ -11,7 +11,7 @@ type RegisterFormProps = {
 
 export const RegisterForm: FC<RegisterFormProps> = ({ role, authRoute = "" }) => {
     const router = useRouter();
-    const [formData, setFormData] = useState(INIT_FORM_DATA);
+    const [formData, setFormData] = useState(AUTH_FORM_INIT);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
 
@@ -33,17 +33,17 @@ export const RegisterForm: FC<RegisterFormProps> = ({ role, authRoute = "" }) =>
             if (res?.status === 409) {
                 setError(UI_CONTENT.err.userExist);
                 setIsLoading(false);
-                setFormData(INIT_FORM_DATA);
+                setFormData(AUTH_FORM_INIT);
                 return;
             }
             if (res.ok) {
                 setIsLoading(false);
-                setFormData(INIT_FORM_DATA);
-                router.push("/auth/signin");
+                setFormData(AUTH_FORM_INIT);
+                router.push(ROUTES.signin);
             }
         } catch (error) {
-            setError("Возникла ошибка, попробуйте снова");
-            setFormData(INIT_FORM_DATA);
+            setError(UI_CONTENT.err.unknownError);
+            setFormData(AUTH_FORM_INIT);
             setIsLoading(false);
             console.error("Registration error:", error);
         }

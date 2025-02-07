@@ -3,7 +3,7 @@ import React, { ChangeEvent, FC, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { AuthForm, AuthSwitch } from "@/ui";
-import { UI_CONTENT, INIT_FORM_DATA } from "@/data/init-data";
+import { UI_CONTENT, AUTH_FORM_INIT } from "@/data/init-data";
 
 type TLoginForm = {
     registerRoute?: string;
@@ -12,7 +12,7 @@ type TLoginForm = {
 export const LoginForm: FC<TLoginForm> = ({ registerRoute = "" }) => {
     const router = useRouter();
     const [error, setError] = useState("");
-    const [formData, setFormData] = useState(INIT_FORM_DATA);
+    const [formData, setFormData] = useState(AUTH_FORM_INIT);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +27,7 @@ export const LoginForm: FC<TLoginForm> = ({ registerRoute = "" }) => {
 
             if (res?.error) {
                 setError(res.error);
-                setFormData(INIT_FORM_DATA);
+                setFormData(AUTH_FORM_INIT);
                 setIsLoading(false);
                 return;
             }
@@ -35,7 +35,7 @@ export const LoginForm: FC<TLoginForm> = ({ registerRoute = "" }) => {
             router.push("/");
             router.refresh();
         } catch (error) {
-            setFormData(INIT_FORM_DATA);
+            setFormData(AUTH_FORM_INIT);
             setIsLoading(false);
             console.error("Login error:", error);
         }

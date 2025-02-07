@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import User from "@/models/User";
 import { connectDB } from "@/lib/mongodb";
+import { ROUTES } from '@/data/init-data';
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -57,7 +58,7 @@ export const authOptions: NextAuthOptions = {
         },
     },
     pages: {
-        signIn: "/auth/signin",
+        signIn: ROUTES.signin,
     },
     session: {
         strategy: "jwt",

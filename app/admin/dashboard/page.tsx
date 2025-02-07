@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { TOrder } from "@/types";
 import { ResponsiveTable, TableColumnProps } from "@/components/AdaptiveTable";
@@ -36,12 +37,11 @@ export default function Orders() {
     };
     return (
         <div>
-            Orders
-            {/* <ResponsiveTable
+            <ResponsiveTable
                 columns={columns}
                 data={orders}
                 onAction={handleAction}
-            /> */}
+            />
         </div>
     );
 }

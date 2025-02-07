@@ -1,12 +1,12 @@
-"use client"
+"use client";
 import React, { FC, useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { orderStatuses } from '@/data/init-data';
+import { orderStatusesLabelsArr } from "@/data/init-data";
 
 type ActionDropdownProps = {
     onSelect: (action: string) => void;
-}
+};
 
 export const ActionDropdown: FC<ActionDropdownProps> = ({ onSelect }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -72,7 +72,7 @@ export const ActionDropdown: FC<ActionDropdownProps> = ({ onSelect }) => {
                         }}
                         className="bg-white rounded-lg shadow-lg border border-gray-200 w-44"
                     >
-                        {orderStatuses.map((status) => (
+                        {orderStatusesLabelsArr.map((status) => (
                             <button
                                 key={status}
                                 onClick={() => {

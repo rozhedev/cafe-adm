@@ -2,8 +2,9 @@
 
 import React, { FC, useState } from "react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
+import { ROUTES, ROLES } from "@/data/init-data";
 
 type TLinksArr = { href: string; label: string }[];
 type NavlinkProps = {
@@ -15,7 +16,7 @@ const Navlink = ({ href, label }: { href: string; label: string }) => {
     const pathname = usePathname();
     const isActive = pathname === href;
     return (
-        <li>
+        <li className="cursor-pointer">
             <Link
                 href={href}
                 className={`link ${isActive ? "text-blue-600" : "text-gray-900"}`}
@@ -27,12 +28,19 @@ const Navlink = ({ href, label }: { href: string; label: string }) => {
 };
 
 export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
+    const { data: session } = useSession();
+
     const [isOpen, setIsOpen] = useState<boolean>(false);
     return (
-        <nav className="border-gray-200 bg-gray-50">
-            <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 md:border-b-2 md:border-gray-200">
+        <nav className="border-gray-200 bg-white shadow-md">
+            <div className="flex flex-wrap items-center justify-between mx-auto px-6 py-3 lg:px-12 lg:py-6 md:border-b-1 md:border-gray-200">
                 <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                    <span className="self-center text-2xl font-semibold whitespace-nowrap">{title}</span>
+                    <Link
+                        href={"/"}
+                        className="self-center text-2xl font-semibold whitespace-nowrap"
+                    >
+                        {title}
+                    </Link>
                 </div>
                 <button
                     onClick={() => setIsOpen(!isOpen)}
@@ -64,6 +72,12 @@ export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
                     id="navbar-solid-bg"
                 >
                     <ul className="flex flex-col font-medium mt-4 rounded-lg bg-gray-100 text-center py-2 rtl:space-x-reverse md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-transparent md:text-left md:py-0">
+                        {!session && (
+                            <Navlink
+                                href="/"
+                                label={"Меню"}
+                            />
+                        )}
                         {linksArr.map((link, index) => (
                             <Navlink
                                 key={index}
@@ -71,14 +85,19 @@ export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
                                 label={link.label}
                             />
                         ))}
-                        <li className="flex md:justify-start justify-center">
-                            <button
-                                onClick={() => signOut({ callbackUrl: "/auth/signin" })}
-                                className="link"
-                            >
-                                <span>Выйти</span>
-                            </button>
-                        </li>
+                        {session && (
+                            <>
+                                <span className="font-bold">{session.user?.name || "User"}</span>
+                                <li className="flex md:justify-start justify-center">
+                                    <button
+                                        onClick={() => signOut({ callbackUrl: ROUTES.signin })}
+                                        className="link"
+                                    >
+                                        <span>Выйти</span>
+                                    </button>
+                                </li>
+                            </>
+                        )}
                     </ul>
                 </div>
             </div>
