@@ -2,7 +2,7 @@ import { APP_NAME, publicLinksArr } from "@/data/init-data";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { Navbar } from "@/ui/Navbar";
-import { ROLES } from "@/data/init-data";
+import { ROLES, ROUTES } from "@/data/init-data";
 import { authOptions } from "@/lib/nextauth";
 
 export default async function AuthLayout({
@@ -13,8 +13,8 @@ export default async function AuthLayout({
     const session = await getServerSession(authOptions);
 
     if (session) {
-        if (session.user.role === ROLES.user) redirect("/dashboard");
-        if (session.user.role === ROLES.admin) redirect("/admin/dashboard");
+        if (session.user.role === ROLES.user) redirect(ROUTES.dash);
+        if (session.user.role === ROLES.admin) redirect(ROUTES.admDash);
     }
     return (
         <div className="min-h-screen bg-gray-50">

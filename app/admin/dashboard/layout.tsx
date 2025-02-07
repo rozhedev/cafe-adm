@@ -12,7 +12,7 @@ export default async function AdmDashboardLayout({
     const session = await getServerSession(authOptions);
 
     if (!session) redirect(ROUTES.signin);
-    if (session.user.role !== ROLES.admin) redirect("/dashboard");
+    if (session.user.role !== ROLES.admin) redirect(ROUTES.dash);
 
     return (
         <div className="min-h-screen bg-gray-50">

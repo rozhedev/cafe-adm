@@ -1,15 +1,15 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/nextauth";
-import { ROLES, APP_NAME, publicLinksArr } from "@/data/init-data";
+import { ROLES, APP_NAME, ROUTES, publicLinksArr } from "@/data/init-data";
 import { Navbar } from "@/ui/Navbar";
 
 export default async function Home() {
     const session = await getServerSession(authOptions);
 
     if (session) {
-        if (session.user.role === ROLES.user) redirect("/dashboard");
-        if (session.user.role === ROLES.admin) redirect("/admin/dashboard");
+        if (session.user.role === ROLES.user) redirect(ROUTES.dash);
+        if (session.user.role === ROLES.admin) redirect(ROUTES.admDash);
     }
     return (
         <div className="min-h-screen bg-gray-50">

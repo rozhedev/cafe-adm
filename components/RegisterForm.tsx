@@ -19,7 +19,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ role, authRoute = "" }) =>
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await fetch("/api/auth/register", {
+            const res = await fetch(ROUTES.apiRegister, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

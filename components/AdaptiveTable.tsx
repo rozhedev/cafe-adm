@@ -48,7 +48,7 @@ export function ResponsiveTable<T extends Record<string, any>>({ columns, data, 
                                 </td>
                             ))}
                             <td className="px-3 py-3">
-                                {/* <ActionDropdown onSelect={(action) => onAction?.(action, item)} /> */}
+                                <ActionDropdown onSelect={(action) => onAction?.(action, item)} />
                             </td>
                         </tr>
                     ))}
