@@ -105,6 +105,13 @@ export const UI_CONTENT = {
             default: "Зарегистрироватся",
             loading: "Регистрация...",
         },
+        addDish: {
+            default: "Добавить блюдо",
+            loading: "Добавляю...",
+        },
+    },
+    success: {
+        dishAdded: "Блюдо успешно добавлено",
     },
     err: {
         invalidAuthCredentials: "Логин или пароль введён неверно",

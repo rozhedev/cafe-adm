@@ -2,7 +2,7 @@
 import React, { ChangeEvent, FC, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { AuthForm, AuthSwitch } from "@/ui";
+import { AuthSwitch, FormController } from "@/ui";
 import { UI_CONTENT, AUTH_FORM_INIT } from "@/data/init-data";
 
 type TLoginForm = {
@@ -47,12 +47,31 @@ export const LoginForm: FC<TLoginForm> = ({ registerRoute = "" }) => {
             method="POST"
             onSubmit={handleSubmit}
         >
-            <AuthForm
-                loginOnChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, name: e.target.value })}
-                loginVal={formData.name}
-                passwordOnChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
-                passwordVal={formData.password}
+            <FormController
+                htmlLabel="Логин"
+                id="login"
+                name="login"
+                type="text"
+                required
+                placeholder="team_manager"
+                minLength={5}
+                aria-label="Логин"
+                value={formData.name}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, name: e.target.value })}
             />
+            <FormController
+                htmlLabel="Пароль"
+                id="password"
+                name="password"
+                type="password"
+                required
+                placeholder="••••••••"
+                minLength={8}
+                aria-label="Пароль"
+                value={formData.password}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
+            />
+            
             {error && <small className="err-output">{UI_CONTENT.err.invalidAuthCredentials}</small>}
             <div>
                 <button
