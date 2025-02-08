@@ -1,11 +1,19 @@
 "use client";
-import React, { useState } from "react";
-import { ResponsiveTable } from "@/components/AdaptiveTable";
-import { TDish } from "@/types/index";
-import { UI_CONTENT, ADD_ORDER_FORM_INIT } from "@/data/init-data";
+import React, { useEffect, useState } from "react";
+import { ResponsiveTable, type TableColumnProps } from "@/components/AdaptiveTable";
+import { TDish } from "@/types";
+import { ROUTES, UI_CONTENT, ADD_ORDER_FORM_INIT } from "@/data/init-data";
 import { FormController } from "@/ui";
 
+const columns: TableColumnProps<TDish>[] = [
+    { key: "dish", header: "Блюдо" },
+    { key: "ingredients", header: "Блюдо" },
+    { key: "quantity", header: "Количество" },
+    { key: "price", header: "Цена" },
+];
+
 export default function EditMenu() {
+    const [dishList, setDishList] = useState<TDish[]>([]);
     const [formData, setFormData] = useState<Omit<TDish, "id">>(ADD_ORDER_FORM_INIT);
     const [error, setError] = useState<string>("");
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -15,7 +23,7 @@ export default function EditMenu() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await fetch("/api/orders/add", {
+            const res = await fetch(ROUTES.addOrders, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -39,75 +47,100 @@ export default function EditMenu() {
             console.error("Create new order error:", error);
         }
     };
+    useEffect(() => {
+        const fetchDishes = async () => {
+            try {
+                const res = await fetch(ROUTES.getOrders, {
+                    method: "GET",
+                });
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+                setDishList(data);
+            } catch (error) {
+                console.error("Get dish list error:", error);
+            }
+        };
+        fetchDishes();
+    }, []);
 
     return (
-        <div className="mb-8 w-full flex flex-col items-center">
-            <h2 className="text-xl font-semibold mb-5">Добавить блюдо</h2>
-            <form
-                className="flex flex-col items-center gap-4"
-                onSubmit={handleAddOrder}
-            >
-                {isVisible && <div className="form-elem-size border-2 border-green-300 rounded-lg shadow-md font-medium bg-green-200 text-green-800 p-3">{UI_CONTENT.success.dishAdded}</div>}
+        <div className="mb-8 w-full flex gap-10 justify-between items-center">
+            <ResponsiveTable
+                columns={columns}
+                data={dishList}
+                // onAction={handleAction}
+            />
 
-                <FormController
-                    htmlLabel="Название"
-                    id="dish"
-                    name="dish"
-                    type="text"
-                    required
-                    placeholder="Спагетти с мясом"
-                    minLength={5}
-                    aria-label="Название"
-                    value={formData.dish}
-                    onChange={(e) => setFormData({ ...formData, dish: e.target.value })}
-                />
-                <div>
-                    <label htmlFor="ingredients">Ингредиенты</label>
-                    <textarea
-                        id="ingredients"
-                        name="ingredients"
-                        required
-                        placeholder="Спагетти, сыр, мясо"
-                        className="mt-1 inp form-elem-size"
-                        aria-label="Ингредиенты"
-                        value={formData.ingredients}
-                        onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })}
-                    />
-                </div>
-                <FormController
-                    htmlLabel="Цена"
-                    id="price"
-                    name="price"
-                    type="number"
-                    required
-                    placeholder="149.99"
-                    min={0}
-                    max={9999}
-                    aria-label="Цена"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                />
-                <FormController
-                    htmlLabel="Количество"
-                    id="quantity"
-                    name="quantity"
-                    type="number"
-                    required
-                    placeholder="12"
-                    min={0}
-                    max={999}
-                    aria-label="Количество"
-                    value={formData.quantity}
-                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                />
-                {error && <small className="err-output">{UI_CONTENT.err.unknownError}</small>}
-                <button
-                    className="mt-4 btn btn--auth"
-                    onClick={handleAddOrder}
+            <div className="flex flex-col items-center">
+                <h2 className="text-xl font-semibold mb-5">Добавить блюдо</h2>
+                <form
+                    className="flex flex-col items-center gap-4"
+                    onSubmit={handleAddOrder}
                 >
-                    {isLoading ? UI_CONTENT.btn.addDish.loading : UI_CONTENT.btn.addDish.default}
-                </button>
-            </form>
+                    {isVisible && <div className="form-elem-size border-2 border-green-300 rounded-lg shadow-md font-medium bg-green-200 text-green-800 p-3">{UI_CONTENT.success.dishAdded}</div>}
+
+                    <FormController
+                        htmlLabel="Название"
+                        id="dish"
+                        name="dish"
+                        type="text"
+                        required
+                        placeholder="Спагетти с мясом"
+                        minLength={5}
+                        aria-label="Название"
+                        value={formData.dish}
+                        onChange={(e) => setFormData({ ...formData, dish: e.target.value })}
+                    />
+                    <div>
+                        <label htmlFor="ingredients">Ингредиенты</label>
+                        <textarea
+                            id="ingredients"
+                            name="ingredients"
+                            required
+                            placeholder="Спагетти, сыр, мясо"
+                            className="mt-1 inp form-elem-size"
+                            aria-label="Ингредиенты"
+                            value={formData.ingredients}
+                            onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })}
+                        />
+                    </div>
+                    <FormController
+                        htmlLabel="Цена"
+                        id="price"
+                        name="price"
+                        type="number"
+                        required
+                        placeholder="149.99"
+                        min={0}
+                        max={9999}
+                        aria-label="Цена"
+                        value={formData.price}
+                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    />
+                    <FormController
+                        htmlLabel="Количество"
+                        id="quantity"
+                        name="quantity"
+                        type="number"
+                        required
+                        placeholder="12"
+                        min={0}
+                        max={999}
+                        aria-label="Количество"
+                        value={formData.quantity}
+                        onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                    />
+                    {error && <small className="err-output">{UI_CONTENT.err.unknownError}</small>}
+                    <button
+                        className="mt-4 btn btn--auth"
+                        onClick={handleAddOrder}
+                    >
+                        {isLoading ? UI_CONTENT.btn.addDish.loading : UI_CONTENT.btn.addDish.default}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }

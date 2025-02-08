@@ -36,6 +36,8 @@ export const ROUTES = {
     //  --> API
     apiRegister: "/api/auth/register",
     apiSignin: "/api/auth/signin",
+    addOrders: "/api/orders/add",
+    getOrders: "/api/dishes/",
 };
 
 export const publicLinksArr = [
