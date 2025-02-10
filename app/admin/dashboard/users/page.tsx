@@ -1,14 +1,10 @@
 "use client";
 import React from "react";
 import { TUserInfo } from "@/types";
-import { ResponsiveTable, TableColumnProps } from "@/components/AdaptiveTable";
+import { ResponsiveTable } from "@/components/AdaptiveTable";
+import { userInfoColumns } from "@/data";
 
 export default function Users() {
-    const columns: TableColumnProps<TUserInfo>[] = [
-        { key: "name", header: "Имя" },
-        { key: "balance", header: "Баланс" },
-        { key: "activeOrders", header: "Активных заказов" },
-    ];
     const users: TUserInfo[] = [
         {
             name: "Дима ИФ",
@@ -28,7 +24,7 @@ export default function Users() {
         <div>
             <ResponsiveTable
                 dropdownLabel="Действия"
-                columns={columns}
+                columns={userInfoColumns}
                 data={users}
                 onAction={handleAction}
             />

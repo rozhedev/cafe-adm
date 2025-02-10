@@ -33,7 +33,7 @@ export const Modal: FC<ModalProps> = ({ isOpen, onAction, onClose, title, action
                     <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div className="flex justify-between items-center">
                             <h2
-                                className="text-lg leading-6 font-medium text-gray-900"
+                                className="text-lg leading-6 font-semibold text-gray-900"
                                 id="modal-title"
                             >
                                 {title}

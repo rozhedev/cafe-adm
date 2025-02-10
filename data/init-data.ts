@@ -1,3 +1,8 @@
+import { TModalsAction } from "@/app/admin/dashboard/edit-menu/page";
+import { TDish, ObjectMap } from "@/types";
+import React, { useState } from "react";
+import { ROUTES } from "./routes";
+
 export const APP_NAME = "Teiwaz Cafe";
 
 // --> Action Dropdown options
@@ -37,7 +42,7 @@ export const AUTH_FORM_INIT = {
     password: "",
 };
 
-export const ADD_ORDER_FORM_INIT = {
+export const DISH_ORDER_FORM_INIT = {
     dish: "",
     ingredients: "",
     price: "",

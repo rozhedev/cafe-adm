@@ -35,3 +35,5 @@ export type TUserInfo = {
 
 export type TActionOption = { status: string; label: string };
 export type TActionOptionsArr = TActionOption[];
+
+export type ObjectMap = { [key: string]: string };

@@ -16,8 +16,8 @@ export const ROUTES = {
     //  --> API
     apiRegister: "/api/auth/register",
     apiSignin: "/api/auth/signin",
-    addOrders: "/api/orders/add",
-    getOrders: "/api/dishes/",
+    addDish: "/api/dishes/add",
+    getDish: "/api/dishes/get",
 };
 
 // --> Links

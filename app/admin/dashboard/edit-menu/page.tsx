@@ -1,48 +1,41 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { ResponsiveTable, type TableColumnProps } from "@/components/AdaptiveTable";
-import { TDish } from "@/types";
-import { ROUTES, UI_CONTENT, ADD_ORDER_FORM_INIT, dishActionOptions, DISH_MODALS_INIT } from "@/data";
+import { ResponsiveTable } from "@/components/AdaptiveTable";
+import { TDish, ObjectMap } from "@/types";
+import { ROUTES, UI_CONTENT, DISH_ORDER_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT } from "@/data";
 import { FormController, Modal } from "@/ui";
 
-type TModalsAction = {
+export type TModalsAction = {
     edit: boolean;
     del: boolean;
 };
 
-const columns: TableColumnProps<TDish>[] = [
-    { key: "dish", header: "Блюдо" },
-    { key: "ingredients", header: "Ингредиенты" },
-    { key: "quantity", header: "Количество" },
-    { key: "price", header: "Цена" },
-];
-
 export default function EditMenu() {
     const [dishList, setDishList] = useState<TDish[]>([]);
-    const [formData, setFormData] = useState<Omit<TDish, "id">>(ADD_ORDER_FORM_INIT);
-    const [editFormData, setEditFormData] = useState<Omit<TDish, "id">>(ADD_ORDER_FORM_INIT);
+    const [addFormData, setAddFormData] = useState<ObjectMap>(DISH_ORDER_FORM_INIT);
+    const [editFormData, setEditFormData] = useState<ObjectMap>(DISH_ORDER_FORM_INIT);
     const [error, setError] = useState<string>("");
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isModalOpen, setIsModalOpen] = useState<TModalsAction>(DISH_MODALS_INIT);
 
     // * Handlers
-    const handleAddOrder = async (e: React.FormEvent) => {
+    const handleAddDish = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await fetch(ROUTES.addOrders, {
+            const res = await fetch(ROUTES.addDish, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(addFormData),
             });
 
             if (res.ok) {
                 setError("");
                 setIsLoading(false);
-                setFormData(ADD_ORDER_FORM_INIT);
+                setEditFormData(DISH_ORDER_FORM_INIT);
                 setIsVisible(true);
                 setError("");
                 return;
@@ -51,9 +44,16 @@ export default function EditMenu() {
             setIsLoading(false);
         } catch (error) {
             setIsLoading(false);
-            setFormData(ADD_ORDER_FORM_INIT);
+            setAddFormData(DISH_ORDER_FORM_INIT);
             console.error("Create new order error:", error);
         }
+    };
+    const handleEditDish = () => {
+        if (Object.values(addFormData).every((item) => item.trim() === "")) {
+            console.log("form not entered");
+            return;
+        }
+        // console.log(name); 
     };
 
     const handleAction = (action: string, item: TDish) => {
@@ -71,7 +71,7 @@ export default function EditMenu() {
     useEffect(() => {
         const fetchDishes = async () => {
             try {
-                const res = await fetch(ROUTES.getOrders, {
+                const res = await fetch(ROUTES.getDish, {
                     method: "GET",
                 });
                 if (!res.ok) {
@@ -84,13 +84,13 @@ export default function EditMenu() {
             }
         };
         fetchDishes();
-    }, []);
+    }, [dishList, setDishList]);
 
     return (
         <div className="mb-8 w-full flex gap-10 justify-between items-start">
             <ResponsiveTable
                 dropdownLabel="Действия"
-                columns={columns}
+                columns={dishInfoColumns}
                 data={dishList}
                 options={dishActionOptions}
                 onAction={handleAction}
@@ -100,22 +100,23 @@ export default function EditMenu() {
                 <h2 className="text-xl font-semibold mb-4">Добавить блюдо</h2>
                 <form
                     className="flex flex-col items-center gap-4"
-                    onSubmit={handleAddOrder}
+                    onSubmit={handleAddDish}
                 >
                     {isVisible && <div className="form-elem-size border-2 border-green-300 rounded-lg shadow-md font-medium bg-green-200 text-green-800 p-3">{UI_CONTENT.success.dishAdded}</div>}
 
-                    <FormController
-                        htmlLabel="Название"
-                        id="dish"
-                        name="dish"
-                        type="text"
-                        required
-                        placeholder="Спагетти с мясом"
-                        minLength={5}
-                        aria-label="Название"
-                        value={formData.dish}
-                        onChange={(e) => setFormData({ ...formData, dish: e.target.value })}
-                    />
+                    {dishFormControllers.map((controller) => (
+                        <FormController
+                            key={controller.id}
+                            {...controller}
+                            value={addFormData[controller.id as any]}
+                            onChange={(e) =>
+                                setAddFormData({
+                                    ...addFormData,
+                                    [controller.id]: e.target.value,
+                                })
+                            }
+                        />
+                    ))}
                     <div>
                         <label htmlFor="ingredients">Ингредиенты</label>
                         <textarea
@@ -125,40 +126,14 @@ export default function EditMenu() {
                             placeholder="Спагетти, сыр, мясо"
                             className="mt-1 inp form-elem-size"
                             aria-label="Ингредиенты"
-                            value={formData.ingredients}
-                            onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })}
+                            value={addFormData.ingredients}
+                            onChange={(e) => setAddFormData({ ...addFormData, ingredients: e.target.value })}
                         />
                     </div>
-                    <FormController
-                        htmlLabel="Цена"
-                        id="price"
-                        name="price"
-                        type="number"
-                        required
-                        placeholder="149.99"
-                        min={0}
-                        max={9999}
-                        aria-label="Цена"
-                        value={formData.price}
-                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    />
-                    <FormController
-                        htmlLabel="Количество"
-                        id="quantity"
-                        name="quantity"
-                        type="number"
-                        required
-                        placeholder="12"
-                        min={0}
-                        max={999}
-                        aria-label="Количество"
-                        value={formData.quantity}
-                        onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                    />
                     {error && <small className="err-output">{UI_CONTENT.err.unknownError}</small>}
                     <button
+                        type="submit"
                         className="mt-4 btn btn--auth"
-                        onClick={handleAddOrder}
                     >
                         {isLoading ? UI_CONTENT.btn.addDish.loading : UI_CONTENT.btn.addDish.default}
                     </button>
@@ -180,20 +155,25 @@ export default function EditMenu() {
                 onClose={() => setIsModalOpen({ ...isModalOpen, edit: false })}
                 isOpen={isModalOpen.edit}
             >
-                <h2 className="text-xl font-semibold mb-4">Выберите поле что нужно изменить</h2>
-                <div>
-                    <FormController
-                        htmlLabel="Название"
-                        id="dish"
-                        name="dish"
-                        type="text"
-                        required
-                        placeholder="Спагетти с мясом"
-                        minLength={5}
-                        aria-label="Название"
-                        value={editFormData.dish}
-                        onChange={(e) => setEditFormData({ ...editFormData, dish: e.target.value })}
-                    />
+                <div className="my-4">Введите новые значения в одно или несколько полей</div>
+                <form
+                    className="flex flex-col items-center gap-4"
+                    onSubmit={handleEditDish}
+                >
+                    {dishFormControllers.map((controller) => (
+                        <FormController
+                            key={controller.id}
+                            
+                            {...controller}
+                            value={editFormData[controller.id as any]}
+                            onChange={(e) =>
+                                setEditFormData({
+                                    ...editFormData,
+                                    [controller.id]: e.target.value,
+                                })
+                            }
+                        />
+                    ))}
                     <div>
                         <label htmlFor="ingredients">Ингредиенты</label>
                         <textarea
@@ -207,33 +187,7 @@ export default function EditMenu() {
                             onChange={(e) => setEditFormData({ ...editFormData, ingredients: e.target.value })}
                         />
                     </div>
-                    <FormController
-                        htmlLabel="Цена"
-                        id="price"
-                        name="price"
-                        type="number"
-                        required
-                        placeholder="149.99"
-                        min={0}
-                        max={9999}
-                        aria-label="Цена"
-                        value={editFormData.price}
-                        onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })}
-                    />
-                    <FormController
-                        htmlLabel="Количество"
-                        id="quantity"
-                        name="quantity"
-                        type="number"
-                        required
-                        placeholder="12"
-                        min={0}
-                        max={999}
-                        aria-label="Количество"
-                        value={editFormData.quantity}
-                        onChange={(e) => setEditFormData({ ...editFormData, quantity: e.target.value })}
-                    />
-                </div>
+                </form>
             </Modal>
         </div>
     );

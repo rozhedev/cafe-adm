@@ -1,19 +1,11 @@
 "use client";
 import React from "react";
 import { TOrder } from "@/types";
-import { ResponsiveTable, TableColumnProps } from "@/components/AdaptiveTable";
-import { orderActionOptions } from "@/data";
+import { ResponsiveTable } from "@/components/AdaptiveTable";
+import { ordersColumns, orderActionOptions } from "@/data";
 
 // * Default page - Orders
 export default function Orders() {
-    const columns: TableColumnProps<TOrder>[] = [
-        { key: "client", header: "Клиент" },
-        { key: "dish", header: "Блюдо" },
-        { key: "quantity", header: "Количество" },
-        { key: "price", header: "Цена" },
-        { key: "status", header: "Статус" },
-        { key: "date", header: "Дата создания" },
-    ];
     const orders: TOrder[] = [
         {
             client: "Дима ИФ",
@@ -41,7 +33,7 @@ export default function Orders() {
             <ResponsiveTable
                 options={orderActionOptions}
                 dropdownLabel="Сменить статус"
-                columns={columns}
+                columns={ordersColumns}
                 data={orders}
                 onAction={handleAction}
             />
