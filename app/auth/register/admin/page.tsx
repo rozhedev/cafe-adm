@@ -1,7 +1,7 @@
 "use client";
-import { AuthWrapper } from "@/ui/AuthWrapper";
+import { AuthWrapper } from "@/ui";
 import { RegisterForm } from "@/components/RegisterForm";
-import { ROLES } from '@/data/init-data';
+import { ROLES } from '@/data';
 
 export default function AdminRegistration() {
     return (

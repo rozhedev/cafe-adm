@@ -1,4 +1,4 @@
-import { COL_ORDERS } from "@/data/env";
+import { COL_ORDERS } from "@/data";
 import { TOrder } from "@/types";
 import mongoose, { models } from "mongoose";
 

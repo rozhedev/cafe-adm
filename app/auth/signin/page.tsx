@@ -1,7 +1,7 @@
 "use client";
-import { AuthWrapper } from "@/ui/AuthWrapper";
+import { AuthWrapper } from "@/ui";
 import { LoginForm } from "@/components/LoginForm";
-import { ROUTES } from '@/data/init-data';
+import { ROUTES } from '@/data';
 
 export default function SignIn() {
     return (

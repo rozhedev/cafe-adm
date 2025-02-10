@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { User } from "@/models";
 import { connectDB } from "@/lib/mongodb";
-import { ROUTES } from "@/data/init-data";
+import { ROUTES } from "@/data";
 
 export const authOptions: NextAuthOptions = {
     providers: [

@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/nextauth";
-import { ROLES, ROUTES, APP_NAME, userLinksArr } from "@/data/init-data";
-import { Navbar } from '@/ui/Navbar';
+import { ROLES, ROUTES, APP_NAME, userLinksArr } from "@/data";
+import { Navbar } from "@/ui";
 
 export default async function UserDashboardLayout({
     children,

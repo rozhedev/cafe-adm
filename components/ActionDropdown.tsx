@@ -2,13 +2,15 @@
 import React, { FC, useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { orderStatusesLabelsArr } from "@/data/init-data";
+import { TActionOptionsArr } from "@/types";
 
 type ActionDropdownProps = {
+    label: string;
     onSelect: (action: string) => void;
+    options?: TActionOptionsArr;
 };
 
-export const ActionDropdown: FC<ActionDropdownProps> = ({ onSelect }) => {
+export const ActionDropdown: FC<ActionDropdownProps> = ({ label, onSelect, options = [] }) => {
     const [isOpen, setIsOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -57,7 +59,7 @@ export const ActionDropdown: FC<ActionDropdownProps> = ({ onSelect }) => {
                 onClick={() => setIsOpen(!isOpen)}
                 className="text-sm text-blue-700 font-medium focus:outline-none flex items-center"
             >
-                Сменить статус
+                {label}
                 <RiArrowDropDownLine className="ml-0.5 h-8 w-8" />
             </button>
 
@@ -72,16 +74,17 @@ export const ActionDropdown: FC<ActionDropdownProps> = ({ onSelect }) => {
                         }}
                         className="bg-white rounded-lg shadow-lg border border-gray-200 w-44"
                     >
-                        {orderStatusesLabelsArr.map((status) => (
+                        {options.map((item) => (
                             <button
-                                key={status}
+                                key={item.status}
+                                data-status={item.status}
                                 onClick={() => {
-                                    onSelect(status);
+                                    onSelect(item.status);
                                     setIsOpen(false);
                                 }}
                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg"
                             >
-                                {status}
+                                {item.label}
                             </button>
                         ))}
                     </div>,

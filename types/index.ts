@@ -32,3 +32,6 @@ export type TUserInfo = {
     balance: number;
     activeOrders: number;
 };
+
+export type TActionOption = { status: string; label: string };
+export type TActionOptionsArr = TActionOption[];

@@ -2,6 +2,7 @@
 import React from "react";
 import { TOrder } from "@/types";
 import { ResponsiveTable, TableColumnProps } from "@/components/AdaptiveTable";
+import { orderActionOptions } from "@/data";
 
 // * Default page - Orders
 export default function Orders() {
@@ -38,6 +39,8 @@ export default function Orders() {
     return (
         <div className="min-w-full">
             <ResponsiveTable
+                options={orderActionOptions}
+                dropdownLabel="Сменить статус"
                 columns={columns}
                 data={orders}
                 onAction={handleAction}

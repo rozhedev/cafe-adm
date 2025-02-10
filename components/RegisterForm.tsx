@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, ChangeEvent, FC } from "react";
 import { useRouter } from "next/navigation";
-import { UI_CONTENT, ROUTES, AUTH_FORM_INIT, RolesUnion } from "@/data/init-data";
+import { UI_CONTENT, ROUTES, AUTH_FORM_INIT, RolesUnion } from "@/data";
 import { AuthSwitch, FormController } from "@/ui";
 
 type RegisterFormProps = {

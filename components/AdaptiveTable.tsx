@@ -1,6 +1,7 @@
-"use client"
+"use client";
 import React from "react";
 import { ActionDropdown } from "./ActionDropdown";
+import { TActionOptionsArr } from "@/types";
 
 export type TableColumnProps<T> = {
     key: string;
@@ -10,13 +11,15 @@ export type TableColumnProps<T> = {
 };
 
 export type ResponsiveTableProps<T> = {
+    dropdownLabel: string;
     columns: TableColumnProps<T>[];
     data: T[];
+    options?: TActionOptionsArr;
     className?: string;
     onAction?: (action: string, item: T) => void;
 };
 
-export function ResponsiveTable<T extends Record<string, any>>({ columns, data, className = "", onAction }: ResponsiveTableProps<T>) {
+export function ResponsiveTable<T extends Record<string, any>>({ dropdownLabel, columns, data, className = "", onAction, options }: ResponsiveTableProps<T>) {
     return (
         <div className="w-full overflow-x-auto rounded-lg bg-white shadow">
             <table className={`w-full table-auto ${className}`}>
@@ -47,9 +50,15 @@ export function ResponsiveTable<T extends Record<string, any>>({ columns, data, 
                                     {column.render ? column.render(item[column.key], item) : item[column.key]}
                                 </td>
                             ))}
-                            <td className="px-3 py-3">
-                                <ActionDropdown onSelect={(action) => onAction?.(action, item)} />
-                            </td>
+                            {options && (
+                                <td className="px-3 py-3">
+                                    <ActionDropdown
+                                        options={options}
+                                        label={dropdownLabel}
+                                        onSelect={(action) => onAction?.(action, item)}
+                                    />
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>

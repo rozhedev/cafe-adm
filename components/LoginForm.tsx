@@ -3,7 +3,7 @@ import React, { ChangeEvent, FC, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { AuthSwitch, FormController } from "@/ui";
-import { UI_CONTENT, AUTH_FORM_INIT } from "@/data/init-data";
+import { UI_CONTENT, AUTH_FORM_INIT } from "@/data";
 
 type TLoginForm = {
     registerRoute?: string;

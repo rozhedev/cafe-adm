@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { TUserInfo } from "@/types/index";
+import { TUserInfo } from "@/types";
 import { ResponsiveTable, TableColumnProps } from "@/components/AdaptiveTable";
 
 export default function Users() {
@@ -27,6 +27,7 @@ export default function Users() {
     return (
         <div>
             <ResponsiveTable
+                dropdownLabel="Действия"
                 columns={columns}
                 data={users}
                 onAction={handleAction}

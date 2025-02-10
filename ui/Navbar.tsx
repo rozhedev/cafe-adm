@@ -4,7 +4,7 @@ import React, { FC, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { ROUTES, ROLES } from "@/data/init-data";
+import { ROUTES, ROLES } from "@/data";
 
 type TLinksArr = { href: string; label: string }[];
 type NavlinkProps = {

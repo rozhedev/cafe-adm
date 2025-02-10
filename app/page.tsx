@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/nextauth";
-import { ROLES, APP_NAME, ROUTES, publicLinksArr } from "@/data/init-data";
-import { Navbar } from "@/ui/Navbar";
+import { ROLES, APP_NAME, ROUTES, publicLinksArr } from "@/data";
+import { Navbar } from "@/ui";
 
 export default async function Home() {
     const session = await getServerSession(authOptions);

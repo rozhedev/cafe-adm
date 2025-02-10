@@ -1,8 +1,7 @@
-import { APP_NAME, publicLinksArr } from "@/data/init-data";
+import { APP_NAME, publicLinksArr, ROLES, ROUTES } from "@/data";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { Navbar } from "@/ui/Navbar";
-import { ROLES, ROUTES } from "@/data/init-data";
+import { Navbar } from "@/ui";
 import { authOptions } from "@/lib/nextauth";
 
 export default async function AuthLayout({

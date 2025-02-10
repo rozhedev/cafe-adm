@@ -1,4 +1,4 @@
-import { COL_USERS } from "@/data/env";
+import { COL_USERS } from "@/data";
 import { TUser } from "@/types";
 import mongoose, { models } from "mongoose";
 
