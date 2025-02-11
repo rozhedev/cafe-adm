@@ -1,11 +1,9 @@
+import React, { useState } from "react";
+
 export const APP_NAME = "Teiwaz Cafe";
 
 // --> INIT STATES
-export const DISH_MODALS_INIT = {
-    edit: false,
-    del: false,
-};
-
+// * Forms
 export const AUTH_FORM_INIT = {
     name: "",
     password: "",
@@ -18,6 +16,17 @@ export const DISH_FORM_INIT = {
     quantity: "",
 };
 
+// * Modals
+export const DISH_MODALS_INIT = {
+    edit: false,
+    delete: false,
+};
+
+export const EDIT_USER_MODALS_INIT = {
+    balance: false,
+};
+
+// --> Content
 export const UI_CONTENT = {
     btn: {
         login: {
@@ -35,6 +44,9 @@ export const UI_CONTENT = {
         edit: {
             default: "Изменить",
             loading: "Изменяю...",
+        },
+        editBalance: {
+            default: "Изменить баланс",
         },
         delete: {
             default: "Удалить",
@@ -54,29 +66,3 @@ export const UI_CONTENT = {
         unknownError: "Возникла ошибка, попробуйте снова",
     },
 };
-
-// --> Action Dropdown options
-export const orderActionOptions: { status: string; label: string }[] = [
-    {
-        status: "ordered",
-        label: "Заказано",
-    },
-    {
-        status: "payed",
-        label: "Оплачено",
-    },
-    {
-        status: "delivered",
-        label: "Выдано",
-    },
-];
-export const dishActionOptions: { status: string; label: string }[] = [
-    {
-        status: "edit",
-        label: UI_CONTENT.btn.edit.default,
-    },
-    {
-        status: "delete",
-        label: UI_CONTENT.btn.delete.default,
-    },
-];

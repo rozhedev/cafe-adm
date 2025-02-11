@@ -1,15 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { ResponsiveTable } from "@/components/AdaptiveTable";
-import { TDish } from "@/types";
-import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT } from "@/data";
-import { DishForm } from "@/components/DishForm";
+import { BooleanValObjMap, TDish } from "@/types";
+import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT, ModalIds } from "@/data";
 import { ModalWithoutFooter, ModalWithFooter } from "@/ui";
-
-export type TModalsAction = {
-    edit: boolean;
-    del: boolean;
-};
+import { DishForm } from "@/components/DishForm";
+import { ResponsiveTable } from "@/components/AdaptiveTable";
 
 export default function EditMenu() {
     const [dishId, setDishId] = useState<string>("");
@@ -21,7 +16,7 @@ export default function EditMenu() {
     const [editStatus, setEditStatus] = useState<string>("");
     const [deleteStatus, setDeleteStatus] = useState<string>("");
 
-    const [isModalOpen, setIsModalOpen] = useState<TModalsAction>(DISH_MODALS_INIT);
+    const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(DISH_MODALS_INIT);
     const [isAddLoading, setIsAddLoading] = useState<boolean>(false);
     const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
 
@@ -29,11 +24,11 @@ export default function EditMenu() {
     const handleAction = (action: string, item: TDish) => {
         const id = String(item._id) || "";
         setDishId(id);
-        if (action === "delete") {
-            setIsModalOpen({ ...DISH_MODALS_INIT, del: true });
+        if (action === ModalIds.delete) {
+            setIsModalOpen({ ...DISH_MODALS_INIT, [ModalIds.delete]: true });
         }
-        if (action === "edit") {
-            setIsModalOpen({ ...DISH_MODALS_INIT, edit: true });
+        if (action === ModalIds.edit) {
+            setIsModalOpen({ ...DISH_MODALS_INIT, [ModalIds.edit]: true });
         }
     };
 
@@ -163,8 +158,8 @@ export default function EditMenu() {
             {/* // --> Modals */}
             <ModalWithFooter
                 title="Вы точно хотите удалить блюдо?"
-                onClose={() => setIsModalOpen({ ...isModalOpen, del: false })}
-                isOpen={isModalOpen.del}
+                onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.delete]: false })}
+                isOpen={isModalOpen[ModalIds.delete]}
                 actionLabel={UI_CONTENT.btn.delete.default}
                 onAction={handleDelete}
             >
@@ -174,8 +169,8 @@ export default function EditMenu() {
             </ModalWithFooter>
             <ModalWithoutFooter
                 title="Изменить блюдо"
-                onClose={() => setIsModalOpen({ ...isModalOpen, edit: false })}
-                isOpen={isModalOpen.edit}
+                onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.edit]: false })}
+                isOpen={isModalOpen[ModalIds.edit]}
             >
                 <div className="my-4">Введите новые значения в одно или несколько полей</div>
 

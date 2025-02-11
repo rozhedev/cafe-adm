@@ -2,7 +2,7 @@ import { COL_ORDERS } from "@/data";
 import { TOrder } from "@/types";
 import mongoose, { models } from "mongoose";
 
-const orderSchema = new mongoose.Schema(
+export const orderSchema = new mongoose.Schema(
     {
         // * For get username from session in next-auth, use "name" instead username or fullname field
         dish: {
@@ -19,6 +19,11 @@ const orderSchema = new mongoose.Schema(
         },
         status: {
             type: String,
+            required: true,
+        },
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
             required: true,
         },
     },

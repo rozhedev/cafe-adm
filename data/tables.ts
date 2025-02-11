@@ -1,12 +1,13 @@
 import { TableColumnProps } from "@/components/AdaptiveTable";
-import { TDish, TOrder, TUserInfo } from "@/types";
-import React from "react";
+import { TActionOptionsArr, TDish, TOrder, TUserInfo } from "@/types";
+import { UI_CONTENT } from "./init-data";
+import { ModalIds } from "./enums";
 
 export const userInfoColumns: TableColumnProps<TUserInfo>[] = [
-        { key: "name", header: "Имя" },
-        { key: "balance", header: "Баланс" },
-        { key: "activeOrders", header: "Активных заказов" },
-    ];
+    { key: "name", header: "Имя" },
+    { key: "balance", header: "Баланс" },
+    { key: "activeOrders", header: "Активных заказов" },
+];
 
 export const dishInfoColumns: TableColumnProps<TDish>[] = [
     { key: "dish", header: "Блюдо" },
@@ -16,13 +17,13 @@ export const dishInfoColumns: TableColumnProps<TDish>[] = [
 ];
 
 export const ordersColumns: TableColumnProps<TOrder>[] = [
-        { key: "client", header: "Клиент" },
-        { key: "dish", header: "Блюдо" },
-        { key: "quantity", header: "Количество" },
-        { key: "price", header: "Цена" },
-        { key: "status", header: "Статус" },
-        { key: "date", header: "Дата создания" },
-    ];
+    { key: "client", header: "Клиент" },
+    { key: "dish", header: "Блюдо" },
+    { key: "quantity", header: "Количество" },
+    { key: "price", header: "Цена" },
+    { key: "status", header: "Статус" },
+    { key: "date", header: "Дата создания" },
+];
 
 export const dishFormControllers = [
     {
@@ -50,5 +51,38 @@ export const dishFormControllers = [
         min: 0,
         max: 999,
         "aria-label": "Количество",
+    },
+];
+
+// --> Action Dropdown options
+export const orderActionOptions: TActionOptionsArr = [
+    {
+        id: "ordered",
+        label: "Заказано",
+    },
+    {
+        id: "payed",
+        label: "Оплачено",
+    },
+    {
+        id: "delivered",
+        label: "Выдано",
+    },
+];
+export const dishActionOptions: TActionOptionsArr = [
+    {
+        id: ModalIds.edit,
+        label: UI_CONTENT.btn.edit.default,
+    },
+    {
+        id: ModalIds.delete,
+        label: UI_CONTENT.btn.delete.default,
+    },
+];
+export const editUserActionOptions = [
+    // TODO Add change orders functionality in next release
+    {
+        id: ModalIds.balance,
+        label: UI_CONTENT.btn.editBalance.default,
     },
 ];

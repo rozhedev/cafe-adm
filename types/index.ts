@@ -34,9 +34,13 @@ export type TUserInfo = {
     activeOrders: number;
 };
 
-export type TActionOption = { status: string; label: string };
+export type TActionOption = { id: string; label: string };
 export type TActionOptionsArr = TActionOption[];
 
 export type StateAction<T> = SetStateAction<Dispatch<T>>;
 
-export type ObjectMap = { [key: string]: string };
+export type StringValObjMap = { [key: string]: string };
+
+export type BooleanValObjMap = {
+    [key: string]: boolean;
+};

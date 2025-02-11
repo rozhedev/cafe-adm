@@ -17,6 +17,13 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        activeOrders: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Order",
+                default: [],
+            },
+        ],
     },
     { timestamps: true, collection: COL_USERS }
 );

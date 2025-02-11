@@ -14,3 +14,10 @@ export enum ROLES {
     admin = "admin",
 }
 export type RolesUnion = `${ROLES}`;
+
+export enum ModalIds {
+    balance = "balance",
+    delete = "delete",
+    edit = "edit",
+}
+export type ModalIdsUnion = `${ModalIds}`;

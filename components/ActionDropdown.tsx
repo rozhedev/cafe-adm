@@ -76,10 +76,10 @@ export const ActionDropdown: FC<ActionDropdownProps> = ({ label, onSelect, optio
                     >
                         {options.map((item) => (
                             <button
-                                key={item.status}
-                                data-status={item.status}
+                                key={item.id}
+                                data-id={item.id}
                                 onClick={() => {
-                                    onSelect(item.status);
+                                    onSelect(item.id);
                                     setIsOpen(false);
                                 }}
                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg"
