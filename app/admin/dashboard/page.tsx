@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { TOrder } from "@/types";
-import { ResponsiveTable } from "@/components/AdaptiveTable";
+import { ResponsiveTable } from "@/components/ResponsiveTable";
 import { ordersColumns, orderActionOptions } from "@/data";
 
 // * Default page - Orders

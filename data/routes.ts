@@ -23,6 +23,7 @@ export const ROUTES = {
     deleteDish: "/api/dishes/delete",
     // * Users
     getUsersRole: "/api/users/getUsersRole",
+    editUser: "/api/users/edit",
 };
 
 // --> Links

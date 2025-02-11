@@ -3,8 +3,9 @@ import React, { useEffect, useState, type FormEvent } from "react";
 import { BooleanValObjMap, TDish } from "@/types";
 import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT, ModalIds } from "@/data";
 import { ModalWithoutFooter, ModalWithFooter } from "@/ui";
+import { cleanObjFromEmptyVal } from "@/helpers";
 import { DishForm } from "@/components/DishForm";
-import { ResponsiveTable } from "@/components/AdaptiveTable";
+import { ResponsiveTable } from "@/components/ResponsiveTable";
 
 export default function EditMenu() {
     const [dishId, setDishId] = useState<string>("");
@@ -65,6 +66,10 @@ export default function EditMenu() {
             setEditStatus(UI_CONTENT.err.dishEmptyForm);
             return;
         }
+
+        // Filter formData object from empty values
+        const filtered = cleanObjFromEmptyVal(editFormData);
+        
         setIsEditLoading(true);
         try {
             const res = await fetch(ROUTES.editDish, {
@@ -72,7 +77,7 @@ export default function EditMenu() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ ...editFormData, dishId }),
+                body: JSON.stringify({ ...filtered, dishId }),
             });
 
             if (res.ok) {
@@ -91,8 +96,6 @@ export default function EditMenu() {
     // * Delete dish
     const handleDelete = async () => {
         setIsEditLoading(true);
-        console.log(dishId);
-
         try {
             const res = await fetch(`${ROUTES.deleteDish}/${dishId}`, {
                 method: "DELETE",

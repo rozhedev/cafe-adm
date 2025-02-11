@@ -1,4 +1,4 @@
-import { TableColumnProps } from "@/components/AdaptiveTable";
+import { TableColumnProps } from "@/components/ResponsiveTable";
 import { TActionOptionsArr, TDish, TOrder, TUserInfo } from "@/types";
 import { UI_CONTENT } from "./init-data";
 import { ModalIds } from "./enums";

@@ -1,5 +1,7 @@
 import React from "react";
 
+export const cleanObjFromEmptyVal = (obj: any) => Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== ""));
+
 // --> Get current Date & Time
 const formatted = (value: number) => (value < 10 ? `0${value}` : `${value}`);
 
@@ -17,4 +19,3 @@ export const getCurrentTimeFormat = (): string => {
     const minutes = date.getMinutes();
     return `${formatted(hours)}:${formatted(minutes)}`;
 };
-

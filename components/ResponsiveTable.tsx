@@ -48,8 +48,14 @@ export function ResponsiveTable<T extends Record<string, any>>({ dropdownLabel, 
                                         key={column.key}
                                         className="px-3 py-3 text-sm text-center text-gray-900"
                                     >
-                                        {/* // TODO Modify for Array length output */}
-                                        {column.render ? column.render(item[column.key], item) : item[column.key]}
+                                        {/* // * Hard check to Object for prevent render error in output orders array */}
+
+                                        {typeof item[column.key] === "object" && item[column.key] !== null
+                                            ? item[column.key].length
+                                            : column.render
+                                            ? // Default render
+                                              column.render(item[column.key], item)
+                                            : item[column.key]}
                                     </td>
                                 ))}
                                 {options && (

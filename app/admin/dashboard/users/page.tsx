@@ -3,11 +3,12 @@ import React, { useEffect, useState, type FormEvent } from "react";
 import { BooleanValObjMap, TUserInfo } from "@/types";
 import { EDIT_USER_MODALS_INIT, userInfoColumns, editUserActionOptions, ModalIds, ROUTES, UI_CONTENT } from "@/data";
 import { FormController, ModalWithoutFooter } from "@/ui";
-import { ResponsiveTable } from "@/components/AdaptiveTable";
+import { ResponsiveTable } from "@/components/ResponsiveTable";
 
 export default function Users() {
     const [userId, setUserId] = useState<string>("");
     const [balance, setBalance] = useState<string>("");
+    const [editStatus, setEditStatus] = useState<string>("");
 
     const [usersList, setUsersList] = useState<TUserInfo[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -16,6 +17,26 @@ export default function Users() {
     // * Edit balance
     const handleEditBalance = async (e: FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
+        try {
+            const res = await fetch(ROUTES.editUser, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId, balance }),
+            });
+            if (res.ok) {
+                setEditStatus("Баланс изменён");
+                setBalance("");
+                return;
+            }
+            setEditStatus("Ошибка при изменении баланса");
+        } catch (error) {
+            console.error("Edit user balance error:", error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     // --> Data fetching
@@ -30,10 +51,7 @@ export default function Users() {
                     throw new Error(`HTTP error! status: ${res.status}`);
                 }
                 const data = await res.json();
-                setUsersList(() => {
-                    console.log(data);
-                    return [...data];
-                });
+                setUsersList([...data]);
             } catch (error) {
                 console.error("Get dish list error:", error);
             }
@@ -48,6 +66,8 @@ export default function Users() {
             setIsModalOpen({ ...EDIT_USER_MODALS_INIT, [ModalIds.balance]: true });
         }
     };
+
+    // * -----------------------------
     return (
         <div>
             <ResponsiveTable
@@ -63,6 +83,7 @@ export default function Users() {
                 isOpen={isModalOpen[ModalIds.balance]}
             >
                 <form onSubmit={handleEditBalance}>
+                    {editStatus && <div className="form-elem-size border-2 border-blue-300 rounded-lg shadow-md font-medium bg-blue-200 text-blue-800 p-3">{editStatus}</div>}
                     <FormController
                         htmlLabel="Введите новый баланс"
                         value={balance}
