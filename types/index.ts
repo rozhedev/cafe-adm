@@ -5,6 +5,8 @@ export type TUser = {
     _id?: ObjectId;
     name: string;
     role: string;
+    balance: number;
+    activeOrders: TDish[] | [];
     password: string;
 };
 

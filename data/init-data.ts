@@ -47,6 +47,7 @@ export const UI_CONTENT = {
         },
         editBalance: {
             default: "Изменить баланс",
+            loading: "Изменение баланса...",
         },
         delete: {
             default: "Удалить",

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, type FormEvent } from "react";
 import { BooleanValObjMap, TDish } from "@/types";
 import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT, ModalIds } from "@/data";
 import { ModalWithoutFooter, ModalWithFooter } from "@/ui";
@@ -33,7 +33,7 @@ export default function EditMenu() {
     };
 
     // * Add dish
-    const handleAddDish = async (e: React.FormEvent) => {
+    const handleAddDish = async (e: FormEvent) => {
         e.preventDefault();
         setIsAddLoading(true);
         try {
@@ -59,7 +59,7 @@ export default function EditMenu() {
         }
     };
     // * Edit dish
-    const handleEditDish = async (e: React.FormEvent) => {
+    const handleEditDish = async (e: FormEvent) => {
         e.preventDefault();
         if (Object.values(editFormData).every((item) => (item as string).trim() === "")) {
             setEditStatus(UI_CONTENT.err.dishEmptyForm);
@@ -99,7 +99,6 @@ export default function EditMenu() {
             });
             if (res.ok) {
                 setDeleteStatus("Блюдо удалено");
-                // setIsModalOpen(DISH_MODALS_INIT);
                 return;
             }
             setDeleteStatus("Ошибка при удалении блюда");

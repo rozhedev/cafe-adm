@@ -16,10 +16,13 @@ export const ROUTES = {
     //  --> API
     apiRegister: "/api/auth/register",
     apiSignin: "/api/auth/signin",
+    // * Dish
     addDish: "/api/dishes/add",
     getDish: "/api/dishes/get",
     editDish: "/api/dishes/edit",
     deleteDish: "/api/dishes/delete",
+    // * Users
+    getUsersRole: "/api/users/getUsersRole",
 };
 
 // --> Links
