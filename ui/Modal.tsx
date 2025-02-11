@@ -5,11 +5,12 @@ type ModalProps = PropsWithChildren & {
     title: string;
     actionLabel?: string;
     isOpen: boolean;
+    haveCloseBtn?: boolean;
     onAction?: () => void;
-    onClose: () => void;
+    onClose?: () => void;
 };
 
-export const Modal: FC<ModalProps> = ({ isOpen, onAction, onClose, title, actionLabel = "", children }) => {
+export const Modal: FC<ModalProps> = ({ isOpen, onAction, onClose, title, haveCloseBtn = true, actionLabel = "", children }) => {
     if (!isOpen) return null;
 
     return (
@@ -58,13 +59,15 @@ export const Modal: FC<ModalProps> = ({ isOpen, onAction, onClose, title, action
                                 {actionLabel}
                             </button>
                         )}
-                        <button
-                            type="button"
-                            className="btn--sm btn--primary-blue"
-                            onClick={onClose}
-                        >
-                            Закрыть
-                        </button>
+                        {haveCloseBtn && (
+                            <button
+                                type="button"
+                                className="btn--sm btn--primary-blue"
+                                onClick={onClose}
+                            >
+                                Закрыть
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

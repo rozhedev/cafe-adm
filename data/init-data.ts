@@ -1,8 +1,3 @@
-import { TModalsAction } from "@/app/admin/dashboard/edit-menu/page";
-import { TDish, ObjectMap } from "@/types";
-import React, { useState } from "react";
-import { ROUTES } from "./routes";
-
 export const APP_NAME = "Teiwaz Cafe";
 
 // --> Action Dropdown options
@@ -42,7 +37,7 @@ export const AUTH_FORM_INIT = {
     password: "",
 };
 
-export const DISH_ORDER_FORM_INIT = {
+export const DISH_FORM_INIT = {
     dish: "",
     ingredients: "",
     price: "",
@@ -63,11 +58,19 @@ export const UI_CONTENT = {
             default: "Добавить блюдо",
             loading: "Добавляю...",
         },
+        edit: {
+            default: "Изменить",
+            loading: "Изменяю...",
+        },
     },
     success: {
         dishAdded: "Блюдо успешно добавлено",
+        dishUpdated: "Блюдо успешно изменено",
     },
     err: {
+        dishEmptyForm: "Введите значение хотя бы в одно поле",
+        dishAddedErr: "Ошибка создания, попробуйте снова",
+        dishUpdatedErr: "Ошибка редактирования, попробуйте снова",
         invalidAuthCredentials: "Логин или пароль введён неверно",
         userExist: "Пользователь с таким именём уже существует",
         unknownError: "Возникла ошибка, попробуйте снова",

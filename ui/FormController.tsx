@@ -10,7 +10,7 @@ export const FormController: FC<FormControllerProps> = ({ id, name, htmlLabel, r
             <input
                 id={id}
                 name={id}
-                required
+                required={required}
                 className={`${className} mt-1 inp form-elem-size`}
                 {...props}
             />

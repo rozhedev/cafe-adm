@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { ResponsiveTable } from "@/components/AdaptiveTable";
-import { TDish, ObjectMap } from "@/types";
-import { ROUTES, UI_CONTENT, DISH_ORDER_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT } from "@/data";
-import { FormController, Modal } from "@/ui";
+import { TDish } from "@/types";
+import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT } from "@/data";
+import { Modal } from "@/ui";
+import { DishForm } from "@/components/DishForm";
 
 export type TModalsAction = {
     edit: boolean;
@@ -11,18 +12,34 @@ export type TModalsAction = {
 };
 
 export default function EditMenu() {
+    const [dishId, setDishId] = useState<string>("");
     const [dishList, setDishList] = useState<TDish[]>([]);
-    const [addFormData, setAddFormData] = useState<ObjectMap>(DISH_ORDER_FORM_INIT);
-    const [editFormData, setEditFormData] = useState<ObjectMap>(DISH_ORDER_FORM_INIT);
-    const [error, setError] = useState<string>("");
-    const [isVisible, setIsVisible] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isModalOpen, setIsModalOpen] = useState<TModalsAction>(DISH_MODALS_INIT);
+    const [addFormData, setAddFormData] = useState<TDish>(DISH_FORM_INIT);
+    const [editFormData, setEditFormData] = useState<TDish>(DISH_FORM_INIT);
 
-    // * Handlers
+    const [addDishStatus, setAddDishStatus] = useState<string>("");
+    const [editDishStatus, setEditDishStatus] = useState<string>("");
+
+    const [isModalOpen, setIsModalOpen] = useState<TModalsAction>(DISH_MODALS_INIT);
+    const [isAddLoading, setIsAddLoading] = useState<boolean>(false);
+    const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
+
+    // --> Handlers
+    const handleAction = (action: string, item: TDish) => {
+        const id = String(item._id) || "";
+        setDishId(id);
+        if (action === "delete") {
+            setIsModalOpen({ ...DISH_MODALS_INIT, del: true });
+        }
+        if (action === "edit") {
+            setIsModalOpen({ ...DISH_MODALS_INIT, edit: true });
+        }
+    };
+
+    // * Add dish
     const handleAddDish = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
+        setIsAddLoading(true);
         try {
             const res = await fetch(ROUTES.addDish, {
                 method: "POST",
@@ -33,39 +50,54 @@ export default function EditMenu() {
             });
 
             if (res.ok) {
-                setError("");
-                setIsLoading(false);
-                setEditFormData(DISH_ORDER_FORM_INIT);
-                setIsVisible(true);
-                setError("");
+                setAddDishStatus(UI_CONTENT.success.dishAdded);
+                setIsAddLoading(false);
+                setEditFormData(DISH_FORM_INIT);
                 return;
             }
-            setError("Ошибка создания, попробуйте снова");
-            setIsLoading(false);
+            setAddDishStatus(UI_CONTENT.err.dishAddedErr);
+            setAddFormData(DISH_FORM_INIT);
+            setIsAddLoading(false);
         } catch (error) {
-            setIsLoading(false);
-            setAddFormData(DISH_ORDER_FORM_INIT);
-            console.error("Create new order error:", error);
+            setIsAddLoading(false);
+            console.error("Create new dish error:", error);
         }
     };
-    const handleEditDish = () => {
-        if (Object.values(addFormData).every((item) => item.trim() === "")) {
-            console.log("form not entered");
+    // * Edit dish
+    const handleEditDish = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (Object.values(editFormData).every((item) => (item as string).trim() === "")) {
+            setEditDishStatus(UI_CONTENT.err.dishEmptyForm);
             return;
         }
-        // console.log(name); 
+        setIsEditLoading(true);
+        try {
+            const res = await fetch(ROUTES.editDish, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ ...editFormData, dishId }),
+            });
+            console.log(res.body);
+
+            if (res.ok) {
+                setEditDishStatus(UI_CONTENT.success.dishUpdated);
+                setIsEditLoading(false);
+                setEditFormData(DISH_FORM_INIT);
+                return;
+            }
+            setEditDishStatus(UI_CONTENT.err.dishUpdatedErr);
+            setEditFormData(DISH_FORM_INIT);
+            setIsEditLoading(false);
+        } catch (error) {
+            setIsEditLoading(false);
+            console.error("Edit dish error:", error);
+        }
     };
 
-    const handleAction = (action: string, item: TDish) => {
-        if (action === "delete") {
-            setIsModalOpen({ ...DISH_MODALS_INIT, del: true });
-        }
-        if (action === "edit") {
-            setIsModalOpen({ ...DISH_MODALS_INIT, edit: true });
-        }
-    };
+    // * Delete dish
     const handleDelete = async () => {};
-    const handleChange = () => {};
 
     // * Data fetching
     useEffect(() => {
@@ -73,6 +105,7 @@ export default function EditMenu() {
             try {
                 const res = await fetch(ROUTES.getDish, {
                     method: "GET",
+                    next: { revalidate: 1200 }, // revalidate every 2 minutes
                 });
                 if (!res.ok) {
                     throw new Error(`HTTP error! status: ${res.status}`);
@@ -84,7 +117,7 @@ export default function EditMenu() {
             }
         };
         fetchDishes();
-    }, [dishList, setDishList]);
+    }, []);
 
     return (
         <div className="mb-8 w-full flex gap-10 justify-between items-start">
@@ -98,46 +131,16 @@ export default function EditMenu() {
 
             <div className="flex flex-col">
                 <h2 className="text-xl font-semibold mb-4">Добавить блюдо</h2>
-                <form
-                    className="flex flex-col items-center gap-4"
+                <DishForm
+                    formData={addFormData}
+                    setFormData={setAddFormData}
                     onSubmit={handleAddDish}
-                >
-                    {isVisible && <div className="form-elem-size border-2 border-green-300 rounded-lg shadow-md font-medium bg-green-200 text-green-800 p-3">{UI_CONTENT.success.dishAdded}</div>}
-
-                    {dishFormControllers.map((controller) => (
-                        <FormController
-                            key={controller.id}
-                            {...controller}
-                            value={addFormData[controller.id as any]}
-                            onChange={(e) =>
-                                setAddFormData({
-                                    ...addFormData,
-                                    [controller.id]: e.target.value,
-                                })
-                            }
-                        />
-                    ))}
-                    <div>
-                        <label htmlFor="ingredients">Ингредиенты</label>
-                        <textarea
-                            id="ingredients"
-                            name="ingredients"
-                            required
-                            placeholder="Спагетти, сыр, мясо"
-                            className="mt-1 inp form-elem-size"
-                            aria-label="Ингредиенты"
-                            value={addFormData.ingredients}
-                            onChange={(e) => setAddFormData({ ...addFormData, ingredients: e.target.value })}
-                        />
-                    </div>
-                    {error && <small className="err-output">{UI_CONTENT.err.unknownError}</small>}
-                    <button
-                        type="submit"
-                        className="mt-4 btn btn--auth"
-                    >
-                        {isLoading ? UI_CONTENT.btn.addDish.loading : UI_CONTENT.btn.addDish.default}
-                    </button>
-                </form>
+                    formFields={dishFormControllers}
+                    isLoading={isAddLoading}
+                    dishStatus={addDishStatus}
+                    btnLoadLabel={UI_CONTENT.btn.addDish.loading}
+                    btnDefaultLabel={UI_CONTENT.btn.addDish.default}
+                />
             </div>
             <Modal
                 title="Вы точно хотите удалить блюдо?"
@@ -151,43 +154,23 @@ export default function EditMenu() {
             <Modal
                 title="Изменить блюдо"
                 actionLabel="Изменить"
-                onAction={handleChange}
+                haveCloseBtn={false}
                 onClose={() => setIsModalOpen({ ...isModalOpen, edit: false })}
                 isOpen={isModalOpen.edit}
             >
                 <div className="my-4">Введите новые значения в одно или несколько полей</div>
-                <form
-                    className="flex flex-col items-center gap-4"
+
+                {/* //* Edit form */}
+                <DishForm
+                    formData={editFormData}
+                    setFormData={setEditFormData}
                     onSubmit={handleEditDish}
-                >
-                    {dishFormControllers.map((controller) => (
-                        <FormController
-                            key={controller.id}
-                            
-                            {...controller}
-                            value={editFormData[controller.id as any]}
-                            onChange={(e) =>
-                                setEditFormData({
-                                    ...editFormData,
-                                    [controller.id]: e.target.value,
-                                })
-                            }
-                        />
-                    ))}
-                    <div>
-                        <label htmlFor="ingredients">Ингредиенты</label>
-                        <textarea
-                            id="ingredients"
-                            name="ingredients"
-                            required
-                            placeholder="Спагетти, сыр, мясо"
-                            className="mt-1 inp form-elem-size"
-                            aria-label="Ингредиенты"
-                            value={editFormData.ingredients}
-                            onChange={(e) => setEditFormData({ ...editFormData, ingredients: e.target.value })}
-                        />
-                    </div>
-                </form>
+                    formFields={dishFormControllers}
+                    isLoading={isEditLoading}
+                    dishStatus={editDishStatus}
+                    btnLoadLabel={UI_CONTENT.btn.edit.loading}
+                    btnDefaultLabel={UI_CONTENT.btn.edit.default}
+                />
             </Modal>
         </div>
     );

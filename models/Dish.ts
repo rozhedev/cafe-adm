@@ -9,10 +9,6 @@ const dishSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        category: {
-            type: String,
-            required: true,
-        },
         ingredients: {
             type: String,
             required: true,

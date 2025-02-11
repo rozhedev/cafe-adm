@@ -1,4 +1,5 @@
 import { ObjectId } from "mongoose";
+import { Dispatch, SetStateAction } from "react";
 
 export type TUser = {
     _id?: ObjectId;
@@ -35,5 +36,7 @@ export type TUserInfo = {
 
 export type TActionOption = { status: string; label: string };
 export type TActionOptionsArr = TActionOption[];
+
+export type StateAction<T> = SetStateAction<Dispatch<T>>;
 
 export type ObjectMap = { [key: string]: string };
