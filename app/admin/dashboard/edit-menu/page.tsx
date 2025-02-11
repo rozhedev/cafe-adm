@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { ResponsiveTable } from "@/components/AdaptiveTable";
 import { TDish } from "@/types";
 import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT } from "@/data";
-import { Modal } from "@/ui";
 import { DishForm } from "@/components/DishForm";
+import { ModalWithoutFooter, ModalWithFooter } from "@/ui";
 
 export type TModalsAction = {
     edit: boolean;
@@ -17,8 +17,9 @@ export default function EditMenu() {
     const [addFormData, setAddFormData] = useState<TDish>(DISH_FORM_INIT);
     const [editFormData, setEditFormData] = useState<TDish>(DISH_FORM_INIT);
 
-    const [addDishStatus, setAddDishStatus] = useState<string>("");
-    const [editDishStatus, setEditDishStatus] = useState<string>("");
+    const [addStatus, setAddStatus] = useState<string>("");
+    const [editStatus, setEditStatus] = useState<string>("");
+    const [deleteStatus, setDeleteStatus] = useState<string>("");
 
     const [isModalOpen, setIsModalOpen] = useState<TModalsAction>(DISH_MODALS_INIT);
     const [isAddLoading, setIsAddLoading] = useState<boolean>(false);
@@ -50,24 +51,23 @@ export default function EditMenu() {
             });
 
             if (res.ok) {
-                setAddDishStatus(UI_CONTENT.success.dishAdded);
-                setIsAddLoading(false);
+                setAddStatus(UI_CONTENT.success.dishAdded);
                 setEditFormData(DISH_FORM_INIT);
                 return;
             }
-            setAddDishStatus(UI_CONTENT.err.dishAddedErr);
+            setAddStatus(UI_CONTENT.err.dishAddedErr);
             setAddFormData(DISH_FORM_INIT);
-            setIsAddLoading(false);
         } catch (error) {
-            setIsAddLoading(false);
             console.error("Create new dish error:", error);
+        } finally {
+            setIsAddLoading(false);
         }
     };
     // * Edit dish
     const handleEditDish = async (e: React.FormEvent) => {
         e.preventDefault();
         if (Object.values(editFormData).every((item) => (item as string).trim() === "")) {
-            setEditDishStatus(UI_CONTENT.err.dishEmptyForm);
+            setEditStatus(UI_CONTENT.err.dishEmptyForm);
             return;
         }
         setIsEditLoading(true);
@@ -79,27 +79,43 @@ export default function EditMenu() {
                 },
                 body: JSON.stringify({ ...editFormData, dishId }),
             });
-            console.log(res.body);
 
             if (res.ok) {
-                setEditDishStatus(UI_CONTENT.success.dishUpdated);
-                setIsEditLoading(false);
+                setEditStatus(UI_CONTENT.success.dishUpdated);
                 setEditFormData(DISH_FORM_INIT);
                 return;
             }
-            setEditDishStatus(UI_CONTENT.err.dishUpdatedErr);
+            setEditStatus(UI_CONTENT.err.dishUpdatedErr);
             setEditFormData(DISH_FORM_INIT);
-            setIsEditLoading(false);
         } catch (error) {
-            setIsEditLoading(false);
             console.error("Edit dish error:", error);
+        } finally {
+            setIsEditLoading(false);
+        }
+    };
+    // * Delete dish
+    const handleDelete = async () => {
+        setIsEditLoading(true);
+        console.log(dishId);
+
+        try {
+            const res = await fetch(`${ROUTES.deleteDish}/${dishId}`, {
+                method: "DELETE",
+            });
+            if (res.ok) {
+                setDeleteStatus("Блюдо удалено");
+                // setIsModalOpen(DISH_MODALS_INIT);
+                return;
+            }
+            setDeleteStatus("Ошибка при удалении блюда");
+        } catch (error) {
+            console.error("Delete dish error:", error);
+        } finally {
+            setIsEditLoading(false);
         }
     };
 
-    // * Delete dish
-    const handleDelete = async () => {};
-
-    // * Data fetching
+    // --> Data fetching
     useEffect(() => {
         const fetchDishes = async () => {
             try {
@@ -119,6 +135,7 @@ export default function EditMenu() {
         fetchDishes();
     }, []);
 
+    // * -----------------------------
     return (
         <div className="mb-8 w-full flex gap-10 justify-between items-start">
             <ResponsiveTable
@@ -137,24 +154,26 @@ export default function EditMenu() {
                     onSubmit={handleAddDish}
                     formFields={dishFormControllers}
                     isLoading={isAddLoading}
-                    dishStatus={addDishStatus}
+                    dishStatus={addStatus}
                     btnLoadLabel={UI_CONTENT.btn.addDish.loading}
                     btnDefaultLabel={UI_CONTENT.btn.addDish.default}
                 />
             </div>
-            <Modal
+
+            {/* // --> Modals */}
+            <ModalWithFooter
                 title="Вы точно хотите удалить блюдо?"
-                actionLabel="Удалить"
-                onAction={handleDelete}
                 onClose={() => setIsModalOpen({ ...isModalOpen, del: false })}
                 isOpen={isModalOpen.del}
+                actionLabel={UI_CONTENT.btn.delete.default}
+                onAction={handleDelete}
             >
-                <div>Эту операцию нельзя отменить</div>
-            </Modal>
-            <Modal
+                <div className="my-4">Эту операцию нельзя отменить. После удаления перезагрузите страницу</div>
+
+                {deleteStatus && <div className="form-elem-size border-2 border-blue-300 rounded-lg shadow-md font-medium bg-blue-200 text-blue-800 p-3">{deleteStatus}</div>}
+            </ModalWithFooter>
+            <ModalWithoutFooter
                 title="Изменить блюдо"
-                actionLabel="Изменить"
-                haveCloseBtn={false}
                 onClose={() => setIsModalOpen({ ...isModalOpen, edit: false })}
                 isOpen={isModalOpen.edit}
             >
@@ -167,11 +186,11 @@ export default function EditMenu() {
                     onSubmit={handleEditDish}
                     formFields={dishFormControllers}
                     isLoading={isEditLoading}
-                    dishStatus={editDishStatus}
+                    dishStatus={editStatus}
                     btnLoadLabel={UI_CONTENT.btn.edit.loading}
                     btnDefaultLabel={UI_CONTENT.btn.edit.default}
                 />
-            </Modal>
+            </ModalWithoutFooter>
         </div>
     );
 }

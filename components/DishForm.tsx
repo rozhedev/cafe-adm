@@ -48,12 +48,14 @@ export const DishForm: FC<TDishForm> = ({ formData, setFormData, formFields, dis
                     onChange={handleChange("ingredients")}
                 />
             </div>
-            <button
-                type="submit"
-                className="mt-4 btn btn--auth"
-            >
-                {isLoading ? btnLoadLabel : btnDefaultLabel}
-            </button>
+            <div className="form-elem-size">
+                <button
+                    type="submit"
+                    className="mt-4 btn btn--auth"
+                >
+                    {isLoading ? btnLoadLabel : btnDefaultLabel}
+                </button>
+            </div>
         </form>
     );
 };

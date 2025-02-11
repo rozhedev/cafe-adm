@@ -19,6 +19,7 @@ export const ROUTES = {
     addDish: "/api/dishes/add",
     getDish: "/api/dishes/get",
     editDish: "/api/dishes/edit",
+    deleteDish: "/api/dishes/delete",
 };
 
 // --> Links

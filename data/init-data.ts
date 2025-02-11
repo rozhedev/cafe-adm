@@ -1,31 +1,5 @@
 export const APP_NAME = "Teiwaz Cafe";
 
-// --> Action Dropdown options
-export const orderActionOptions: { status: string; label: string }[] = [
-    {
-        status: "ordered",
-        label: "Заказано",
-    },
-    {
-        status: "payed",
-        label: "Оплачено",
-    },
-    {
-        status: "delivered",
-        label: "Выдано",
-    },
-];
-export const dishActionOptions: { status: string; label: string }[] = [
-    {
-        status: "edit",
-        label: "Изменить",
-    },
-    {
-        status: "delete",
-        label: "Удалить",
-    },
-];
-
 // --> INIT STATES
 export const DISH_MODALS_INIT = {
     edit: false,
@@ -62,6 +36,10 @@ export const UI_CONTENT = {
             default: "Изменить",
             loading: "Изменяю...",
         },
+        delete: {
+            default: "Удалить",
+            loading: "Удаляю...",
+        },
     },
     success: {
         dishAdded: "Блюдо успешно добавлено",
@@ -76,3 +54,29 @@ export const UI_CONTENT = {
         unknownError: "Возникла ошибка, попробуйте снова",
     },
 };
+
+// --> Action Dropdown options
+export const orderActionOptions: { status: string; label: string }[] = [
+    {
+        status: "ordered",
+        label: "Заказано",
+    },
+    {
+        status: "payed",
+        label: "Оплачено",
+    },
+    {
+        status: "delivered",
+        label: "Выдано",
+    },
+];
+export const dishActionOptions: { status: string; label: string }[] = [
+    {
+        status: "edit",
+        label: UI_CONTENT.btn.edit.default,
+    },
+    {
+        status: "delete",
+        label: UI_CONTENT.btn.delete.default,
+    },
+];
