@@ -3,7 +3,7 @@ import React, { useEffect, useState, type FormEvent } from "react";
 import { BooleanValObjMap, TDish } from "@/types";
 import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT, ModalIds } from "@/data";
 import { ModalWithoutFooter, ModalWithFooter } from "@/ui";
-import { cleanObjFromEmptyVal } from "@/helpers";
+import { cleanObjFromEmptyVal, fetchDataByRoute } from "@/helpers";
 import { DishForm } from "@/components/DishForm";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
 
@@ -22,6 +22,16 @@ export default function EditMenu() {
     const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
 
     // --> Handlers
+    const handleTableUpdate = () => {
+        fetchDataByRoute(
+            ROUTES.getDish,
+            {
+                method: "GET",
+                next: { revalidate: 1200 },
+            },
+            setDishList
+        );
+    };
     const handleAction = (action: string, item: TDish) => {
         const id = String(item._id) || "";
         setDishId(id);
@@ -69,7 +79,7 @@ export default function EditMenu() {
 
         // Filter formData object from empty values
         const filtered = cleanObjFromEmptyVal(editFormData);
-        
+
         setIsEditLoading(true);
         try {
             const res = await fetch(ROUTES.editDish, {
@@ -114,35 +124,35 @@ export default function EditMenu() {
 
     // --> Data fetching
     useEffect(() => {
-        const fetchDishes = async () => {
-            try {
-                const res = await fetch(ROUTES.getDish, {
-                    method: "GET",
-                    next: { revalidate: 1200 }, // revalidate every 2 minutes
-                });
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-                const data = await res.json();
-                setDishList(data);
-            } catch (error) {
-                console.error("Get dish list error:", error);
-            }
-        };
-        fetchDishes();
+        fetchDataByRoute(
+            ROUTES.getDish,
+            {
+                method: "GET",
+                next: { revalidate: 1200 }, // revalidate every 2 minutes
+            },
+            setDishList
+        );
     }, []);
 
     // * -----------------------------
     return (
         <div className="mb-8 w-full flex gap-10 justify-between items-start">
-            <ResponsiveTable
-                dropdownLabel="Действия"
-                columns={dishInfoColumns}
-                data={dishList}
-                options={dishActionOptions}
-                onAction={handleAction}
-            />
-
+            <div className="w-full flex flex-col">
+                <button
+                    type="button"
+                    className="max-w-48 my-4 btn--sm btn--auth"
+                    onClick={handleTableUpdate}
+                >
+                    {UI_CONTENT.btn.update.default}
+                </button>
+                <ResponsiveTable
+                    dropdownLabel="Действия"
+                    columns={dishInfoColumns}
+                    data={dishList}
+                    options={dishActionOptions}
+                    onAction={handleAction}
+                />
+            </div>
             <div className="flex flex-col">
                 <h2 className="text-xl font-semibold mb-4">Добавить блюдо</h2>
                 <DishForm

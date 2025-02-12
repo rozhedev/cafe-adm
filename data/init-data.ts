@@ -53,6 +53,10 @@ export const UI_CONTENT = {
             default: "Удалить",
             loading: "Удаляю...",
         },
+        update: {
+            default: "Обновить",
+            loading: "Обновляю...",
+        },
     },
     success: {
         dishAdded: "Блюдо успешно добавлено",

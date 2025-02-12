@@ -10,6 +10,13 @@ export type TUser = {
     password: string;
 };
 
+export type TAdmin = {
+    _id?: ObjectId;
+    name: string;
+    role: string;
+    password: string;
+};
+
 export type TOrder = {
     _id?: ObjectId;
     client: string;

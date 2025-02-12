@@ -53,6 +53,8 @@ export const authOptions: NextAuthOptions = {
                 user: {
                     ...session.user,
                     role: token.role,
+                    balance: token.balance,
+                    activeOrders: token.activeOrders,
                 },
             };
         },

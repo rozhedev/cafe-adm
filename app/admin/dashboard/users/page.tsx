@@ -2,6 +2,7 @@
 import React, { useEffect, useState, type FormEvent } from "react";
 import { BooleanValObjMap, TUserInfo } from "@/types";
 import { EDIT_USER_MODALS_INIT, userInfoColumns, editUserActionOptions, ModalIds, ROUTES, UI_CONTENT } from "@/data";
+import { fetchDataByRoute } from "@/helpers";
 import { FormController, ModalWithoutFooter } from "@/ui";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
 
@@ -13,6 +14,28 @@ export default function Users() {
     const [usersList, setUsersList] = useState<TUserInfo[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(EDIT_USER_MODALS_INIT);
+
+    // * Data fetching
+    useEffect(() => {
+        fetchDataByRoute(
+            ROUTES.getUsersRole,
+            {
+                method: "GET",
+                next: { revalidate: 1200 }, // revalidate every 2 minutes
+            },
+            setUsersList
+        );
+    }, []);
+    const handleTableUpdate = () => {
+        fetchDataByRoute(
+            ROUTES.getUsersRole,
+            {
+                method: "GET",
+                next: { revalidate: 1200 },
+            },
+            setUsersList
+        );
+    };
 
     // * Edit balance
     const handleEditBalance = async (e: FormEvent) => {
@@ -39,26 +62,6 @@ export default function Users() {
         }
     };
 
-    // --> Data fetching
-    useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const res = await fetch(ROUTES.getUsersRole, {
-                    method: "GET",
-                    next: { revalidate: 1200 }, // revalidate every 2 minutes
-                });
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-                const data = await res.json();
-                setUsersList([...data]);
-            } catch (error) {
-                console.error("Get dish list error:", error);
-            }
-        };
-        fetchUsers();
-    }, []);
-
     const handleAction = (action: string, item: TUserInfo) => {
         const id = String(item._id) || "";
         setUserId(id);
@@ -69,7 +72,16 @@ export default function Users() {
 
     // * -----------------------------
     return (
-        <div>
+        <div className="w-[50%]">
+            <div className="form-elem-size">
+                <button
+                    type="button"
+                    className="max-w-48 my-4 btn--sm btn--auth"
+                    onClick={handleTableUpdate}
+                >
+                    {UI_CONTENT.btn.update.default}
+                </button>
+            </div>
             <ResponsiveTable
                 dropdownLabel="Действия"
                 columns={userInfoColumns}
