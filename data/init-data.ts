@@ -35,8 +35,8 @@ export const UI_CONTENT = {
             default: "Зарегистрироватся",
             loading: "Регистрация...",
         },
-        addDish: {
-            default: "Добавить блюдо",
+        add: {
+            default: "Добавить",
             loading: "Добавляю...",
         },
         edit: {

@@ -164,8 +164,8 @@ export default function EditMenu() {
                     formFields={dishFormControllers}
                     isLoading={isAddLoading}
                     dishStatus={addStatus}
-                    btnLoadLabel={UI_CONTENT.btn.addDish.loading}
-                    btnDefaultLabel={UI_CONTENT.btn.addDish.default}
+                    btnLoadLabel={UI_CONTENT.btn.add.loading}
+                    btnDefaultLabel={UI_CONTENT.btn.add.default}
                 />
             </div>
 

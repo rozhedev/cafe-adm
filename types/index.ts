@@ -37,7 +37,7 @@ export type TOrder = {
     quantity: string;
     status: string;
     user: string;
-    createdAt: number;
+    createdAt: number | string;
 };
 export type TOrderArr = TOrder[];
 

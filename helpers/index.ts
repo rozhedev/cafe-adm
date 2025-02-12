@@ -1,5 +1,6 @@
 import React from "react";
 import { StateAction } from "@/types";
+import { OrderStatuses, OrderStatusesLabels } from "@/data";
 
 export const cleanObjFromEmptyVal = (obj: any) => Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== ""));
 
@@ -18,7 +19,45 @@ export const fetchDataByRoute = async (apiRoute: string, options: RequestInit, s
     }
 };
 
+// * Replace status labels
+export const replaceStatusLabels = (status: string): string => {
+    if (status === OrderStatuses.ordered) return OrderStatusesLabels.ordered;
+    if (status === OrderStatuses.payed) return OrderStatusesLabels.payed;
+    if (status === OrderStatuses.completed) return OrderStatusesLabels.completed;
+    return OrderStatusesLabels.unknown;
+};
+
 // --> Get current Date & Time
+export function formatUnixTimestamp(unixTimestamp: string | number, dateSep: string, timeSep: string): string {
+    // Check the data type
+    if (typeof unixTimestamp !== "number") {
+        unixTimestamp = Number(unixTimestamp);
+
+        // If the result is not a number (NaN), throw an error
+        if (isNaN(unixTimestamp)) {
+            throw new Error("Invalid data type: expected a number or a string that can be converted to a number");
+        }
+    }
+
+    // Check the length of the timestamp
+    if (String(unixTimestamp).length === 13) {
+        // Convert milliseconds to seconds
+        unixTimestamp = Math.floor(unixTimestamp / 1000);
+    } else if (String(unixTimestamp).length !== 10) {
+        throw new Error("Invalid UNIX timestamp format");
+    }
+
+    const date = new Date(unixTimestamp * 1000);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    return `${day}${dateSep}${month}${dateSep}${year} | ${hours}${timeSep}${minutes}`;
+}
+
 const formatted = (value: number) => (value < 10 ? `0${value}` : `${value}`);
 
 export const getCurrentDateFormat = (): string => {
