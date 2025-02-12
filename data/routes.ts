@@ -1,3 +1,5 @@
+import { get } from "http";
+
 export const ROUTES = {
     // --> Public
     registerAdmin: "/auth/register/admin",
@@ -18,12 +20,15 @@ export const ROUTES = {
     apiSignin: "/api/auth/signin",
     // * Dish
     addDish: "/api/dishes/add",
-    getDish: "/api/dishes/get",
+    getAllDish: "/api/dishes/getAll",
     editDish: "/api/dishes/edit",
     deleteDish: "/api/dishes/delete",
     // * Users
     getUsersRole: "/api/users/getUsersRole",
     editUser: "/api/users/edit",
+    // * Orders
+    addOrder: "/api/orders/add",
+    getAllOrders: "/api/orders/getAll",
 };
 
 // --> Links

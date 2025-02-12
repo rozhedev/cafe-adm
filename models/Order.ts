@@ -26,8 +26,12 @@ export const orderSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+        createdAt: {
+            type: Number,
+            required: true,
+        },
     },
-    { timestamps: true, collection: COL_ORDERS }
+    { timestamps: false, collection: COL_ORDERS }
 );
 
 export const Order = mongoose.models?.Order || mongoose.model<TOrder>("Order", orderSchema);

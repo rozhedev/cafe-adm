@@ -24,7 +24,7 @@ export default function EditMenu() {
     // --> Handlers
     const handleTableUpdate = () => {
         fetchDataByRoute(
-            ROUTES.getDish,
+            ROUTES.getAllDish,
             {
                 method: "GET",
                 next: { revalidate: 1200 },
@@ -125,7 +125,7 @@ export default function EditMenu() {
     // --> Data fetching
     useEffect(() => {
         fetchDataByRoute(
-            ROUTES.getDish,
+            ROUTES.getAllDish,
             {
                 method: "GET",
                 next: { revalidate: 1200 }, // revalidate every 2 minutes

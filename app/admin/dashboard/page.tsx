@@ -1,35 +1,72 @@
 "use client";
-import React from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { TOrder } from "@/types";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
-import { ordersColumns, orderActionOptions } from "@/data";
+import { ordersColumns, orderActionOptions, ROUTES, OrderStatuses } from "@/data";
+import { fetchDataByRoute } from "@/helpers";
 
 // * Default page - Orders
 export default function Orders() {
-    const orders: TOrder[] = [
-        {
-            client: "Дима ИФ",
-            dish: "бутерброд",
-            quantity: "1шт.",
-            price: 100,
-            status: "Оплачено",
-            date: "12:46 | 03.02.2025",
-        },
-        {
-            client: "Даша ТИ",
-            dish: "сок",
-            quantity: "1шт.",
-            price: 40,
-            status: "Оплачено",
-            date: "12:46 | 03.02.2025",
-        },
-    ];
+    const [orders, setOrders] = useState<TOrder[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [userId, setUserId] = useState<string>("");
+
+    // --> Data fetching
+    useEffect(() => {
+        fetchDataByRoute(
+            ROUTES.getAllOrders,
+            {
+                method: "GET",
+                next: { revalidate: 1200 }, // revalidate every 2 minutes
+            },
+            setOrders
+        );
+    }, []);
+
+    const handleAddOrder = async (e: FormEvent) => {
+        e.preventDefault();
+        try {
+            setIsLoading(true);
+            const res = await fetch(ROUTES.addOrder, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    dish: "Test dish",
+                    quantity: 1,
+                    price: 100,
+                    status: OrderStatuses.payed,
+                    user: "67ab421b75b3fffa6d404e05",
+                    createdAt: Date.now(),
+                }),
+            });
+
+            if (res.ok) {
+                console.log("Dish added successfully");
+                return;
+            }
+        } catch (error) {
+            console.error("Error when adding order:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleAction = (action: string, order: TOrder) => {
-        console.log(`Action ${action} for order from ${order.client}`);
+        console.log(`Action ${action} for order from ${order._id}`);
+        setUserId(order.user);
     };
     return (
-        <div className="min-w-full">
+        <div className="w-full">
+            <form onSubmit={handleAddOrder}>
+                <button
+                    type="submit"
+                    className="max-w-48 my-4 btn--sm btn--auth"
+                >
+                    {isLoading ? "Добавляю..." : "Добавить заказ"}
+                </button>
+            </form>
             <ResponsiveTable
                 options={orderActionOptions}
                 dropdownLabel="Сменить статус"

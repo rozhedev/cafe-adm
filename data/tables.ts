@@ -1,7 +1,7 @@
 import { TableColumnProps } from "@/components/ResponsiveTable";
 import { TActionOptionsArr, TDish, TOrder, TUserInfo } from "@/types";
 import { UI_CONTENT } from "./init-data";
-import { ModalIds } from "./enums";
+import { ModalIds, OrderStatuses, OrderStatusesLabels } from "./enums";
 
 export const userInfoColumns: TableColumnProps<TUserInfo>[] = [
     { key: "name", header: "Имя" },
@@ -17,12 +17,12 @@ export const dishInfoColumns: TableColumnProps<TDish>[] = [
 ];
 
 export const ordersColumns: TableColumnProps<TOrder>[] = [
-    { key: "client", header: "Клиент" },
+    { key: "user", header: "Клиент" },
     { key: "dish", header: "Блюдо" },
     { key: "quantity", header: "Количество" },
     { key: "price", header: "Цена" },
     { key: "status", header: "Статус" },
-    { key: "date", header: "Дата создания" },
+    { key: "createdAt", header: "Дата создания" },
 ];
 
 export const dishFormControllers = [
@@ -57,16 +57,16 @@ export const dishFormControllers = [
 // --> Action Dropdown options
 export const orderActionOptions: TActionOptionsArr = [
     {
-        id: "ordered",
-        label: "Заказано",
+        id: OrderStatuses.ordered,
+        label: OrderStatusesLabels.ordered,
     },
     {
-        id: "payed",
-        label: "Оплачено",
+        id: OrderStatuses.payed,
+        label: OrderStatusesLabels.payed,
     },
     {
-        id: "delivered",
-        label: "Выдано",
+        id: OrderStatuses.completed,
+        label: OrderStatusesLabels.completed,
     },
 ];
 export const dishActionOptions: TActionOptionsArr = [

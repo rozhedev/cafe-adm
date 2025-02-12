@@ -19,13 +19,13 @@ export type TAdmin = {
 
 export type TOrder = {
     _id?: ObjectId;
-    client: string;
     // * Don't change key prop from "dish" to "name" for prevent render bug
     dish: string;
-    quantity: string;
     price: number;
+    quantity: string;
     status: string;
-    date: string;
+    user: string;
+    createdAt: number;
 };
 
 export type TDish = {
