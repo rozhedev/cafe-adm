@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState, type FormEvent } from "react";
+import React, { useContext, useEffect, useState, type FormEvent } from "react";
+import { TUsersInfoContextState, UsersInfoContext } from "@/providers";
 import { BooleanValObjMap, TUserInfo } from "@/types";
 import { EDIT_USER_MODALS_INIT, userInfoColumns, editUserActionOptions, ModalIds, ROUTES, UI_CONTENT } from "@/data";
 import { fetchDataByRoute } from "@/helpers";
@@ -7,11 +8,11 @@ import { FormController, ModalWithoutFooter } from "@/ui";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
 
 export default function Users() {
+    const [usersInfo, setUsersInfo] = useContext(UsersInfoContext) as TUsersInfoContextState;
     const [userId, setUserId] = useState<string>("");
     const [balance, setBalance] = useState<string>("");
     const [editStatus, setEditStatus] = useState<string>("");
 
-    const [usersList, setUsersList] = useState<TUserInfo[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(EDIT_USER_MODALS_INIT);
 
@@ -23,7 +24,7 @@ export default function Users() {
                 method: "GET",
                 next: { revalidate: 1200 }, // revalidate every 2 minutes
             },
-            setUsersList
+            setUsersInfo
         );
     }, []);
     const handleTableUpdate = () => {
@@ -33,7 +34,7 @@ export default function Users() {
                 method: "GET",
                 next: { revalidate: 1200 },
             },
-            setUsersList
+            setUsersInfo
         );
     };
 
@@ -85,7 +86,7 @@ export default function Users() {
             <ResponsiveTable
                 dropdownLabel="Действия"
                 columns={userInfoColumns}
-                data={usersList}
+                data={usersInfo}
                 onAction={handleAction}
                 options={editUserActionOptions}
             />

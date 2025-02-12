@@ -1,13 +1,14 @@
 "use client";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { TOrder } from "@/types";
-import { ResponsiveTable } from "@/components/ResponsiveTable";
+import { AdmOrdersContext, TAdmOrdersContextState } from "@/providers";
 import { ordersColumns, orderActionOptions, ROUTES, OrderStatuses } from "@/data";
 import { fetchDataByRoute } from "@/helpers";
+import { ResponsiveTable } from "@/components/ResponsiveTable";
 
 // * Default page - Orders
 export default function Orders() {
-    const [orders, setOrders] = useState<TOrder[]>([]);
+    const [admOrders, setAdmOrders] = useContext(AdmOrdersContext) as TAdmOrdersContextState;
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [userId, setUserId] = useState<string>("");
 
@@ -19,11 +20,11 @@ export default function Orders() {
                 method: "GET",
                 next: { revalidate: 1200 }, // revalidate every 2 minutes
             },
-            setOrders
+            setAdmOrders
         );
     }, []);
 
-    const handleAddOrder = async (e: FormEvent) => {
+    const handleAddOrder = async (e: SyntheticEvent) => {
         e.preventDefault();
         try {
             setIsLoading(true);
@@ -59,19 +60,18 @@ export default function Orders() {
     };
     return (
         <div className="w-full">
-            <form onSubmit={handleAddOrder}>
-                <button
-                    type="submit"
-                    className="max-w-48 my-4 btn--sm btn--auth"
-                >
-                    {isLoading ? "Добавляю..." : "Добавить заказ"}
-                </button>
-            </form>
+            <button
+                type="button"
+                onClick={handleAddOrder}
+                className="max-w-48 my-4 btn--sm btn--auth"
+            >
+                {isLoading ? "Добавляю..." : "Добавить заказ"}
+            </button>
             <ResponsiveTable
                 options={orderActionOptions}
                 dropdownLabel="Сменить статус"
                 columns={ordersColumns}
-                data={orders}
+                data={admOrders}
                 onAction={handleAction}
             />
         </div>

@@ -1,15 +1,17 @@
 "use client";
-import React, { useEffect, useState, type FormEvent } from "react";
+import React, { useContext, useEffect, useState, type FormEvent } from "react";
 import { BooleanValObjMap, TDish } from "@/types";
 import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT, ModalIds } from "@/data";
-import { ModalWithoutFooter, ModalWithFooter } from "@/ui";
 import { cleanObjFromEmptyVal, fetchDataByRoute } from "@/helpers";
+import { DishesContext, TDishesContextState } from "@/providers";
+import { ModalWithoutFooter, ModalWithFooter } from "@/ui";
 import { DishForm } from "@/components/DishForm";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
 
 export default function EditMenu() {
+    const [dishes, setDishes] = useContext(DishesContext) as TDishesContextState;
+
     const [dishId, setDishId] = useState<string>("");
-    const [dishList, setDishList] = useState<TDish[]>([]);
     const [addFormData, setAddFormData] = useState<TDish>(DISH_FORM_INIT);
     const [editFormData, setEditFormData] = useState<TDish>(DISH_FORM_INIT);
 
@@ -29,7 +31,7 @@ export default function EditMenu() {
                 method: "GET",
                 next: { revalidate: 1200 },
             },
-            setDishList
+            setDishes
         );
     };
     const handleAction = (action: string, item: TDish) => {
@@ -130,7 +132,7 @@ export default function EditMenu() {
                 method: "GET",
                 next: { revalidate: 1200 }, // revalidate every 2 minutes
             },
-            setDishList
+            setDishes
         );
     }, []);
 
@@ -148,7 +150,7 @@ export default function EditMenu() {
                 <ResponsiveTable
                     dropdownLabel="Действия"
                     columns={dishInfoColumns}
-                    data={dishList}
+                    data={dishes}
                     options={dishActionOptions}
                     onAction={handleAction}
                 />

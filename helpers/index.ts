@@ -4,14 +4,15 @@ import { StateAction } from "@/types";
 export const cleanObjFromEmptyVal = (obj: any) => Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== ""));
 
 // TODO Create hook useFetch
-export const fetchDataByRoute = async (apiRoute: string, options: RequestInit, stateAction: StateAction<() => any[]>) => {
+export const fetchDataByRoute = async (apiRoute: string, options: RequestInit, stateAction: StateAction<any[]>) => {
     try {
         const res = await fetch(apiRoute, options);
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
         }
         const data = await res.json();
-        stateAction(() => [...data]);
+        // Use any for prevent use unnecessary callbacks in state action
+        stateAction([...data] as any);
     } catch (error) {
         console.error("Get dish list error:", error);
     }
