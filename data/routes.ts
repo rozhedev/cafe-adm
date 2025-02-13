@@ -1,5 +1,3 @@
-import { get } from "http";
-
 export const ROUTES = {
     // --> Public
     registerAdmin: "/auth/register/admin",
@@ -30,6 +28,7 @@ export const ROUTES = {
     // * Orders
     addOrder: "/api/orders/add",
     getAllOrders: "/api/orders/getAll",
+    editStatus: "/api/orders/editStatus",
 };
 
 // --> Links

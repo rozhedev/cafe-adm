@@ -4,16 +4,22 @@ import { OrderStatuses, OrderStatusesLabels } from "@/data";
 
 export const cleanObjFromEmptyVal = (obj: any) => Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== ""));
 
+type TFetchDataByRoute = <T>(apiRoute: string, options: RequestInit, stateAction: StateAction<T[]>, transformData?: (data: T[] | []) => T[]) => Promise<void>;
+
 // TODO Create hook useFetch
-export const fetchDataByRoute = async (apiRoute: string, options: RequestInit, stateAction: StateAction<any[]>) => {
+export const fetchDataByRoute: TFetchDataByRoute = async (apiRoute, options, stateAction, transformData) => {
     try {
         const res = await fetch(apiRoute, options);
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
         }
         const data = await res.json();
+
+        const processedData = transformData ? transformData(data) : data;
+        console.log(data[0].user.name);
+        
         // Use any for prevent use unnecessary callbacks in state action
-        stateAction([...data] as any);
+        stateAction([...processedData] as any[]);
     } catch (error) {
         console.error("Get dish list error:", error);
     }

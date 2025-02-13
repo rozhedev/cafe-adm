@@ -1,7 +1,7 @@
 "use client";
-import React, { SyntheticEvent, useContext, useEffect, useMemo, useState } from "react";
-import { StringValObjMap, TOrder } from "@/types";
-import { AdmOrdersContext, TAdmOrdersContextState } from "@/providers";
+import React, { SyntheticEvent, useContext, useEffect, useState } from "react";
+import { TOrder } from "@/types";
+import { AdmOrdersContext, type TAdmOrdersContextState } from "@/providers";
 import { ordersColumns, orderActionOptions, ROUTES, OrderStatuses, UI_CONTENT } from "@/data";
 import { fetchDataByRoute, formatUnixTimestamp, replaceStatusLabels } from "@/helpers";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
@@ -10,62 +10,21 @@ import { ResponsiveTable } from "@/components/ResponsiveTable";
 export default function Orders() {
     const [admOrders, setAdmOrders] = useContext(AdmOrdersContext) as TAdmOrdersContextState;
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [userId, setUserId] = useState<string>("");
-    const [userNames, setUserNames] = useState<StringValObjMap>({});
 
-    const findUserById = async (id: string) => {
+    // --> Handlers
+    const handleUpdateStatus = async (id: string, status: string) => {
         try {
-            const res = await fetch(`${ROUTES.findById}/${id}`, {
-                method: "POST",
+            const res = await fetch(ROUTES.editStatus, {
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
+                body: JSON.stringify({ id, status }),
             });
-            if (res.ok) {
-                const data = await res.json();
-                setUserNames((prev: any) => ({
-                    ...prev,
-                    [id]: data.name,
-                }));
-            } else {
-                return "Имя не найдено";
-            }
         } catch (error) {
-            console.error("Find name error:", error);
+            console.error("Get dish list error:", error);
         }
     };
-
-    const formattedOrders = useMemo(() => {
-        return admOrders.map((order: TOrder) => ({
-            // Don't change order of props
-            ...order,
-            user: userNames[order.user] || order.user,
-            status: replaceStatusLabels(order.status),
-            createdAt: formatUnixTimestamp(order.createdAt, ".", ":"),
-        }));
-    }, [admOrders]);
-
-    // --> Data fetching
-    useEffect(() => {
-        const userIds = Array.from(new Set(admOrders.map((order: TOrder) => order.user)).values()) as string[];
-
-        // Load name for every ID
-        userIds.forEach((id) => {
-            if (!userNames[id]) {
-                // Load if name don't exist in cache
-                findUserById(id);
-            }
-        });
-        fetchDataByRoute(
-            ROUTES.getAllOrders,
-            {
-                method: "GET",
-                next: { revalidate: 1200 }, // revalidate every 2 minutes
-            },
-            setAdmOrders
-        );
-    }, [admOrders]);
-
     const handleAddOrder = async (e: SyntheticEvent) => {
         e.preventDefault();
         try {
@@ -95,10 +54,31 @@ export default function Orders() {
             setIsLoading(false);
         }
     };
-
-    const handleAction = (action: string, order: TOrder) => {
-        console.log(`Action ${action} for order from ${order._id}`);
+    const handleAction = async (status: string, order: TOrder) => {
+        const id = String(order._id) || "";
+        await handleUpdateStatus(id, status);
     };
+
+    // --> Data fetching
+    useEffect(() => {
+        fetchDataByRoute(
+            ROUTES.getAllOrders,
+            {
+                method: "GET",
+                next: { revalidate: 1200 }, // revalidate every 2 minutes
+            },
+            setAdmOrders,
+            (orders) =>
+                orders.map((order) => ({
+                    ...order,
+                    // user is Object contains: {_id: string, name: string}
+                    user: (order.user as any)?.name || "Имя не найдено",
+                    status: replaceStatusLabels(order.status),
+                    createdAt: formatUnixTimestamp(order.createdAt, ".", ":"),
+                }))
+        );
+    }, []);
+    
     return (
         <div className="w-full">
             <button
@@ -112,7 +92,7 @@ export default function Orders() {
                 options={orderActionOptions}
                 dropdownLabel="Сменить статус"
                 columns={ordersColumns}
-                data={formattedOrders}
+                data={admOrders}
                 onAction={handleAction}
             />
         </div>

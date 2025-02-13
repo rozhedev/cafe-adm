@@ -2,7 +2,7 @@ import { ObjectId } from "mongoose";
 import { Dispatch, SetStateAction } from "react";
 
 // * Utility types
-export type StateAction<T> = SetStateAction<Dispatch<T>>;
+export type StateAction<T> = Dispatch<SetStateAction<T>>;
 
 export type StringValObjMap = { [key: string]: string };
 

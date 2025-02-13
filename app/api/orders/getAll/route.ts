@@ -5,7 +5,7 @@ import { Order } from "@/models";
 export async function GET(req: NextRequest) {
     await connectDB();
     try {
-        const ordersList = await Order.find({});
+        const ordersList = await Order.find({}).populate("user", "name").exec();
         return NextResponse.json(ordersList, { status: 200 });
     } catch (error) {
         console.error("Get dish list error:", error);
