@@ -3,10 +3,10 @@ import { createContext, PropsWithChildren, useState } from "react";
 import { StateAction, TOrderArr } from "@/types";
 
 // --> Admin
-export type TAdmOrdersContextState = [TOrderArr, StateAction<TOrderArr>];
-type TAdmOrdersContext = TAdmOrdersContextState | undefined;
+export type TOrdersContextState = [TOrderArr, StateAction<TOrderArr>];
+type TOrdersContext = TOrdersContextState | undefined;
 
-export const AdmOrdersContext = createContext<TAdmOrdersContext>(undefined);
+export const AdmOrdersContext = createContext<TOrdersContext>(undefined);
 
 export const AdmOrdersProvider = ({ children }: PropsWithChildren) => {
     const [admOrders, setAdmOrders] = useState<TOrderArr>([]);
@@ -15,10 +15,7 @@ export const AdmOrdersProvider = ({ children }: PropsWithChildren) => {
 };
 
 // --> User
-export type TUserOrdersContextState = [TOrderArr, StateAction<TOrderArr>];
-type TUserOrdersContext = TUserOrdersContextState | undefined;
-
-export const UserOrdersContext = createContext<TUserOrdersContext>(undefined);
+export const UserOrdersContext = createContext<TOrdersContext>(undefined);
 
 export const UserOrdersProvider = ({ children }: PropsWithChildren) => {
     const [userOrders, setUserOrders] = useState<TOrderArr>([]);

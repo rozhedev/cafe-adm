@@ -31,7 +31,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ role, authRoute = "" }) =>
             });
 
             if (res?.status === 409) {
-                setError(UI_CONTENT.err.userExist);
+                setError(UI_CONTENT.err.auth.userExist);
                 setIsLoading(false);
                 setFormData(AUTH_FORM_INIT);
                 return;

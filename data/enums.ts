@@ -2,11 +2,13 @@ export enum OrderStatuses {
     ordered = "ordered",
     payed = "payed",
     completed = "completed",
+    cancelled = "cancelled",
     unknown = "unknown",
 }
 export enum OrderStatusesLabels {
     ordered = "Заказано",
     payed = "Оплачено",
+    cancelled = "Отменён",
     completed = "Выдано",
     unknown = "Нет данных",
 }

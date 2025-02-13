@@ -71,7 +71,7 @@ export function ResponsiveTable<T extends Record<string, any>>({ dropdownLabel, 
                         ))
                     ) : (
                         <tr className="block p-4">
-                            <td>Данные загружаются...</td>
+                            <td>Данных не найдено...</td>
                         </tr>
                     )}
                 </tbody>

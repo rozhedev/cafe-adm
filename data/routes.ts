@@ -28,6 +28,7 @@ export const ROUTES = {
     // * Orders
     addOrder: "/api/orders/add",
     getAllOrders: "/api/orders/getAll",
+    getByUserName: "/api/orders/getByUserName",
     editStatus: "/api/orders/editStatus",
 };
 

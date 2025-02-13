@@ -72,7 +72,7 @@ export const LoginForm: FC<TLoginForm> = ({ registerRoute = "" }) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
             />
             
-            {error && <small className="err-output">{UI_CONTENT.err.invalidAuthCredentials}</small>}
+            {error && <small className="err-output">{UI_CONTENT.err.auth.invalidCredentials}</small>}
             <div>
                 <button
                     type="submit"

@@ -11,7 +11,6 @@ type SchemaField = {
 
 const dishSchema = new mongoose.Schema(
     {
-        // * For get username from session in next-auth, use "name" instead username or fullname field
         dish: {
             type: String,
             required: true,

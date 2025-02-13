@@ -58,7 +58,7 @@ export default function EditMenu() {
 
             if (res.ok) {
                 addToast(UI_CONTENT.success.dish.added, "success");
-                setEditFormData(DISH_FORM_INIT);
+                setAddFormData(DISH_FORM_INIT);
                 return;
             }
             addToast(UI_CONTENT.err.dish.added, "error");

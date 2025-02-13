@@ -3,7 +3,7 @@ import React, { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { TOrder } from "@/types";
 import { AdmOrdersContext, type TAdmOrdersContextState } from "@/providers";
 import { ordersColumns, orderActionOptions, ROUTES, OrderStatuses, UI_CONTENT } from "@/data";
-import { fetchDataByRoute, formatAdmOrders } from "@/helpers";
+import { fetchDataByRoute, formatOrders } from "@/helpers";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
 import { useToast } from "@/components/Toast";
 
@@ -22,7 +22,7 @@ export default function Orders() {
                 next: { revalidate: 1200 }, // revalidate every 2 minutes
             },
             setAdmOrders,
-            (orders) => formatAdmOrders(orders)
+            (orders) => formatOrders(orders)
         );
 
     const handleUpdateStatus = async (id: string, status: string) => {
@@ -61,8 +61,7 @@ export default function Orders() {
             });
 
             if (res.ok) {
-                addToast(UI_CONTENT.success.dish.added, "success");
-                // console.log("Dish added successfully");
+                addToast(UI_CONTENT.success.order.added, "success");
                 return;
             }
         } catch (error) {
@@ -85,7 +84,7 @@ export default function Orders() {
                 next: { revalidate: 1200 }, // revalidate every 2 minutes
             },
             setAdmOrders,
-            (orders) => formatAdmOrders(orders)
+            (orders) => formatOrders(orders)
         );
     }, []);
 

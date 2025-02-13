@@ -63,6 +63,7 @@ export const UI_CONTENT = {
             updated: "Блюдо успешно изменено",
         },
         order: {
+            added: "Заказ успешно добавлено",
             statusChanged: "Статус изменён, обновите таблицу",
         },
         balanceChanged: "Баланс изменён, обновите таблицу",
