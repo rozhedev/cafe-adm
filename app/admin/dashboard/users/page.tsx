@@ -53,12 +53,12 @@ export default function Users() {
                 body: JSON.stringify({ userId, balance }),
             });
             if (res.ok) {
-                addToast("Баланс изменён", "success");
+                addToast(UI_CONTENT.success.balanceChanged, "success");
                 setBalance("");
                 setIsModalOpen(EDIT_USER_MODALS_INIT);
                 return;
             }
-            addToast("Ошибка при изменении баланса", "error");
+            addToast(UI_CONTENT.err.balanceChanged, "error");
         } catch (error) {
             console.error("Edit user balance error:", error);
         } finally {

@@ -57,11 +57,11 @@ export default function EditMenu() {
             });
 
             if (res.ok) {
-                addToast(UI_CONTENT.success.dishAdded, "success");
+                addToast(UI_CONTENT.success.dish.added, "success");
                 setEditFormData(DISH_FORM_INIT);
                 return;
             }
-            addToast(UI_CONTENT.err.dishAddedErr, "error");
+            addToast(UI_CONTENT.err.dish.added, "error");
             setAddFormData(DISH_FORM_INIT);
         } catch (error) {
             console.error("Create new dish error:", error);
@@ -73,7 +73,7 @@ export default function EditMenu() {
     const handleEditDish = async (e: FormEvent) => {
         e.preventDefault();
         if (Object.values(editFormData).every((item) => (item as string).trim() === "")) {
-            addToast(UI_CONTENT.err.dishEmptyForm, "error");
+            addToast(UI_CONTENT.err.dish.emptyForm, "error");
             return;
         }
 
@@ -91,12 +91,12 @@ export default function EditMenu() {
             });
 
             if (res.ok) {
-                addToast(UI_CONTENT.success.dishUpdated, "success");
+                addToast(UI_CONTENT.success.dish.updated, "success");
                 setEditFormData(DISH_FORM_INIT);
                 setIsModalOpen(DISH_MODALS_INIT);
                 return;
             }
-            addToast(UI_CONTENT.err.dishUpdatedErr, "error");
+            addToast(UI_CONTENT.err.dish.updated, "error");
             setEditFormData(DISH_FORM_INIT);
         } catch (error) {
             console.error("Edit dish error:", error);
@@ -112,11 +112,11 @@ export default function EditMenu() {
                 method: "DELETE",
             });
             if (res.ok) {
-                addToast(UI_CONTENT.success.dishDeleted, "success");
+                addToast(UI_CONTENT.success.dish.deleted, "success");
                 setIsModalOpen(DISH_MODALS_INIT);
                 return;
             }
-            addToast(UI_CONTENT.err.dishDeletedErr, "error");
+            addToast(UI_CONTENT.err.dish.deleted, "error");
         } catch (error) {
             console.error("Delete dish error:", error);
         } finally {

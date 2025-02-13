@@ -35,7 +35,7 @@ export default function Orders() {
                 body: JSON.stringify({ id, status }),
             });
             if (res.ok) {
-                addToast(UI_CONTENT.success.orderStatusChanged, "success");
+                addToast(UI_CONTENT.success.order.statusChanged, "success");
             }
         } catch (error) {
             console.error("Get dish list error:", error);
@@ -61,7 +61,7 @@ export default function Orders() {
             });
 
             if (res.ok) {
-                addToast("Блюдо добавлено", "success");
+                addToast(UI_CONTENT.success.dish.added, "success");
                 // console.log("Dish added successfully");
                 return;
             }
