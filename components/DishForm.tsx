@@ -6,14 +6,13 @@ type TDishForm = {
     formData: TDish;
     setFormData: any;
     formFields: Array<any>;
-    dishStatus: string;
     isLoading: boolean;
     btnLoadLabel: string;
     btnDefaultLabel: string;
     onSubmit: (e: React.FormEvent) => Promise<void>;
 };
 
-export const DishForm: FC<TDishForm> = ({ formData, setFormData, formFields, dishStatus, isLoading, btnLoadLabel, btnDefaultLabel, onSubmit }) => {
+export const DishForm: FC<TDishForm> = ({ formData, setFormData, formFields, isLoading, btnLoadLabel, btnDefaultLabel, onSubmit }) => {
     const handleChange = (fieldId: keyof TDish) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData((prev: any) => ({
             ...prev,
@@ -26,7 +25,6 @@ export const DishForm: FC<TDishForm> = ({ formData, setFormData, formFields, dis
             className="flex flex-col items-center gap-4"
             onSubmit={onSubmit}
         >
-            {dishStatus && <div className="form-elem-size border-2 border-blue-300 rounded-lg shadow-md font-medium bg-blue-200 text-blue-800 p-3">{dishStatus}</div>}
             {formFields.map((field) => (
                 <FormController
                     key={field.id}

@@ -6,12 +6,14 @@ import { EDIT_USER_MODALS_INIT, userInfoColumns, editUserActionOptions, ModalIds
 import { fetchDataByRoute } from "@/helpers";
 import { FormController, ModalWithoutFooter } from "@/ui";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
+import { useToast } from "@/components/Toast";
 
 export default function Users() {
+    const { addToast } = useToast();
+
     const [usersInfo, setUsersInfo] = useContext(UsersInfoContext) as TUsersInfoContextState;
     const [userId, setUserId] = useState<string>("");
     const [balance, setBalance] = useState<string>("");
-    const [editStatus, setEditStatus] = useState<string>("");
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(EDIT_USER_MODALS_INIT);
@@ -51,11 +53,12 @@ export default function Users() {
                 body: JSON.stringify({ userId, balance }),
             });
             if (res.ok) {
-                setEditStatus("Баланс изменён");
+                addToast("Баланс изменён", "success");
                 setBalance("");
+                setIsModalOpen(EDIT_USER_MODALS_INIT);
                 return;
             }
-            setEditStatus("Ошибка при изменении баланса");
+            addToast("Ошибка при изменении баланса", "error");
         } catch (error) {
             console.error("Edit user balance error:", error);
         } finally {
@@ -96,7 +99,6 @@ export default function Users() {
                 isOpen={isModalOpen[ModalIds.balance]}
             >
                 <form onSubmit={handleEditBalance}>
-                    {editStatus && <div className="form-elem-size border-2 border-blue-300 rounded-lg shadow-md font-medium bg-blue-200 text-blue-800 p-3">{editStatus}</div>}
                     <FormController
                         htmlLabel="Введите новый баланс"
                         value={balance}

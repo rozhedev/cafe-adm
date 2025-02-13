@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
-import { Order } from "@/models";
+import { Order, User } from "@/models";
 
 export async function POST(req: Request) {
     try {
@@ -10,14 +10,23 @@ export async function POST(req: Request) {
         }
         await connectDB();
 
-        const order = await Order.create({
+        const newOrder = await Order.create({
             dish,
             quantity,
             price,
             status,
             user,
-            createdAt
+            createdAt,
         });
+        await User.findByIdAndUpdate(
+            user,
+            {
+                $push: { activeOrders: newOrder._id },
+            },
+            {
+                new: true,
+            }
+        );
 
         return NextResponse.json({ message: "Order created successfully" }, { status: 201 });
     } catch (error) {

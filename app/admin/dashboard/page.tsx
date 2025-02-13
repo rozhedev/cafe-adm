@@ -3,15 +3,28 @@ import React, { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { TOrder } from "@/types";
 import { AdmOrdersContext, type TAdmOrdersContextState } from "@/providers";
 import { ordersColumns, orderActionOptions, ROUTES, OrderStatuses, UI_CONTENT } from "@/data";
-import { fetchDataByRoute, formatUnixTimestamp, replaceStatusLabels } from "@/helpers";
+import { fetchDataByRoute, formatAdmOrders } from "@/helpers";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
+import { useToast } from "@/components/Toast";
 
 // * Default page - Orders
 export default function Orders() {
+    const { addToast } = useToast();
     const [admOrders, setAdmOrders] = useContext(AdmOrdersContext) as TAdmOrdersContextState;
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // --> Handlers
+    const handleTableUpdate = () =>
+        fetchDataByRoute(
+            ROUTES.getAllOrders,
+            {
+                method: "GET",
+                next: { revalidate: 1200 }, // revalidate every 2 minutes
+            },
+            setAdmOrders,
+            (orders) => formatAdmOrders(orders)
+        );
+
     const handleUpdateStatus = async (id: string, status: string) => {
         try {
             const res = await fetch(ROUTES.editStatus, {
@@ -21,6 +34,9 @@ export default function Orders() {
                 },
                 body: JSON.stringify({ id, status }),
             });
+            if (res.ok) {
+                addToast(UI_CONTENT.success.orderStatusChanged, "success");
+            }
         } catch (error) {
             console.error("Get dish list error:", error);
         }
@@ -45,7 +61,8 @@ export default function Orders() {
             });
 
             if (res.ok) {
-                console.log("Dish added successfully");
+                addToast("Блюдо добавлено", "success");
+                // console.log("Dish added successfully");
                 return;
             }
         } catch (error) {
@@ -68,26 +85,29 @@ export default function Orders() {
                 next: { revalidate: 1200 }, // revalidate every 2 minutes
             },
             setAdmOrders,
-            (orders) =>
-                orders.map((order) => ({
-                    ...order,
-                    // user is Object contains: {_id: string, name: string}
-                    user: (order.user as any)?.name || "Имя не найдено",
-                    status: replaceStatusLabels(order.status),
-                    createdAt: formatUnixTimestamp(order.createdAt, ".", ":"),
-                }))
+            (orders) => formatAdmOrders(orders)
         );
     }, []);
-    
+
+    // * -----------------------------
     return (
         <div className="w-full">
-            <button
-                type="button"
-                onClick={handleAddOrder}
-                className="max-w-48 my-4 btn--sm btn--auth"
-            >
-                {isLoading ? UI_CONTENT.btn.add.loading : UI_CONTENT.btn.add.default}
-            </button>
+            <div className="form-elem-size flex gap-5">
+                <button
+                    type="button"
+                    className="max-w-48 my-4 btn--sm btn--auth"
+                    onClick={handleTableUpdate}
+                >
+                    {UI_CONTENT.btn.update.default}
+                </button>
+                <button
+                    type="button"
+                    onClick={handleAddOrder}
+                    className="max-w-48 my-4 btn--sm btn--auth"
+                >
+                    {isLoading ? UI_CONTENT.btn.add.loading : UI_CONTENT.btn.add.default}
+                </button>
+            </div>
             <ResponsiveTable
                 options={orderActionOptions}
                 dropdownLabel="Сменить статус"

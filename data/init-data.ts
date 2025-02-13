@@ -57,13 +57,20 @@ export const UI_CONTENT = {
         },
     },
     success: {
+        // dish: {
+        //     deleted
+
+        // },
         dishAdded: "Блюдо успешно добавлено",
         dishUpdated: "Блюдо успешно изменено",
+        dishDeleted: "Блюдо удалено, обнови таблицу",
+        orderStatusChanged: "Статус изменён, обнови таблицу",
     },
     err: {
         dishEmptyForm: "Введите значение хотя бы в одно поле",
         dishAddedErr: "Ошибка создания, попробуйте снова",
         dishUpdatedErr: "Ошибка редактирования, попробуйте снова",
+        dishDeletedErr: "Ошибка удаления, попробуйте снова",
         invalidAuthCredentials: "Логин или пароль введён неверно",
         userExist: "Пользователь с таким именём уже существует",
         unknownError: "Возникла ошибка, попробуйте снова",

@@ -1,5 +1,5 @@
 import React from "react";
-import { StateAction } from "@/types";
+import { StateAction, TOrder } from "@/types";
 import { OrderStatuses, OrderStatusesLabels } from "@/data";
 
 export const cleanObjFromEmptyVal = (obj: any) => Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== ""));
@@ -16,7 +16,6 @@ export const fetchDataByRoute: TFetchDataByRoute = async (apiRoute, options, sta
         const data = await res.json();
 
         const processedData = transformData ? transformData(data) : data;
-        console.log(data[0].user.name);
         
         // Use any for prevent use unnecessary callbacks in state action
         stateAction([...processedData] as any[]);
@@ -24,6 +23,16 @@ export const fetchDataByRoute: TFetchDataByRoute = async (apiRoute, options, sta
         console.error("Get dish list error:", error);
     }
 };
+
+// Format orders in admin dashboard (route: /admin/dashboard/ )
+export const formatAdmOrders = (orders: TOrder[] | []) =>
+        orders.map((order) => ({
+            ...order,
+            // user is Object contains: {_id: string, name: string}
+            user: (order.user as any)?.name || "Имя не найдено",
+            status: replaceStatusLabels(order.status),
+            createdAt: formatUnixTimestamp(order.createdAt, ".", ":"),
+        }));
 
 // * Replace status labels
 export const replaceStatusLabels = (status: string): string => {
