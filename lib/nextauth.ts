@@ -36,6 +36,7 @@ export const authOptions: NextAuthOptions = {
                     id: user._id.toString(),
                     name: user.name,
                     role: user.role,
+                    balance: user.balance,
                 };
             },
         }),
@@ -43,7 +44,9 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
+                token._id = user.id;
                 token.role = user.role;
+                token.balance = user.balance;
             }
             return token;
         },
@@ -55,7 +58,6 @@ export const authOptions: NextAuthOptions = {
                     id: token._id,
                     role: token.role,
                     balance: token.balance,
-                    activeOrders: token.activeOrders,
                 },
             };
         },

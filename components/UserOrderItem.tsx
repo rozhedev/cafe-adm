@@ -37,7 +37,7 @@ export const UserOrderItem: React.FC<UserOrderItemProps> = ({ order, onCancelOrd
                             </button>
                         )}
                         <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-xs"
+                            className="btn--sm btn--primary-blue text-sm font-semibold"
                             onClick={() => onRepeatOrder(order)}
                         >
                             Повторить заказ

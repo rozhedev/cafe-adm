@@ -29,6 +29,8 @@ const Navlink = ({ href, label }: { href: string; label: string }) => {
 
 export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
     const { data: session } = useSession();
+    console.log(session?.user);
+    
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     return (
@@ -87,7 +89,8 @@ export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
                         ))}
                         {session && (
                             <>
-                                <span className="font-bold py-2 px-3 md:p-0">{session.user?.name || "User"}</span>
+                                <span className="py-2 px-3 md:p-0">Баланс: <span className="font-semibold">{session?.user?.balance || 0}</span></span>
+                                <span className="font-semibold py-2 px-3 md:p-0">{session?.user?.name || "User"}</span>
                                 <li className="flex md:justify-start justify-center">
                                     <button
                                         onClick={() => signOut({ callbackUrl: ROUTES.signin })}

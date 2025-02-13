@@ -22,7 +22,7 @@ export default async function UserDashboardLayout({
                     title={APP_NAME}
                     linksArr={userLinksArr}
                 />
-                <div className="mx-auto flex flex-col items-center xl:mt-16 lg:mt-12 mt-8 gap-4 max-w-[420px] lg:max-w-screen-xl md:max-w-screen-lg sm:max-w-screen-md">{children}</div>
+                <div className="mx-auto flex flex-col items-center lg:mt-12 mt-8 gap-4 max-w-[420px] lg:max-w-screen-xl md:max-w-screen-lg sm:max-w-screen-md">{children}</div>
             </div>
         </UserOrdersProvider>
     );
