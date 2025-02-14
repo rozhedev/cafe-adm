@@ -1,8 +1,8 @@
 "use client";
-import React, { SyntheticEvent, useContext, useEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { BooleanValObjMap, TOrder } from "@/types";
-import { AdmOrdersContext, type TOrdersContextState } from "@/providers";
-import { ordersColumns, orderActionOptions, ROUTES, OrderStatuses, UI_CONTENT, ModalIds, DISH_MODALS_INIT } from "@/data";
+import { useAdmOrders } from "@/providers";
+import { ordersColumns, orderActionOptions, ROUTES, OrderStatuses, UI_CONTENT, ModalIds, DISH_MODALS_INIT, ORDER_MODALS_INIT } from "@/data";
 import { fetchDataByRoute, formatOrders } from "@/helpers";
 import { ModalWithFooter } from "@/ui";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
@@ -10,15 +10,11 @@ import { useToast } from "@/components/Toast";
 
 // * Default page - Orders
 export default function Orders() {
-    const MODALS_INIT_STATE = {
-        delete: false,
-    };
-
     const { addToast } = useToast();
-    const [admOrders, setAdmOrders] = useContext(AdmOrdersContext) as TOrdersContextState;
+    const [admOrders, setAdmOrders] = useAdmOrders();
     const [orderId, setOrderId] = useState<string>("");
 
-    const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(MODALS_INIT_STATE);
+    const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(ORDER_MODALS_INIT);
 
     const [isAddLoading, setAddIsLoading] = useState<boolean>(false);
     const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
@@ -110,7 +106,7 @@ export default function Orders() {
         console.log(status);
         if (status !== ModalIds.delete) await handleUpdateStatus(id, status);
         else {
-            setIsModalOpen({ delete: true });
+            setIsModalOpen({ ...ORDER_MODALS_INIT, delete: true });
         }
     };
 
@@ -154,13 +150,13 @@ export default function Orders() {
                 onAction={handleAction}
             />
             <ModalWithFooter
-                title="Вы точно хотите удалить заказ?"
+                title={UI_CONTENT.confirmAction.delete.order}
                 onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.delete]: false })}
                 isOpen={isModalOpen[ModalIds.delete]}
                 actionLabel={isDeleteLoading ? UI_CONTENT.btn.delete.loading : UI_CONTENT.btn.delete.default}
                 onAction={handleDeleteOrder}
             >
-                <div className="my-4">Эту операцию нельзя отменить. После удаления перезагрузите страницу</div>
+                <div className="my-4">{UI_CONTENT.confirmActionDescr.delete.order}</div>
             </ModalWithFooter>
         </div>
     );

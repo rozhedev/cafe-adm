@@ -1,6 +1,6 @@
 "use client";
-import React, { useContext, useEffect, useState, type FormEvent } from "react";
-import { TUsersInfoContextState, UsersInfoContext } from "@/providers";
+import React, { useEffect, useState, type FormEvent } from "react";
+import { useUsersInfo } from "@/providers";
 import { BooleanValObjMap, TUserInfo } from "@/types";
 import { EDIT_USER_MODALS_INIT, userInfoColumns, editUserActionOptions, ModalIds, ROUTES, UI_CONTENT } from "@/data";
 import { fetchDataByRoute } from "@/helpers";
@@ -11,7 +11,7 @@ import { useToast } from "@/components/Toast";
 export default function Users() {
     const { addToast } = useToast();
 
-    const [usersInfo, setUsersInfo] = useContext(UsersInfoContext) as TUsersInfoContextState;
+    const [usersInfo, setUsersInfo] = useUsersInfo();
     const [userId, setUserId] = useState<string>("");
     const [balance, setBalance] = useState<string>("");
 
@@ -94,13 +94,13 @@ export default function Users() {
                 options={editUserActionOptions}
             />
             <ModalWithoutFooter
-                title="Изменить баланс"
+                title={UI_CONTENT.confirmAction.edit.balance}
                 onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.balance]: false })}
                 isOpen={isModalOpen[ModalIds.balance]}
             >
                 <form onSubmit={handleEditBalance}>
                     <FormController
-                        htmlLabel="Введите новый баланс"
+                        htmlLabel={UI_CONTENT.confirmActionDescr.edit.balance}
                         value={balance}
                         onChange={(e) => setBalance(e.target.value)}
                     />

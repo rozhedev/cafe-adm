@@ -24,6 +24,10 @@ export const EDIT_USER_MODALS_INIT = {
     balance: false,
 };
 
+export const ORDER_MODALS_INIT = {
+    delete: false,
+};
+
 // --> Content
 export const UI_CONTENT = {
     btn: {
@@ -82,6 +86,27 @@ export const UI_CONTENT = {
             userExist: "Пользователь с таким именём уже существует",
         },
         balanceChanged: "Ошибка изменения баланса, попробуйте снова",
+        orderListEmpty: "Вы ещё не сделали ни одного заказа",
         unknownError: "Возникла ошибка, попробуйте снова",
+    },
+    confirmAction: {
+        delete: {
+            dish: "Вы точно хотите удалить блюдо?",
+            order: "Вы точно хотите удалить заказ?",
+        },
+        edit: {
+            dish: "Изменить блюдо",
+            balance: "Изменить баланс",
+        },
+    },
+    confirmActionDescr: {
+        delete: {
+            dish: "Эту операцию нельзя отменить. После удаления перезагрузите страницу",
+            order: "Эту операцию нельзя отменить. Заказ также будет удалён в клиента",
+        },
+        edit: {
+            dish: "Введите новые значения в одно или несколько полей",
+            balance: "Введите новый баланс",
+        },
     },
 };

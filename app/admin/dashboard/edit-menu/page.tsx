@@ -1,9 +1,9 @@
 "use client";
-import React, { useContext, useEffect, useState, type FormEvent } from "react";
+import React, { useEffect, useState, type FormEvent } from "react";
 import { BooleanValObjMap, TDish } from "@/types";
 import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT, ModalIds } from "@/data";
 import { cleanObjFromEmptyVal, fetchDataByRoute } from "@/helpers";
-import { DishesContext, TDishesContextState } from "@/providers";
+import { useDishes } from "@/providers";
 import { ModalWithoutFooter, ModalWithFooter } from "@/ui";
 import { useToast } from "@/components/Toast";
 import { DishForm } from "@/components/DishForm";
@@ -11,7 +11,7 @@ import { ResponsiveTable } from "@/components/ResponsiveTable";
 
 export default function EditMenu() {
     const { addToast } = useToast();
-    const [dishes, setDishes] = useContext(DishesContext) as TDishesContextState;
+    const [dishes, setDishes] = useDishes();
 
     const [dishId, setDishId] = useState<string>("");
     const [addFormData, setAddFormData] = useState<TDish>(DISH_FORM_INIT);
@@ -171,20 +171,20 @@ export default function EditMenu() {
 
             {/* // --> Modals */}
             <ModalWithFooter
-                title="Вы точно хотите удалить блюдо?"
+                title={UI_CONTENT.confirmAction.delete.dish}
                 onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.delete]: false })}
                 isOpen={isModalOpen[ModalIds.delete]}
-                actionLabel={UI_CONTENT.btn.delete.default}
+                actionLabel={isDeleteLoading ? UI_CONTENT.btn.delete.loading : UI_CONTENT.btn.delete.default}
                 onAction={handleDelete}
             >
-                <div className="my-4">Эту операцию нельзя отменить. После удаления перезагрузите страницу</div>
+                <div className="my-4">{UI_CONTENT.confirmActionDescr.delete.dish}</div>
             </ModalWithFooter>
             <ModalWithoutFooter
-                title="Изменить блюдо"
+                title={UI_CONTENT.confirmAction.edit.dish}
                 onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.edit]: false })}
                 isOpen={isModalOpen[ModalIds.edit]}
             >
-                <div className="my-4">Введите новые значения в одно или несколько полей</div>
+                <div className="my-4">{UI_CONTENT.confirmActionDescr.edit.dish}</div>
 
                 {/* //* Edit form */}
                 <DishForm

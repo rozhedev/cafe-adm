@@ -1,25 +1,57 @@
-import { getServerSession } from "next-auth";
+"use client";
+import React, { useEffect } from "react";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/nextauth";
+import { useSession } from "next-auth/react";
 import { ROLES, APP_NAME, ROUTES, publicLinksArr } from "@/data";
+import { TDish } from "@/types";
 import { Navbar } from "@/ui";
+import { useDishes } from "@/providers";
+import { fetchDataByRoute } from "@/helpers";
+import { MenuItem } from "@/components/MenuItem";
 
-export default async function Home() {
-    const session = await getServerSession(authOptions);
+export default function Home() {
+    const { data: session } = useSession();
+    const [dishes, setDishes] = useDishes();
+    const role = session?.user?.role;
 
+    const handleAddToCart = (dish: TDish) => {
+        console.log("Добавлено в корзину:", dish);
+    };
     if (session) {
-        if (session.user.role === ROLES.user) redirect(ROUTES.dash);
-        if (session.user.role === ROLES.admin) redirect(ROUTES.admDash);
+        if (role === ROLES.user) redirect(ROUTES.dash);
+        if (role === ROLES.admin) redirect(ROUTES.admDash);
     }
+
+    useEffect(() => {
+        fetchDataByRoute(
+            ROUTES.getAllDish,
+            {
+                method: "GET",
+                next: { revalidate: 1200 },
+            },
+            setDishes
+        );
+    }, []);
+
     return (
         <div className="min-h-screen bg-gray-50">
             <Navbar
                 title={APP_NAME}
                 linksArr={publicLinksArr}
             />
-            <main className="mx-auto my-12 px-12 py-6">
-                <div className="m-auto flex flex-col items-center mt-6">
-                    <h1 className="font-bold leading-snug tracking-normal text-slate-800 my-3 w-full text-lg lg:max-w-xl lg:text-2xl">Меню</h1>
+            <main className="flex gap-5">
+                <div className="container mx-auto px-4 py-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {dishes &&
+                            dishes.map((dish) => (
+                                <MenuItem
+                                    key={dish._id?.toString()}
+                                    item={dish}
+                                    isAuthenticated={false}
+                                    onAddToCart={handleAddToCart}
+                                />
+                            ))}
+                    </div>
                 </div>
             </main>
         </div>

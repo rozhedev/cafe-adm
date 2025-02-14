@@ -1,17 +1,17 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { v4 as uuidv4 } from "uuid";
 import { ROUTES, UI_CONTENT } from "@/data";
-import { TOrdersContextState, UserOrdersContext } from "@/providers";
+import { useUserOrders } from "@/providers";
 import { TOrder } from "@/types";
 import { UserOrderItem } from "@/components/UserOrderItem";
 
 export default function Orders() {
     const { data: session, status } = useSession();
-    const [name, setName] = useState<string>("");
+    const [userOrders, setUserOrders] = useUserOrders();
 
-    const [userOrders, setUserOrders] = useContext(UserOrdersContext) as TOrdersContextState;
+    const [name, setName] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const fetchOrdersByUserName = async (username: string) => {
@@ -85,7 +85,7 @@ export default function Orders() {
                                 />
                             ))
                         ) : (
-                            <div>Вы ещё не сделали ни одного заказа</div>
+                            <div>{UI_CONTENT.err.orderListEmpty}</div>
                         )}
                     </>
                 )}

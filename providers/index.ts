@@ -1,5 +1,5 @@
-export { AdmOrdersContext, AdmOrdersProvider, UserOrdersContext, UserOrdersProvider, type TOrdersContextState } from "./OrdersProvider";
-export { DishesContext, DishesProvider, type TDishesContextState } from "./DishesProvider";
-export { UsersInfoContext, UsersInfoProvider, type TUsersInfoContextState } from "./UsersInfoProvider";
+export { AdmOrdersContext, AdmOrdersProvider, useAdmOrders, UserOrdersContext, UserOrdersProvider, useUserOrders, type TOrdersContextState } from "./OrdersProvider";
+export { DishesContext, DishesProvider, useDishes, type TDishesContextState } from "./DishesProvider";
+export { UsersInfoContext, UsersInfoProvider, useUsersInfo, type TUsersInfoContextState } from "./UsersInfoProvider";
 
 export { AuthProvider } from "./AuthProvider";
