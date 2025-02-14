@@ -29,9 +29,8 @@ const Navlink = ({ href, label }: { href: string; label: string }) => {
 
 export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
     const { data: session } = useSession();
-    console.log(session?.user);
-
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    
     return (
         <nav className="border-gray-200 bg-white shadow-md">
             <div className="flex flex-wrap items-center justify-between mx-auto px-6 py-3 lg:px-12 lg:py-6 md:border-b-1 md:border-gray-200">

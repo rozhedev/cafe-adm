@@ -48,11 +48,11 @@ export const publicLinksArr = [
 export const userLinksArr = [
     {
         href: ROUTES.dash,
-        label: "Меню блюд",
+        label: "Меню",
     },
     {
         href: ROUTES.dashOrders,
-        label: "Мои заказы",
+        label: "История заказов",
     },
     {
         href: ROUTES.dashBusket,

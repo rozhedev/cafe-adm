@@ -49,7 +49,7 @@ export const DishForm: FC<TDishForm> = ({ formData, setFormData, formFields, isL
             <div className="form-elem-size">
                 <button
                     type="submit"
-                    className="mt-4 btn btn--auth"
+                    className="mt-4 btn btn--accent"
                 >
                     {isLoading ? btnLoadLabel : btnDefaultLabel}
                 </button>

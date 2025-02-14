@@ -12,6 +12,7 @@ type BaseModalProps = {
 type FooterProps = {
     actionLabel: string;
     haveCloseBtn?: boolean;
+    actionBtnClassname: string;
     onAction: () => void;
 };
 
@@ -69,7 +70,7 @@ function withModal<P extends object, HasFooter extends boolean = true>(WrappedCo
                             <div className="bg-gray-50 px-4 py-3 gap-6 sm:px-6 sm:flex justify-end">
                                 <button
                                     type="button"
-                                    className="btn--sm btn--primary-red"
+                                    className={`btn--sm ${footerProps.actionBtnClassname}`}
                                     onClick={footerProps.onAction}
                                 >
                                     {footerProps.actionLabel}
@@ -77,7 +78,7 @@ function withModal<P extends object, HasFooter extends boolean = true>(WrappedCo
                                 {footerProps.haveCloseBtn !== false && (
                                     <button
                                         type="button"
-                                        className="btn--sm btn--primary-blue"
+                                        className="btn--sm !text-gray-800 font-medium border-2 bg-slate-100 border-blue-800 hover:border-blue-600"
                                         onClick={onClose}
                                     >
                                         Закрыть

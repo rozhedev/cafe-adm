@@ -59,6 +59,10 @@ export const UI_CONTENT = {
             default: "Обновить",
             loading: "Обновляю...",
         },
+        confirm: {
+            default: "Подтверждаю",
+            loading: "Подтверждение...",
+        },
     },
     success: {
         dish: {
@@ -98,6 +102,7 @@ export const UI_CONTENT = {
             dish: "Изменить блюдо",
             balance: "Изменить баланс",
         },
+        buy: "Вы подтверждаете заказ?"
     },
     confirmActionDescr: {
         delete: {
@@ -108,5 +113,6 @@ export const UI_CONTENT = {
             dish: "Введите новые значения в одно или несколько полей",
             balance: "Введите новый баланс",
         },
+        buy: "Товар попадёт в корзину, в которой Вы оплачиваете товар со своего баланса."
     },
 };

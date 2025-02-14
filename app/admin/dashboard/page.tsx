@@ -129,7 +129,7 @@ export default function Orders() {
             <div className="form-elem-size flex gap-5">
                 <button
                     type="button"
-                    className="max-w-48 my-4 btn--sm btn--auth"
+                    className="max-w-48 my-4 btn--sm btn--accent"
                     onClick={handleTableUpdate}
                 >
                     {UI_CONTENT.btn.update.default}
@@ -137,7 +137,7 @@ export default function Orders() {
                 <button
                     type="button"
                     onClick={handleAddOrder}
-                    className="max-w-48 my-4 btn--sm btn--auth"
+                    className="max-w-48 my-4 btn--sm btn--accent"
                 >
                     {isAddLoading ? UI_CONTENT.btn.add.loading : UI_CONTENT.btn.add.default}
                 </button>
@@ -154,6 +154,7 @@ export default function Orders() {
                 onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.delete]: false })}
                 isOpen={isModalOpen[ModalIds.delete]}
                 actionLabel={isDeleteLoading ? UI_CONTENT.btn.delete.loading : UI_CONTENT.btn.delete.default}
+                actionBtnClassname="btn--primary-red"
                 onAction={handleDeleteOrder}
             >
                 <div className="my-4">{UI_CONTENT.confirmActionDescr.delete.order}</div>

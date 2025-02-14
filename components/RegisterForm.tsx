@@ -83,7 +83,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ role, authRoute = "" }) =>
             <div>
                 <button
                     type="submit"
-                    className="btn btn--auth"
+                    className="btn btn--accent"
                     disabled={isLoading}
                 >
                     {isLoading ? UI_CONTENT.btn.register.loading : UI_CONTENT.btn.register.default}

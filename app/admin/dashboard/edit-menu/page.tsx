@@ -143,7 +143,7 @@ export default function EditMenu() {
             <div className="w-full flex flex-col">
                 <button
                     type="button"
-                    className="max-w-48 my-4 btn--sm btn--auth"
+                    className="max-w-48 my-4 btn--sm btn--accent"
                     onClick={handleTableUpdate}
                 >
                     {UI_CONTENT.btn.update.default}
@@ -175,6 +175,7 @@ export default function EditMenu() {
                 onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.delete]: false })}
                 isOpen={isModalOpen[ModalIds.delete]}
                 actionLabel={isDeleteLoading ? UI_CONTENT.btn.delete.loading : UI_CONTENT.btn.delete.default}
+                actionBtnClassname="btn--primary-red"
                 onAction={handleDelete}
             >
                 <div className="my-4">{UI_CONTENT.confirmActionDescr.delete.dish}</div>

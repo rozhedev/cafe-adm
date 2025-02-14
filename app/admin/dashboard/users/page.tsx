@@ -80,7 +80,7 @@ export default function Users() {
             <div className="form-elem-size">
                 <button
                     type="button"
-                    className="max-w-48 my-4 btn--sm btn--auth"
+                    className="max-w-48 my-4 btn--sm btn--accent"
                     onClick={handleTableUpdate}
                 >
                     {UI_CONTENT.btn.update.default}
@@ -107,7 +107,7 @@ export default function Users() {
                     <div className="form-elem-size">
                         <button
                             type="submit"
-                            className="mt-4 btn btn--auth"
+                            className="mt-4 btn btn--accent"
                         >
                             {isLoading ? UI_CONTENT.btn.editBalance.loading : UI_CONTENT.btn.editBalance.default}
                         </button>

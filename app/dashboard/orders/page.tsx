@@ -65,7 +65,7 @@ export default function Orders() {
                 <button
                     type="button"
                     onClick={handleOrdersUpdate}
-                    className="max-w-48 my-4 btn--sm btn--auth"
+                    className="max-w-48 my-4 btn--sm btn--accent"
                 >
                     {UI_CONTENT.btn.update.default}
                 </button>
