@@ -20,6 +20,7 @@ export default function EditMenu() {
     const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(DISH_MODALS_INIT);
     const [isAddLoading, setIsAddLoading] = useState<boolean>(false);
     const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
+    const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
 
     // --> Handlers
     const handleTableUpdate = () =>
@@ -106,7 +107,7 @@ export default function EditMenu() {
     };
     // * Delete dish
     const handleDelete = async () => {
-        setIsEditLoading(true);
+        setIsDeleteLoading(true);
         try {
             const res = await fetch(`${ROUTES.deleteDish}/${dishId}`, {
                 method: "DELETE",
@@ -120,7 +121,7 @@ export default function EditMenu() {
         } catch (error) {
             console.error("Delete dish error:", error);
         } finally {
-            setIsEditLoading(false);
+            setIsDeleteLoading(false);
         }
     };
 

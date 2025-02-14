@@ -4,7 +4,7 @@ import React, { FC, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { ROUTES } from "@/data";
+import { ROLES, ROUTES } from "@/data";
 
 type TLinksArr = { href: string; label: string }[];
 type NavlinkProps = {
@@ -30,7 +30,6 @@ const Navlink = ({ href, label }: { href: string; label: string }) => {
 export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
     const { data: session } = useSession();
     console.log(session?.user);
-    
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     return (
@@ -87,9 +86,13 @@ export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
                                 label={link.label}
                             />
                         ))}
+                        {session?.user?.role === ROLES.user && (
+                            <span className="py-2 px-3 md:p-0">
+                                Баланс: <span className="font-semibold">{session?.user?.balance || 0}</span>
+                            </span>
+                        )}
                         {session && (
                             <>
-                                <span className="py-2 px-3 md:p-0">Баланс: <span className="font-semibold">{session?.user?.balance || 0}</span></span>
                                 <span className="font-semibold py-2 px-3 md:p-0">{session?.user?.name || "User"}</span>
                                 <li className="flex md:justify-start justify-center">
                                     <button

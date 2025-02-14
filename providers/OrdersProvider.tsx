@@ -1,3 +1,5 @@
+// ? Need to store full list of orders (separate client & admin context for prevent unwished state changees)
+
 "use client"
 import { createContext, PropsWithChildren, useState } from "react";
 import { StateAction, TOrderArr } from "@/types";
@@ -6,7 +8,7 @@ import { StateAction, TOrderArr } from "@/types";
 export type TOrdersContextState = [TOrderArr, StateAction<TOrderArr>];
 type TOrdersContext = TOrdersContextState | undefined;
 
-export const AdmOrdersContext = createContext<TOrdersContext>(undefined);
+export const AdmOrdersContext = createContext<TOrdersContext>([[], () => null]);
 
 export const AdmOrdersProvider = ({ children }: PropsWithChildren) => {
     const [admOrders, setAdmOrders] = useState<TOrderArr>([]);

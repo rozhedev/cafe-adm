@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/nextauth";
 import { ROLES, ROUTES, APP_NAME, adminLinksArr } from "@/data";
 import { Navbar } from "@/ui";
-import { AdmOrdersProvider, DishesProvider, UsersInfoProvider } from "@/providers";
+import { AdmOrdersProvider, UsersInfoProvider } from "@/providers";
 
 export default async function AdmDashboardLayout({
     children,
@@ -17,19 +17,17 @@ export default async function AdmDashboardLayout({
 
     return (
         <AdmOrdersProvider>
-            <DishesProvider>
-                <UsersInfoProvider>
-                    <div className="min-h-screen bg-gray-50">
-                        <Navbar
-                            title={APP_NAME}
-                            linksArr={adminLinksArr}
-                        />
-                        <div className="mx-auto my-12 px-3">
-                            <div className="mx-auto flex flex-col items-center gap-4 max-w-[420px] lg:max-w-screen-xl md:max-w-screen-lg sm:max-w-screen-md">{children}</div>
-                        </div>
+            <UsersInfoProvider>
+                <div className="min-h-screen bg-gray-50">
+                    <Navbar
+                        title={APP_NAME}
+                        linksArr={adminLinksArr}
+                    />
+                    <div className="mx-auto my-12 px-3">
+                        <div className="mx-auto flex flex-col items-center gap-4 max-w-[420px] lg:max-w-screen-xl md:max-w-screen-lg sm:max-w-screen-md">{children}</div>
                     </div>
-                </UsersInfoProvider>
-            </DishesProvider>
+                </div>
+            </UsersInfoProvider>
         </AdmOrdersProvider>
     );
 }

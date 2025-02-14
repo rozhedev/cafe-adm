@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { TDish } from "@/types";
 import { MenuItem } from "@/components/MenuItem";
 import { fetchDataByRoute } from "@/helpers";
@@ -8,8 +8,7 @@ import { DishesContext, TDishesContextState } from "@/providers";
 
 // * Default page - Cafe Menu
 export default function CafeMenu() {
-    // const [dishes, setDishes] = useContext(DishesContext) as TDishesContextState;
-    const [dishes, setDishes] = useState<TDish[]>([]);
+    const [dishes, setDishes] = useContext(DishesContext) as TDishesContextState;
 
     const handleAddToCart = (dish: TDish) => {
         console.log("Добавлено в корзину:", dish);
@@ -31,7 +30,7 @@ export default function CafeMenu() {
             <div className="form-elem-size flex gap-5">
                 <div className="container mx-auto px-4 py-8">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {dishes.map((dish) => (
+                        {dishes && dishes.map((dish) => (
                             <MenuItem
                                 key={dish._id?.toString()}
                                 item={dish}

@@ -1,3 +1,4 @@
+// ? Next-auth necessary provider
 "use client";
 
 import { SessionProvider } from "next-auth/react";

@@ -1,17 +1,27 @@
 "use client";
 import React, { SyntheticEvent, useContext, useEffect, useState } from "react";
-import { TOrder } from "@/types";
-import { AdmOrdersContext, type TAdmOrdersContextState } from "@/providers";
-import { ordersColumns, orderActionOptions, ROUTES, OrderStatuses, UI_CONTENT } from "@/data";
+import { BooleanValObjMap, TOrder } from "@/types";
+import { AdmOrdersContext, type TOrdersContextState } from "@/providers";
+import { ordersColumns, orderActionOptions, ROUTES, OrderStatuses, UI_CONTENT, ModalIds, DISH_MODALS_INIT } from "@/data";
 import { fetchDataByRoute, formatOrders } from "@/helpers";
+import { ModalWithFooter } from "@/ui";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
 import { useToast } from "@/components/Toast";
 
 // * Default page - Orders
 export default function Orders() {
+    const MODALS_INIT_STATE = {
+        delete: false,
+    };
+
     const { addToast } = useToast();
-    const [admOrders, setAdmOrders] = useContext(AdmOrdersContext) as TAdmOrdersContextState;
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [admOrders, setAdmOrders] = useContext(AdmOrdersContext) as TOrdersContextState;
+    const [orderId, setOrderId] = useState<string>("");
+
+    const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(MODALS_INIT_STATE);
+
+    const [isAddLoading, setAddIsLoading] = useState<boolean>(false);
+    const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
 
     // --> Handlers
     const handleTableUpdate = () =>
@@ -25,6 +35,7 @@ export default function Orders() {
             (orders) => formatOrders(orders)
         );
 
+    // * Update
     const handleUpdateStatus = async (id: string, status: string) => {
         try {
             const res = await fetch(ROUTES.editStatus, {
@@ -41,10 +52,12 @@ export default function Orders() {
             console.error("Get dish list error:", error);
         }
     };
+
+    // * Add
     const handleAddOrder = async (e: SyntheticEvent) => {
         e.preventDefault();
         try {
-            setIsLoading(true);
+            setAddIsLoading(true);
             const res = await fetch(ROUTES.addOrder, {
                 method: "POST",
                 headers: {
@@ -67,12 +80,38 @@ export default function Orders() {
         } catch (error) {
             console.error("Error when adding order:", error);
         } finally {
-            setIsLoading(false);
+            setAddIsLoading(false);
         }
     };
+
+    // * Delete
+    const handleDeleteOrder = async () => {
+        setIsDeleteLoading(true);
+        try {
+            const res = await fetch(`${ROUTES.deleteOrder}/${orderId}`, {
+                method: "DELETE",
+            });
+            if (res.ok) {
+                addToast(UI_CONTENT.success.dish.deleted, "success");
+                setIsModalOpen(DISH_MODALS_INIT);
+                return;
+            }
+            addToast(UI_CONTENT.err.dish.deleted, "error");
+        } catch (error) {
+            console.error("Delete dish error:", error);
+        } finally {
+            setIsDeleteLoading(false);
+        }
+    };
+
     const handleAction = async (status: string, order: TOrder) => {
         const id = String(order._id) || "";
-        await handleUpdateStatus(id, status);
+        setOrderId(id);
+        console.log(status);
+        if (status !== ModalIds.delete) await handleUpdateStatus(id, status);
+        else {
+            setIsModalOpen({ delete: true });
+        }
     };
 
     // --> Data fetching
@@ -104,7 +143,7 @@ export default function Orders() {
                     onClick={handleAddOrder}
                     className="max-w-48 my-4 btn--sm btn--auth"
                 >
-                    {isLoading ? UI_CONTENT.btn.add.loading : UI_CONTENT.btn.add.default}
+                    {isAddLoading ? UI_CONTENT.btn.add.loading : UI_CONTENT.btn.add.default}
                 </button>
             </div>
             <ResponsiveTable
@@ -114,6 +153,15 @@ export default function Orders() {
                 data={admOrders}
                 onAction={handleAction}
             />
+            <ModalWithFooter
+                title="Вы точно хотите удалить заказ?"
+                onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.delete]: false })}
+                isOpen={isModalOpen[ModalIds.delete]}
+                actionLabel={isDeleteLoading ? UI_CONTENT.btn.delete.loading : UI_CONTENT.btn.delete.default}
+                onAction={handleDeleteOrder}
+            >
+                <div className="my-4">Эту операцию нельзя отменить. После удаления перезагрузите страницу</div>
+            </ModalWithFooter>
         </div>
     );
 }

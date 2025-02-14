@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { AuthProvider } from "@/providers";
 import { APP_NAME } from "@/data";
+import { AuthProvider, DishesProvider } from "@/providers";
 import { ToastProvider } from "@/components/Toast";
 
 const geistSans = localFont({
@@ -30,7 +30,9 @@ export default function RootLayout({
         <html lang="ru">
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <ToastProvider>
-                    <AuthProvider>{children}</AuthProvider>
+                    <AuthProvider>
+                        <DishesProvider>{children}</DishesProvider>
+                    </AuthProvider>
                 </ToastProvider>
             </body>
         </html>

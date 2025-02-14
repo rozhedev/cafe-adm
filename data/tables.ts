@@ -68,6 +68,10 @@ export const orderActionOptions: TActionOptionsArr = [
         id: OrderStatuses.completed,
         label: OrderStatusesLabels.completed,
     },
+    {
+        id: "delete",
+        label: "Удалить",
+    },
 ];
 export const dishActionOptions: TActionOptionsArr = [
     {

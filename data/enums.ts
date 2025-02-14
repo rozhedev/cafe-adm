@@ -5,6 +5,10 @@ export enum OrderStatuses {
     cancelled = "cancelled",
     unknown = "unknown",
 }
+export enum Actions {
+    delete = "delete",
+}
+
 export enum OrderStatusesLabels {
     ordered = "Заказано",
     payed = "Оплачено",

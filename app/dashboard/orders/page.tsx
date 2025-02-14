@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { v4 as uuidv4 } from "uuid";
 import { ROUTES, UI_CONTENT } from "@/data";
-import { TUserOrdersContextState, UserOrdersContext } from "@/providers";
+import { TOrdersContextState, UserOrdersContext } from "@/providers";
 import { TOrder } from "@/types";
 import { UserOrderItem } from "@/components/UserOrderItem";
 
@@ -11,7 +11,7 @@ export default function Orders() {
     const { data: session, status } = useSession();
     const [name, setName] = useState<string>("");
 
-    const [userOrders, setUserOrders] = useContext(UserOrdersContext) as TUserOrdersContextState;
+    const [userOrders, setUserOrders] = useContext(UserOrdersContext) as TOrdersContextState;
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const fetchOrdersByUserName = async (username: string) => {

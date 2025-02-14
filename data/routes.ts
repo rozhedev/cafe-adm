@@ -30,6 +30,7 @@ export const ROUTES = {
     getAllOrders: "/api/orders/getAll",
     getByUserName: "/api/orders/getByUserName",
     editStatus: "/api/orders/editStatus",
+    deleteOrder: "/api/orders/delete",
 };
 
 // --> Links
