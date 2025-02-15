@@ -1,8 +1,8 @@
 "use client";
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BooleanValObjMap, TOrder } from "@/types";
 import { useAdmOrders } from "@/providers";
-import { ordersColumns, orderActionOptions, ROUTES, OrderStatuses, UI_CONTENT, ModalIds, DISH_MODALS_INIT, ORDER_MODALS_INIT } from "@/data";
+import { ordersColumns, orderActionOptions, ROUTES, UI_CONTENT, ModalIds, DISH_MODALS_INIT, ORDER_MODALS_INIT } from "@/data";
 import { fetchDataByRoute, formatOrders } from "@/helpers";
 import { ModalWithFooter } from "@/ui";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
@@ -15,8 +15,6 @@ export default function Orders() {
     const [orderId, setOrderId] = useState<string>("");
 
     const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(ORDER_MODALS_INIT);
-
-    const [isAddLoading, setAddIsLoading] = useState<boolean>(false);
     const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
 
     // --> Handlers
@@ -46,37 +44,6 @@ export default function Orders() {
             }
         } catch (error) {
             console.error("Get dish list error:", error);
-        }
-    };
-
-    // * Add
-    const handleAddOrder = async (e: SyntheticEvent) => {
-        e.preventDefault();
-        try {
-            setAddIsLoading(true);
-            const res = await fetch(ROUTES.addOrder, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    dish: "Test dish",
-                    quantity: 1,
-                    price: 100,
-                    status: OrderStatuses.payed,
-                    user: "67ab421b75b3fffa6d404e05",
-                    createdAt: Date.now(),
-                }),
-            });
-
-            if (res.ok) {
-                addToast(UI_CONTENT.success.order.added, "success");
-                return;
-            }
-        } catch (error) {
-            console.error("Error when adding order:", error);
-        } finally {
-            setAddIsLoading(false);
         }
     };
 
@@ -133,13 +100,6 @@ export default function Orders() {
                     onClick={handleTableUpdate}
                 >
                     {UI_CONTENT.btn.update.default}
-                </button>
-                <button
-                    type="button"
-                    onClick={handleAddOrder}
-                    className="max-w-48 my-4 btn--sm btn--accent"
-                >
-                    {isAddLoading ? UI_CONTENT.btn.add.loading : UI_CONTENT.btn.add.default}
                 </button>
             </div>
             <ResponsiveTable

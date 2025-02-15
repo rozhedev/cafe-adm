@@ -34,7 +34,7 @@ export type TOrder = {
     // * Don't change key prop from "dish" to "name" for prevent render bug
     dish: string;
     price: number;
-    quantity: string;
+    quantity: number;
     status: string;
     user: string;
     createdAt: number | string;
@@ -45,8 +45,8 @@ export type TDish = {
     _id?: ObjectId;
     dish: string;
     ingredients: string;
-    price: string;
-    quantity: string;
+    price: number;
+    quantity: number;
 };
 export type TDishArr = TDish[];
 

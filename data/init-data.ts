@@ -28,6 +28,10 @@ export const ORDER_MODALS_INIT = {
     delete: false,
 };
 
+export const MENU_MODALS_INIT = {
+    add: false,
+};
+
 // --> Content
 export const UI_CONTENT = {
     btn: {
@@ -102,7 +106,7 @@ export const UI_CONTENT = {
             dish: "Изменить блюдо",
             balance: "Изменить баланс",
         },
-        buy: "Вы подтверждаете заказ?"
+        buy: "Вы подтверждаете заказ?",
     },
     confirmActionDescr: {
         delete: {
@@ -113,6 +117,6 @@ export const UI_CONTENT = {
             dish: "Введите новые значения в одно или несколько полей",
             balance: "Введите новый баланс",
         },
-        buy: "Товар попадёт в корзину, в которой Вы оплачиваете товар со своего баланса."
+        buy: "Товар попадёт в корзину, в которой Вы оплачиваете товар со своего баланса.",
     },
 };

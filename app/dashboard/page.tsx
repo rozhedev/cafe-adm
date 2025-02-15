@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { BooleanValObjMap, TDish } from "@/types";
 import { useDishes } from "@/providers";
 import { fetchDataByRoute } from "@/helpers";
-import { OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
+import { MENU_MODALS_INIT, OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
 import { MenuItem } from "@/components/MenuItem";
 import { ModalWithFooter } from "@/ui";
 import { useToast } from "@/components/Toast";
@@ -11,14 +11,14 @@ import { useSession } from "next-auth/react";
 
 // * Default page - Cafe Menu
 export default function CafeMenu() {
-    const { data: session } = useSession();
+
+    const { data: session, update } = useSession();
     const userid = session?.user?.id;
-    const role = session?.user?.role;
 
     const { addToast } = useToast();
     const [dishes, setDishes] = useDishes();
     const [orderedProduct, setOrderedProduct] = useState<TDish | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>({ add: false });
+    const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(MENU_MODALS_INIT);
     const [isLoading, setIsLoading] = useState(false);
 
     const handleAddOrder = async () => {
@@ -33,7 +33,7 @@ export default function CafeMenu() {
                 },
                 body: JSON.stringify({
                     dish: orderedProduct.dish,
-                    quantity: orderedProduct.quantity,
+                    quantity: 1,
                     price: orderedProduct.price,
                     status: OrderStatuses.ordered,
                     user: userid,
@@ -43,6 +43,14 @@ export default function CafeMenu() {
 
             if (res.ok) {
                 addToast(UI_CONTENT.success.order.added, "success");
+                setIsModalOpen(MENU_MODALS_INIT);
+                update({
+                    ...session,
+                    user: {
+                        ...session?.user,
+                        balance: session?.user.balance - orderedProduct.price,
+                    },
+                })
                 return;
             }
         } catch (error) {

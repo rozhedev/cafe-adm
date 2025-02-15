@@ -51,15 +51,20 @@ export const authOptions: NextAuthOptions = {
             return token;
         },
         async session({ session, token }) {
+            // Modify user balance in session when balance update on server
+            if (session?.user) {
+                const user = await User.findById(token.sub);
+                session.user.balance = user.balance;
+            }
             return {
                 ...session,
                 user: {
                     ...session.user,
                     id: token._id,
                     role: token.role,
-                    balance: token.balance,
                 },
-            };
+            }
+           
         },
     },
     pages: {
