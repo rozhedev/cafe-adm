@@ -2,14 +2,14 @@ import React, { FC, PropsWithChildren } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
 // * Base modal
-type BaseModalProps = {
+export type BaseModalProps = {
     title: string;
     isOpen: boolean;
     onClose?: () => void;
 };
 
 // * Modal with footer
-type FooterProps = {
+export type FooterProps = {
     actionLabel: string;
     haveCloseBtn?: boolean;
     actionBtnClassname: string;

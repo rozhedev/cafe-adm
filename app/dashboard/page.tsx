@@ -11,7 +11,6 @@ import { useSession } from "next-auth/react";
 
 // * Default page - Cafe Menu
 export default function CafeMenu() {
-
     const { data: session, update } = useSession();
     const userid = session?.user?.id;
 
@@ -50,7 +49,7 @@ export default function CafeMenu() {
                         ...session?.user,
                         balance: session?.user.balance - orderedProduct.price,
                     },
-                })
+                });
                 return;
             }
         } catch (error) {
