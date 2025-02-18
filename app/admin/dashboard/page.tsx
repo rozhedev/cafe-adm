@@ -53,6 +53,9 @@ export default function Orders() {
         try {
             const res = await fetch(`${ROUTES.deleteOrder}/${orderId}`, {
                 method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
             });
             if (res.ok) {
                 addToast(UI_CONTENT.success.dish.deleted, "success");

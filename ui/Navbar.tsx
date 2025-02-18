@@ -29,6 +29,8 @@ const Navlink = ({ href, label }: { href: string; label: string }) => {
 
 export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
     const { data: session } = useSession();
+    const role = session?.user.role;
+    
     const [isOpen, setIsOpen] = useState<boolean>(false);
     
     return (
@@ -85,7 +87,7 @@ export const Navbar: FC<NavlinkProps> = ({ title, linksArr }) => {
                                 label={link.label}
                             />
                         ))}
-                        {session?.user?.role === ROLES.user && (
+                        {role === ROLES.user && (
                             <span className="py-2 px-3 md:p-0">
                                 Баланс: <span className="font-semibold">{session?.user?.balance || 0}</span>
                             </span>

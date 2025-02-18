@@ -1,23 +1,18 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useBusket } from "@/providers";
 import { useSession } from "next-auth/react";
 import { TDish } from "@/types";
 
 export default function Busket() {
     const { data: session } = useSession();
-    const { items, removeItem, totalPrice, checkout } = useBusket();
+    const { items, removeItem, totalPrice, checkout, isLoading } = useBusket();
     const userBalance = session?.user?.balance || 0;
-
-    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-2xl font-bold mb-6">Корзина</h1>
-
-            {items.length === 0 ? (
-                <div className="text-center text-gray-500">Корзина пуста</div>
-            ) : (
+            {items && items.length > 0 ? (
                 <>
                     <div className="bg-white rounded-lg shadow-md mb-6">
                         {items.map((item: TDish) => (
@@ -30,7 +25,7 @@ export default function Busket() {
                                     <p className="text-gray-600 text-sm">{item.price} грн.</p>
                                 </div>
                                 <button
-                                    onClick={() => removeItem(item._id?.toString() || "")}
+                                    onClick={() => removeItem(item._id?.toString() as string)}
                                     className="text-red-500 hover:text-red-700"
                                     disabled={isLoading}
                                 >
@@ -62,6 +57,8 @@ export default function Busket() {
                         </button>
                     </div>
                 </>
+            ) : (
+                <div className="text-center text-gray-500">Корзина пуста</div>
             )}
         </div>
     );

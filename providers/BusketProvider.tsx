@@ -1,17 +1,12 @@
 "use client";
-import React, { FC, createContext, useContext, useEffect, useState } from "react";
-import { TDish } from "@/types";
+import React, { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { TDish, TDishArr } from "@/types";
 import { useToast } from "@/components/Toast";
 import { OrderStatuses, ROUTES } from "@/data";
-import { useSession } from "next-auth/react";
-
-// Types
-export type CartItem = TDish & {
-    orderId?: string;
-};
 
 export type TBusketContextState = {
-    items: CartItem[];
+    items: TDishArr;
     addItem: (item: TDish) => Promise<void>;
     removeItem: (itemId: string) => void;
     clearBusket: () => void;
@@ -25,13 +20,13 @@ export type TBusketContextState = {
 export const BusketContext = createContext<TBusketContextState | undefined>(undefined);
 
 // Provider
-export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [items, setItems] = useState<CartItem[]>([]);
-    const [totalPrice, setTotalPrice] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
+export const BusketProvider = ({ children }: PropsWithChildren) => {
+    const [items, setItems] = useState<TDishArr>([]);
+    const [totalPrice, setTotalPrice] = useState<number>(0);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { data: session } = useSession();
     const { addToast } = useToast();
-    const userid = session?.user?.id;
+    const userId = session?.user?.id;
     const username = session?.user?.name;
 
     const fetchOrders = async () => {
@@ -51,20 +46,15 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 }),
             });
 
-            const orderData = await response.json();
-
-            const cartItems: CartItem[] = orderData.map((order: any) => ({
-                _id: order.dish._id || order.dish,
-                dish: order.dish.name || order.dishName || order.dish,
-                price: order.price,
-                description: order.dish.description || "",
-                image: order.dish.image || "",
-                orderId: order._id,
-            }));
-
-            setItems(cartItems);
+            if (response.ok) {
+                const orderData = await response.json();
+                setItems(Array.isArray(orderData) ? orderData : []);
+            } else if (response.status === 404) setItems([]);
+            else console.error("Error fetching orders:", response.statusText);
         } catch (error) {
             console.error("Error fetching orders:", error);
+
+            setItems([]);
         } finally {
             setIsLoading(false);
         }
@@ -81,34 +71,31 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }, [username]);
 
     useEffect(() => {
-        // Обновляем localStorage когда изменяются айтемы
         localStorage.setItem("busket", JSON.stringify(items));
 
-        // Рассчитываем общую стоимость
-        const total = items && items.reduce((sum, item) => sum + +item.price, 0);
+        const total = items.reduce((sum, item) => sum + +item.price, 0) || 0;
         setTotalPrice(total);
     }, [items]);
 
     const addItem = async (item: TDish) => {
         try {
             setIsLoading(true);
-            if (!userid) {
+            if (!userId) {
                 addToast("Необходимо авторизоваться", "error");
                 return;
             }
 
-            // Создаем заказ со статусом "ordered"
             const res = await fetch(ROUTES.addOrder, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    dish: item.dish || item._id,
-                    quantity: "1", // Предполагаем, что количество 1 на каждое добавление
+                    dish: item.dish,
                     price: item.price,
+                    quantity: 1,
                     status: OrderStatuses.ordered,
-                    user: userid,
+                    user: userId,
                     createdAt: Date.now(),
                 }),
             });
@@ -119,13 +106,7 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 return;
             }
 
-            const data = await res.json();
-            const cartItem: CartItem = {
-                ...item,
-                orderId: data.orderId || data._id, // API может вернуть orderId или _id
-            };
-
-            setItems((prev) => [...prev, cartItem]);
+            setItems((prev) => [...prev, item]);
             addToast("Товар добавлен в корзину", "success");
         } catch (error) {
             console.error("Error adding item to cart:", error);
@@ -139,13 +120,13 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         try {
             const itemToRemove = items.find((item) => item._id?.toString() === itemId);
 
-            if (!itemToRemove || !itemToRemove.orderId) {
+            if (!itemToRemove || !itemToRemove._id) {
                 // Если нет orderId или элемент не найден, просто удаляем из локального состояния
                 setItems((prev) => prev.filter((item) => item._id?.toString() !== itemId));
                 return;
             }
 
-            if (!userid) {
+            if (!userId) {
                 addToast("Необходимо авторизоваться", "error");
                 return;
             }
@@ -153,15 +134,11 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             setIsLoading(true);
 
             // Удаляем заказ на сервере
-            const res = await fetch(`/api/orders/${itemToRemove.orderId}`, {
+            const res = await fetch(`${ROUTES.deleteOrder}/${itemToRemove._id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    orderId: itemToRemove.orderId,
-                    userId: userid,
-                }),
             });
 
             if (!res.ok) {
@@ -182,12 +159,13 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
 
     const clearBusket = async () => {
-        if (userid && items.length > 0) {
+        if (userId && items.length > 0) {
             try {
                 setIsLoading(true);
 
                 // Получаем все ID заказов
-                const orderIds = items && items.map((item) => item.orderId).filter((id) => id !== undefined) as string[];
+                const orderIds = items && items.map((item) => item._id).filter((id) => id !== undefined);
+                console.log(orderIds);
 
                 // Удаляем все заказы на сервере (для каждого заказа делаем отдельный запрос)
                 const deletePromises = orderIds.map((orderId) =>
@@ -196,10 +174,6 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                         headers: {
                             "Content-Type": "application/json",
                         },
-                        body: JSON.stringify({
-                            orderId: orderId,
-                            userId: userid,
-                        }),
                     })
                 );
 
@@ -220,7 +194,7 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const checkout = async () => {
         try {
             setIsLoading(true);
-            if (!userid) {
+            if (!userId) {
                 addToast("Необходимо авторизоваться", "error");
                 return;
             }
@@ -229,12 +203,10 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 addToast("Корзина пуста", "error");
                 return;
             }
-
-            // Получаем все ID заказов
-            const orderIds = items && items.map((item) => item.orderId).filter((id) => id !== undefined) as string[];
+            const orderIds = items && items.filter((item) => item._id !== undefined);
 
             // Меняем статус на "payed" и списываем баланс
-            const res = await fetch("/api/orders/checkout", {
+            const res = await fetch(ROUTES.checkoutOrder, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -242,7 +214,7 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 body: JSON.stringify({
                     orderIds,
                     totalPrice,
-                    userId: userid,
+                    userId: userId,
                 }),
             });
 
@@ -257,8 +229,8 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             clearBusket();
 
             // Обновляем баланс сессии, если доступен
-            if (session && data.updatedBalance !== undefined) {
-                session.user.balance = data.updatedBalance;
+            if (session && data.balance !== undefined) {
+                session.user.balance = data.balance;
             }
         } catch (error) {
             console.error("Error checking out:", error);
@@ -294,7 +266,7 @@ export const BusketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 export const useBusket = () => {
     const context = useContext(BusketContext);
     if (!context) {
-      throw new Error('useBusket must be used within a BusketProvider');
+        throw new Error("useBusket must be used within a BusketProvider");
     }
     return context;
-  };
+};

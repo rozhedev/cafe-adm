@@ -52,12 +52,6 @@ export default function Orders() {
     const handleOrdersUpdate = () => {
         fetchOrdersByUserName(name);
     };
-    const handleCancelOrder = (order: any) => {
-        console.log(`Отмена заказа: ${order.dish}`);
-    };
-    const handleRepeatOrder = (order: any) => {
-        console.log(`Повтор заказа: ${order.dish}`);
-    };
 
     return (
         <div className="w-full">
@@ -80,8 +74,6 @@ export default function Orders() {
                                 <UserOrderItem
                                     key={uuidv4()}
                                     order={order}
-                                    onCancelOrder={handleCancelOrder}
-                                    onRepeatOrder={handleRepeatOrder}
                                 />
                             ))
                         ) : (

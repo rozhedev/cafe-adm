@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { BooleanValObjMap, TDish } from "@/types";
 import { useDishes } from "@/providers";
 import { fetchDataByRoute } from "@/helpers";
 import { MENU_MODALS_INIT, OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
-import { MenuItem } from "@/components/MenuItem";
 import { ModalWithFooter } from "@/ui";
 import { useToast } from "@/components/Toast";
-import { useSession } from "next-auth/react";
+import { MenuItem } from "@/components/MenuItem";
 
 // * Default page - Cafe Menu
 export default function CafeMenu() {

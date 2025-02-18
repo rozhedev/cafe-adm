@@ -32,9 +32,9 @@ export async function POST(req: Request) {
         // Deduct balance from user
         const updatedUser = await User.findByIdAndUpdate(userId, { $inc: { balance: -totalPrice } }, { new: true });
 
-        // Update session if necessary
+        // Update session
         const session = await getServerSession(authOptions);
-        if (session && session.user.id === userId) {
+        if (session) {
             session.user.balance = updatedUser.balance;
         }
 
