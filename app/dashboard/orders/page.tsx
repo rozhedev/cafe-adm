@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { v4 as uuidv4 } from "uuid";
 import { OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
-import { useUserOrders } from "@/providers";
+import { useBusket, useUserOrders } from "@/providers";
 import { TOrder } from "@/types";
 import { UserOrderItem } from "@/components/UserOrderItem";
 
@@ -41,10 +41,10 @@ export default function Orders() {
     useEffect(() => {
         if (status === "authenticated") {
             const username = session?.user?.name as string;
-
             if (username) {
-                setName(username);
                 fetchOrdersByUserName(username);
+                setName(username);
+                localStorage.setItem("orders", JSON.stringify(userOrders));
             }
         }
     }, [status, session?.user?.name]);

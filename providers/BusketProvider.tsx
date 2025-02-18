@@ -1,5 +1,5 @@
 "use client";
-import React, { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
+import React, { PropsWithChildren, createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { TDish, TDishArr } from "@/types";
 import { useToast } from "@/components/Toast";
@@ -15,27 +15,24 @@ export type TBusketContextState = {
     isLoading: boolean;
     refreshCart: () => void;
 };
-
-// Context
 export const BusketContext = createContext<TBusketContextState | undefined>(undefined);
 
-// Provider
+// --> Provider
 export const BusketProvider = ({ children }: PropsWithChildren) => {
     const [items, setItems] = useState<TDishArr>([]);
     const [totalPrice, setTotalPrice] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const { data: session } = useSession();
+    const { data: session, update } = useSession();
     const { addToast } = useToast();
     const userId = session?.user?.id;
     const username = session?.user?.name;
 
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         if (!username) return;
 
         try {
             setIsLoading(true);
-
-            const response = await fetch(ROUTES.getByUserName, {
+            const res = await fetch(ROUTES.getByUserName, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -46,45 +43,58 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
                 }),
             });
 
-            if (response.ok) {
-                const orderData = await response.json();
+            if (res.ok) {
+                const orderData = await res.json();
                 setItems(Array.isArray(orderData) ? orderData : []);
-            } else if (response.status === 404) setItems([]);
-            else console.error("Error fetching orders:", response.statusText);
+            }
         } catch (error) {
             console.error("Error fetching orders:", error);
-
             setItems([]);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [username, addToast]);
 
+    // Initial loading of cart items
     useEffect(() => {
-        const savedItems = localStorage.getItem("busket");
-        if (savedItems) {
-            setItems(JSON.parse(savedItems));
-        }
         if (username) {
             fetchOrders();
+        } 
+        else {
+            // If no user is logged in, try to get items from localStorage
+            const savedItems = localStorage.getItem("busket");
+            if (savedItems) {
+                try {
+                    const parsedItems = JSON.parse(savedItems);
+                    setItems(Array.isArray(parsedItems) ? parsedItems : []);
+                } catch (e) {
+                    console.error("Error parsing saved cart items:", e);
+                    localStorage.removeItem("busket");
+                }
+            }
         }
-    }, [username]);
+    }, [username, fetchOrders]);
 
+    // Update localStorage and calculate total price when items change
     useEffect(() => {
-        localStorage.setItem("busket", JSON.stringify(items));
+        if (items.length > 0) {
+            localStorage.setItem("busket", JSON.stringify(items));
+        } else {
+            localStorage.removeItem("busket");
+        }
 
-        const total = items.reduce((sum, item) => sum + +item.price, 0) || 0;
+        const total = items.reduce((sum, item) => sum + +(item.price || 0), 0);
         setTotalPrice(total);
     }, [items]);
 
     const addItem = async (item: TDish) => {
         try {
-            setIsLoading(true);
             if (!userId) {
                 addToast("Необходимо авторизоваться", "error");
                 return;
             }
 
+            setIsLoading(true);
             const res = await fetch(ROUTES.addOrder, {
                 method: "POST",
                 headers: {
@@ -101,12 +111,12 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (!res.ok) {
-                const error = await res.json();
-                addToast(error.message || "Ошибка при добавлении в корзину", "error");
+                const errorData = await res.json();
+                addToast(errorData.message || "Ошибка при добавлении в корзину", "error");
                 return;
             }
-
-            setItems((prev) => [...prev, item]);
+            const newItem = await res.json();
+            setItems((prev) => [...prev, newItem]);
             addToast("Товар добавлен в корзину", "success");
         } catch (error) {
             console.error("Error adding item to cart:", error);
@@ -121,19 +131,16 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             const itemToRemove = items.find((item) => item._id?.toString() === itemId);
 
             if (!itemToRemove || !itemToRemove._id) {
-                // Если нет orderId или элемент не найден, просто удаляем из локального состояния
+                // If no orderId or item not found, just remove from local state
                 setItems((prev) => prev.filter((item) => item._id?.toString() !== itemId));
                 return;
             }
-
             if (!userId) {
                 addToast("Необходимо авторизоваться", "error");
                 return;
             }
 
             setIsLoading(true);
-
-            // Удаляем заказ на сервере
             const res = await fetch(`${ROUTES.deleteOrder}/${itemToRemove._id}`, {
                 method: "DELETE",
                 headers: {
@@ -142,12 +149,11 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (!res.ok) {
-                const error = await res.json();
-                addToast(error.message || "Ошибка при удалении из корзины", "error");
+                const errorData = await res.json();
+                addToast(errorData.message || "Ошибка при удалении из корзины", "error");
                 return;
             }
 
-            // Удаляем элемент из локального состояния
             setItems((prev) => prev.filter((item) => item._id?.toString() !== itemId));
             addToast("Товар удален из корзины", "success");
         } catch (error) {
@@ -162,22 +168,19 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
         if (userId && items.length > 0) {
             try {
                 setIsLoading(true);
+                const orderIds = items.map((item) => item._id).filter((id) => id !== undefined);
 
-                // Получаем все ID заказов
-                const orderIds = items && items.map((item) => item._id).filter((id) => id !== undefined);
-                console.log(orderIds);
-
-                // Удаляем все заказы на сервере (для каждого заказа делаем отдельный запрос)
-                const deletePromises = orderIds.map((orderId) =>
-                    fetch(`${ROUTES.deleteOrder}/${orderId}`, {
-                        method: "DELETE",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    })
-                );
-
-                await Promise.all(deletePromises);
+                if (orderIds.length > 0) {
+                    const deletePromises = orderIds.map((orderId) =>
+                        fetch(`${ROUTES.deleteOrder}/${orderId}`, {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        })
+                    );
+                    await Promise.all(deletePromises);
+                }
             } catch (error) {
                 console.error("Error clearing basket:", error);
                 addToast("Ошибка при очистке корзины", "error");
@@ -186,26 +189,29 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             }
         }
 
-        // В любом случае очищаем локальное состояние
         setItems([]);
         localStorage.removeItem("busket");
     };
 
     const checkout = async () => {
         try {
-            setIsLoading(true);
             if (!userId) {
                 addToast("Необходимо авторизоваться", "error");
                 return;
             }
-
             if (items.length === 0) {
                 addToast("Корзина пуста", "error");
                 return;
             }
-            const orderIds = items && items.filter((item) => item._id !== undefined);
 
-            // Меняем статус на "payed" и списываем баланс
+            setIsLoading(true);
+            const orderIds = items.map((item) => item._id).filter((id) => id !== undefined);
+
+            if (orderIds.length === 0) {
+                addToast("Нет действительных заказов в корзине", "error");
+                return;
+            }
+
             const res = await fetch(ROUTES.checkoutOrder, {
                 method: "POST",
                 headers: {
@@ -214,24 +220,26 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
                 body: JSON.stringify({
                     orderIds,
                     totalPrice,
-                    userId: userId,
+                    userId,
                 }),
             });
 
-            if (!res.ok) {
-                const error = await res.json();
-                addToast(error.message || "Ошибка при оформлении заказа", "error");
+            if (res.ok) {
+                const data = await res.json();
+                update({
+                    ...session,
+                    user: {
+                        ...session?.user,
+                        balance: session?.user.balance - data.price,
+                    },
+                });
+                addToast("Заказ успешно оформлен", "success");
+                clearBusket();
                 return;
             }
+            const errorData = await res.json();
+            addToast(errorData.message || "Ошибка при оформлении заказа", "error");
 
-            const data = await res.json();
-            addToast("Заказ успешно оформлен", "success");
-            clearBusket();
-
-            // Обновляем баланс сессии, если доступен
-            if (session && data.balance !== undefined) {
-                session.user.balance = data.balance;
-            }
         } catch (error) {
             console.error("Error checking out:", error);
             addToast("Ошибка при оформлении заказа", "error");
@@ -240,10 +248,10 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
         }
     };
 
-    // Добавляем функцию для ручной синхронизации с сервером
-    const refreshCart = () => {
+    // Function for manual synchronization with server
+    const refreshCart = useCallback(() => {
         fetchOrders();
-    };
+    }, [fetchOrders]);
 
     return (
         <BusketContext.Provider

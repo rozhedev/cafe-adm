@@ -32,6 +32,7 @@ export const ROUTES = {
     editStatus: "/api/orders/editStatus",
     deleteOrder: "/api/orders/delete",
     checkoutOrder: "/api/orders/checkout",
+    rollbackOrder: "/api/orders/rollbackOrder",
 };
 
 // --> Links

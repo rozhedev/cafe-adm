@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { BooleanValObjMap, TDish } from "@/types";
-import { useDishes } from "@/providers";
+import { useBusket, useDishes } from "@/providers";
 import { fetchDataByRoute } from "@/helpers";
 import { MENU_MODALS_INIT, OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
 import { ModalWithFooter } from "@/ui";
@@ -14,6 +14,7 @@ export default function CafeMenu() {
     const { data: session } = useSession();
     const userid = session?.user?.id;
     const { addToast } = useToast();
+    const { refreshCart } = useBusket();
 
     const [dishes, setDishes] = useDishes();
     const [orderedProduct, setOrderedProduct] = useState<TDish | null>(null);
@@ -43,6 +44,15 @@ export default function CafeMenu() {
             if (res.ok) {
                 addToast(UI_CONTENT.success.order.added, "success");
                 setIsModalOpen(MENU_MODALS_INIT);
+                refreshCart();
+                fetchDataByRoute(
+                    ROUTES.getAllDish,
+                    {
+                        method: "GET",
+                        next: { revalidate: 1200 },
+                    },
+                    setDishes
+                );
                 return;
             }
         } catch (error) {
