@@ -4,3 +4,4 @@ export { UsersInfoContext, UsersInfoProvider, useUsersInfo, type TUsersInfoConte
 export { BusketContext, BusketProvider, useBusket, type TBusketContextState } from "./BusketProvider";
 
 export { AuthProvider } from "./AuthProvider";
+export { MasterProvider } from "./MasterProvider";

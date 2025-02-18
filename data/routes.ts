@@ -31,6 +31,7 @@ export const ROUTES = {
     getByUserName: "/api/orders/getByUserName",
     editStatus: "/api/orders/editStatus",
     deleteOrder: "/api/orders/delete",
+    checkoutOrder: "/api/orders/checkout",
 };
 
 // --> Links

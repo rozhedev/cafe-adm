@@ -11,10 +11,10 @@ import { useSession } from "next-auth/react";
 
 // * Default page - Cafe Menu
 export default function CafeMenu() {
-    const { data: session, update } = useSession();
+    const { data: session } = useSession();
     const userid = session?.user?.id;
-
     const { addToast } = useToast();
+
     const [dishes, setDishes] = useDishes();
     const [orderedProduct, setOrderedProduct] = useState<TDish | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(MENU_MODALS_INIT);
@@ -43,13 +43,6 @@ export default function CafeMenu() {
             if (res.ok) {
                 addToast(UI_CONTENT.success.order.added, "success");
                 setIsModalOpen(MENU_MODALS_INIT);
-                update({
-                    ...session,
-                    user: {
-                        ...session?.user,
-                        balance: session?.user.balance - orderedProduct.price,
-                    },
-                });
                 return;
             }
         } catch (error) {

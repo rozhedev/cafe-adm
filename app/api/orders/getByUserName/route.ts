@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
     try {
-        const { username } = await req.json();
+        const { username, status } = await req.json();
 
         if (!username) {
             return NextResponse.json({ message: "Name is required" }, { status: 400 });
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "User not found" }, { status: 404 });
         }
 
-        const orders = await Order.find({ user: user._id });
+        const orders = await Order.find({ user: user._id, status: { $in: [...status] } });
         if (!orders || orders.length === 0) {
             return NextResponse.json({ message: "No orders found for this user" }, { status: 404 });
         }

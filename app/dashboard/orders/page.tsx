@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { v4 as uuidv4 } from "uuid";
-import { ROUTES, UI_CONTENT } from "@/data";
+import { OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
 import { useUserOrders } from "@/providers";
 import { TOrder } from "@/types";
 import { UserOrderItem } from "@/components/UserOrderItem";
@@ -22,7 +22,7 @@ export default function Orders() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ username }),
+                body: JSON.stringify({ username, status: [OrderStatuses.cancelled, OrderStatuses.completed, OrderStatuses.payed] }),
             });
             const data = await res.json();
 
