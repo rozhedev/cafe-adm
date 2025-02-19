@@ -10,8 +10,8 @@ export const AUTH_FORM_INIT = {
 export const DISH_FORM_INIT = {
     dish: "",
     ingredients: "",
-    price: "",
-    quantity: "",
+    price: 0,
+    quantity: 0,
 };
 
 // * Modals
@@ -129,5 +129,6 @@ export const UI_CONTENT = {
             balance: "Введите новый баланс",
         },
         buy: "Товар попадёт в корзину, в которой Вы оплачиваете товар со своего баланса.",
+        addressNotice: "Укажите адрес, без него заказ не будет обработан"
     },
 };

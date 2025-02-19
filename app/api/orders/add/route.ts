@@ -5,12 +5,12 @@ import { TDish, TUser } from "@/types";
 
 export async function POST(req: Request) {
     try {
-        const { dish, quantity, price, status, user, createdAt } = await req.json();
+        const { dish, quantity, price, status, user, address, createdAt } = await req.json();
         if (!dish || !quantity || !price || !status || !user) {
             return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
         }
         await connectDB();
-
+        
         // Existing check if sended incorrect userId
         const existedUser = (await User.findById(user)) as TUser;
         if (!existedUser) {
@@ -36,6 +36,7 @@ export async function POST(req: Request) {
             price,
             status,
             user,
+            address,
             createdAt,
         });
 

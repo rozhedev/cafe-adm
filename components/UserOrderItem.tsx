@@ -3,7 +3,7 @@ import { TOrder } from "@/types";
 
 type UserOrderItemProps = {
     order: TOrder;
-    // * Create in future releases
+    // TODO Create in future releases
     // onCancelOrder: (order: TOrder) => void;
     // onRepeatOrder: (order: TOrder) => void;
 };
@@ -17,6 +17,7 @@ export const UserOrderItem: React.FC<UserOrderItemProps> = ({ order }) => {
                     <p className="text-gray-600">Цена: {order.price} грн.</p>
                     <p className="text-gray-600">Количество: {order.quantity}</p>
                     <p className="text-gray-600">Статус: {order.status}</p>
+                    <p className="text-gray-600">Адрес: {order.address}</p>
                     <p className="text-gray-600">Дата заказа: {order.createdAt}</p>
                 </div>
             </div>

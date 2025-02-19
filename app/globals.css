@@ -72,5 +72,5 @@ input[type=number] {
 }
 
 .form-elem-size {
-    @apply md:min-w-[420px] min-w-[330px];
+    @apply md:min-w-[420px] min-w-[300px];
 }

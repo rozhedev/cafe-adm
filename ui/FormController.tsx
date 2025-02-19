@@ -1,11 +1,12 @@
 import React, { FC, InputHTMLAttributes } from "react";
 
 type FormControllerProps = InputHTMLAttributes<HTMLInputElement> & {
+    wrapperClass?: string;
     htmlLabel: string;
 };
-export const FormController: FC<FormControllerProps> = ({ id, name, htmlLabel, required, className, ...props }) => {
+export const FormController: FC<FormControllerProps> = ({ wrapperClass, id, name, htmlLabel, required, className, ...props }) => {
     return (
-        <div>
+        <div className={`${wrapperClass}`}>
             <label htmlFor={id}>{htmlLabel}</label>
             <input
                 id={id}

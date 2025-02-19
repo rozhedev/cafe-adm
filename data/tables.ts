@@ -22,6 +22,7 @@ export const ordersColumns: TableColumnProps<TOrder>[] = [
     { key: "quantity", header: "Количество" },
     { key: "price", header: "Цена" },
     { key: "status", header: "Статус" },
+    { key: "address", header: "Адрес" },
     { key: "createdAt", header: "Дата создания" },
 ];
 
