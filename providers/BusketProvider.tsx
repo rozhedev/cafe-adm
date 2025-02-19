@@ -45,7 +45,7 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
 
             if (res.ok) {
                 const orderData = await res.json();
-                setItems(Array.isArray(orderData) ? orderData : []);
+                setItems(orderData);
             }
         } catch (error) {
             console.error("Error fetching orders:", error);
@@ -59,8 +59,7 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
     useEffect(() => {
         if (username) {
             fetchOrders();
-        } 
-        else {
+        } else {
             // If no user is logged in, try to get items from localStorage
             const savedItems = localStorage.getItem("busket");
             if (savedItems) {
@@ -141,11 +140,12 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             }
 
             setIsLoading(true);
-            const res = await fetch(`${ROUTES.deleteOrder}/${itemToRemove._id}`, {
-                method: "DELETE",
+            const res = await fetch(ROUTES.rollbackOrder, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
+                body: JSON.stringify({ id: itemToRemove._id, dish: itemToRemove.dish }),
             });
 
             if (!res.ok) {
@@ -168,15 +168,15 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
         if (userId && items.length > 0) {
             try {
                 setIsLoading(true);
-                const orderIds = items.map((item) => item._id).filter((id) => id !== undefined);
 
-                if (orderIds.length > 0) {
-                    const deletePromises = orderIds.map((orderId) =>
-                        fetch(`${ROUTES.deleteOrder}/${orderId}`, {
-                            method: "DELETE",
+                if (items.length > 0) {
+                    const deletePromises = items.map((item) =>
+                        fetch(ROUTES.deleteOrder, {
+                            method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
                             },
+                            body: JSON.stringify({ id: item._id, dish: item.dish }),
                         })
                     );
                     await Promise.all(deletePromises);
@@ -239,7 +239,6 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             }
             const errorData = await res.json();
             addToast(errorData.message || "Ошибка при оформлении заказа", "error");
-
         } catch (error) {
             console.error("Error checking out:", error);
             addToast("Ошибка при оформлении заказа", "error");

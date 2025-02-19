@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { v4 as uuidv4 } from "uuid";
+import { formatOrders } from "@/helpers";
 import { OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
-import { useBusket, useUserOrders } from "@/providers";
 import { TOrder } from "@/types";
+import { useUserOrders } from "@/providers";
 import { UserOrderItem } from "@/components/UserOrderItem";
 
 export default function Orders() {
@@ -27,7 +28,7 @@ export default function Orders() {
             const data = await res.json();
 
             if (res.ok) {
-                setUserOrders(data);
+                setUserOrders(() => formatOrders(data));
             } else {
                 console.error("Fetch error:", res.status, data);
             }

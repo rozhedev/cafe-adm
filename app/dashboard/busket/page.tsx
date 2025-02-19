@@ -3,6 +3,7 @@ import React from "react";
 import { useBusket } from "@/providers";
 import { useSession } from "next-auth/react";
 import { TDish } from "@/types";
+import { UI_CONTENT } from "@/data";
 
 export default function Busket() {
     const { data: session } = useSession();
@@ -29,7 +30,7 @@ export default function Busket() {
                                     className="text-red-500 hover:text-red-700"
                                     disabled={isLoading}
                                 >
-                                    Удалить
+                                    {UI_CONTENT.btn.delete.default}
                                 </button>
                             </div>
                         ))}
