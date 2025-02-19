@@ -6,7 +6,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
     await connectDB();
     try {
         const { id, dish } = await req.json();
-        console.log(id, dish);
 
         const deletedOrder = await Order.findByIdAndDelete(id, {
             runValidators: true,

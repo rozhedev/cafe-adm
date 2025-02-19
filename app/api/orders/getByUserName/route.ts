@@ -16,11 +16,8 @@ export async function POST(req: NextRequest) {
         }
 
         const orders = await Order.find({ user: user._id, status: { $in: [...status] } });
-        if (!orders || orders.length === 0) {
-            return NextResponse.json({ message: "No orders found for this user" }, { status: 404 });
-        }
-
-        return NextResponse.json(orders, { status: 200 });
+    
+        return NextResponse.json(orders || [], { status: 200 });
     } catch (error) {
         console.error("Get users list error:", error);
         return NextResponse.json(

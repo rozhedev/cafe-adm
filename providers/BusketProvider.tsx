@@ -3,7 +3,7 @@ import React, { PropsWithChildren, createContext, useCallback, useContext, useEf
 import { useSession } from "next-auth/react";
 import { TDish, TDishArr } from "@/types";
 import { useToast } from "@/components/Toast";
-import { OrderStatuses, ROUTES } from "@/data";
+import { OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
 
 export type TBusketContextState = {
     items: TDishArr;
@@ -46,7 +46,7 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             if (res.ok) {
                 const orderData = await res.json();
                 setItems(orderData);
-            }
+            } else if (res.status === 404) setItems([]);
         } catch (error) {
             console.error("Error fetching orders:", error);
             setItems([]);
@@ -62,14 +62,14 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
         } else {
             // If no user is logged in, try to get items from localStorage
             const savedItems = localStorage.getItem("busket");
-            if (savedItems) {
-                try {
-                    const parsedItems = JSON.parse(savedItems);
-                    setItems(Array.isArray(parsedItems) ? parsedItems : []);
-                } catch (e) {
-                    console.error("Error parsing saved cart items:", e);
-                    localStorage.removeItem("busket");
-                }
+            if (!savedItems) return;
+
+            try {
+                const parsedItems = JSON.parse(savedItems);
+                setItems(Array.isArray(parsedItems) ? parsedItems : []);
+            } catch (e) {
+                console.error("Error parsing saved cart items:", e);
+                localStorage.removeItem("busket");
             }
         }
     }, [username, fetchOrders]);
@@ -89,7 +89,7 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
     const addItem = async (item: TDish) => {
         try {
             if (!userId) {
-                addToast("Необходимо авторизоваться", "error");
+                addToast(UI_CONTENT.err.auth.required, "error");
                 return;
             }
 
@@ -110,16 +110,16 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (!res.ok) {
-                const errorData = await res.json();
-                addToast(errorData.message || "Ошибка при добавлении в корзину", "error");
+                const err = await res.json();
+                addToast(err.message || UI_CONTENT.err.cart.unknown, "error");
                 return;
             }
             const newItem = await res.json();
             setItems((prev) => [...prev, newItem]);
-            addToast("Товар добавлен в корзину", "success");
+            addToast(UI_CONTENT.success.order.addedToCard, "success");
         } catch (error) {
             console.error("Error adding item to cart:", error);
-            addToast("Ошибка при добавлении в корзину", "error");
+            addToast(UI_CONTENT.err.cart.unknown, "error");
         } finally {
             setIsLoading(false);
         }
@@ -127,15 +127,15 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
 
     const removeItem = async (itemId: string) => {
         try {
+            if (!userId) {
+                addToast(UI_CONTENT.err.auth.required, "error");
+                return;
+            }
             const itemToRemove = items.find((item) => item._id?.toString() === itemId);
 
             if (!itemToRemove || !itemToRemove._id) {
                 // If no orderId or item not found, just remove from local state
                 setItems((prev) => prev.filter((item) => item._id?.toString() !== itemId));
-                return;
-            }
-            if (!userId) {
-                addToast("Необходимо авторизоваться", "error");
                 return;
             }
 
@@ -149,68 +149,49 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             });
 
             if (!res.ok) {
-                const errorData = await res.json();
-                addToast(errorData.message || "Ошибка при удалении из корзины", "error");
+                const err = await res.json();
+                addToast(err.message || UI_CONTENT.err.cart.unknown, "error");
                 return;
             }
 
             setItems((prev) => prev.filter((item) => item._id?.toString() !== itemId));
-            addToast("Товар удален из корзины", "success");
+            addToast(UI_CONTENT.success.order.removedFromCart, "success");
         } catch (error) {
             console.error("Error removing item from cart:", error);
-            addToast("Ошибка при удалении из корзины", "error");
+            addToast(UI_CONTENT.err.cart.unknown, "error");
         } finally {
             setIsLoading(false);
         }
     };
 
+    // Make function async  for prevent errors for other async operations
     const clearBusket = async () => {
-        if (userId && items.length > 0) {
-            try {
-                setIsLoading(true);
+        try {
+            setIsLoading(true);
 
-                if (items.length > 0) {
-                    const deletePromises = items.map((item) =>
-                        fetch(ROUTES.deleteOrder, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ id: item._id, dish: item.dish }),
-                        })
-                    );
-                    await Promise.all(deletePromises);
-                }
-            } catch (error) {
-                console.error("Error clearing basket:", error);
-                addToast("Ошибка при очистке корзины", "error");
-            } finally {
-                setIsLoading(false);
-            }
+            if (items.length > 0) setItems([]);
+            if (localStorage.getItem("busket")) localStorage.removeItem("busket");
+        } catch (error) {
+            console.error("Error clearing basket:", error);
+            addToast(UI_CONTENT.err.cart.clear, "error");
+        } finally {
+            setIsLoading(false);
         }
-
-        setItems([]);
-        localStorage.removeItem("busket");
     };
 
     const checkout = async () => {
         try {
             if (!userId) {
-                addToast("Необходимо авторизоваться", "error");
+                addToast(UI_CONTENT.err.auth.required, "error");
                 return;
             }
             if (items.length === 0) {
-                addToast("Корзина пуста", "error");
+                addToast(UI_CONTENT.err.cart.empty, "error");
                 return;
             }
 
             setIsLoading(true);
             const orderIds = items.map((item) => item._id).filter((id) => id !== undefined);
-
-            if (orderIds.length === 0) {
-                addToast("Нет действительных заказов в корзине", "error");
-                return;
-            }
 
             const res = await fetch(ROUTES.checkoutOrder, {
                 method: "POST",
@@ -233,15 +214,17 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
                         balance: session?.user.balance - data.price,
                     },
                 });
-                addToast("Заказ успешно оформлен", "success");
+                addToast(UI_CONTENT.success.order.payed, "success");
                 clearBusket();
                 return;
             }
-            const errorData = await res.json();
-            addToast(errorData.message || "Ошибка при оформлении заказа", "error");
+            if (!res.ok) {
+                const err = await res.json();
+                addToast(err.message || UI_CONTENT.err.order.unknown, "error");
+            }
         } catch (error) {
             console.error("Error checking out:", error);
-            addToast("Ошибка при оформлении заказа", "error");
+            addToast(UI_CONTENT.err.order.unknown, "error");
         } finally {
             setIsLoading(false);
         }

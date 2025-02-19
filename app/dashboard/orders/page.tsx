@@ -78,7 +78,7 @@ export default function Orders() {
                                 />
                             ))
                         ) : (
-                            <div>{UI_CONTENT.err.orderListEmpty}</div>
+                            <div>{UI_CONTENT.err.order.listEmpty}</div>
                         )}
                     </>
                 )}
