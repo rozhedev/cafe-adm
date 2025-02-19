@@ -1,6 +1,7 @@
 export enum OrderStatuses {
     ordered = "ordered",
     payed = "payed",
+    delivered = "delivered",
     completed = "completed",
     cancelled = "cancelled",
     unknown = "unknown",
@@ -12,6 +13,7 @@ export enum Actions {
 export enum OrderStatusesLabels {
     ordered = "Заказано",
     payed = "Оплачено",
+    delivered = "Доставлено",
     cancelled = "Отменён",
     completed = "Выдано",
     unknown = "Нет данных",

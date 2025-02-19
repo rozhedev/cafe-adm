@@ -66,6 +66,10 @@ export const orderActionOptions: TActionOptionsArr = [
         label: OrderStatusesLabels.payed,
     },
     {
+        id: OrderStatuses.delivered,
+        label: OrderStatusesLabels.delivered,
+    },
+    {
         id: OrderStatuses.completed,
         label: OrderStatusesLabels.completed,
     },
