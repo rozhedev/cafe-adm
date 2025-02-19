@@ -1,17 +1,16 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { ROLES, APP_NAME, ROUTES, publicLinksArr } from "@/data";
 import { TDish } from "@/types";
 import { Navbar } from "@/ui";
 import { useDishes } from "@/providers";
-import { fetchDataByRoute } from "@/helpers";
 import { MenuItem } from "@/components/MenuItem";
 
 export default function Home() {
     const { data: session } = useSession();
-    const [dishes, setDishes] = useDishes();
+    const [dishes] = useDishes();
     const role = session?.user?.role;
 
     const handleAddToCart = (dish: TDish) => {
@@ -21,17 +20,6 @@ export default function Home() {
         if (role === ROLES.user) redirect(ROUTES.dash);
         if (role === ROLES.admin) redirect(ROUTES.admDash);
     }
-
-    useEffect(() => {
-        fetchDataByRoute(
-            ROUTES.getAllDish,
-            {
-                method: "GET",
-                next: { revalidate: 1200 },
-            },
-            setDishes
-        );
-    }, []);
 
     return (
         <div className="min-h-screen bg-gray-50">

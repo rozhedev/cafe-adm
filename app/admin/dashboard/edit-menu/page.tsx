@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState, type FormEvent } from "react";
-import { BooleanValObjMap, TDish } from "@/types";
+import { BooleanValObjMap, StringValObjMap } from "@/types";
 import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT, ModalIds } from "@/data";
-import { cleanObjFromEmptyVal, fetchDataByRoute } from "@/helpers";
+import { cleanObjFromEmptyVal } from "@/helpers";
 import { useDishes } from "@/providers";
 import { ModalWithoutFooter, ModalWithFooter } from "@/ui";
 import { useToast } from "@/components/Toast";
@@ -11,11 +11,11 @@ import { ResponsiveTable } from "@/components/ResponsiveTable";
 
 export default function EditMenu() {
     const { addToast } = useToast();
-    const [dishes, setDishes] = useDishes();
+    const [dishes, setDishes, refreshDishes] = useDishes();
 
     const [dishId, setDishId] = useState<string>("");
-    const [addFormData, setAddFormData] = useState<TDish>(DISH_FORM_INIT);
-    const [editFormData, setEditFormData] = useState<TDish>(DISH_FORM_INIT);
+    const [addFormData, setAddFormData] = useState<StringValObjMap>(DISH_FORM_INIT);
+    const [editFormData, setEditFormData] = useState<StringValObjMap>(DISH_FORM_INIT);
 
     const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(DISH_MODALS_INIT);
     const [isAddLoading, setIsAddLoading] = useState<boolean>(false);
@@ -23,17 +23,9 @@ export default function EditMenu() {
     const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
 
     // --> Handlers
-    const handleTableUpdate = () =>
-        fetchDataByRoute(
-            ROUTES.getAllDish,
-            {
-                method: "GET",
-                next: { revalidate: 1200 },
-            },
-            setDishes
-        );
+    const handleTableUpdate = () => refreshDishes();
 
-    const handleAction = (action: string, item: TDish) => {
+    const handleAction = (action: string, item: any) => {
         const id = String(item._id) || "";
         setDishId(id);
         if (action === ModalIds.delete) {
@@ -60,6 +52,7 @@ export default function EditMenu() {
             if (res.ok) {
                 addToast(UI_CONTENT.success.dish.added, "success");
                 setAddFormData(DISH_FORM_INIT);
+                await refreshDishes();
                 return;
             }
             addToast(UI_CONTENT.err.dish.added, "error");
@@ -95,6 +88,7 @@ export default function EditMenu() {
                 addToast(UI_CONTENT.success.dish.updated, "success");
                 setEditFormData(DISH_FORM_INIT);
                 setIsModalOpen(DISH_MODALS_INIT);
+                await refreshDishes();
                 return;
             }
             addToast(UI_CONTENT.err.dish.updated, "error");
@@ -115,6 +109,7 @@ export default function EditMenu() {
             if (res.ok) {
                 addToast(UI_CONTENT.success.dish.deleted, "success");
                 setIsModalOpen(DISH_MODALS_INIT);
+                await refreshDishes();
                 return;
             }
             addToast(UI_CONTENT.err.dish.deleted, "error");
@@ -124,18 +119,6 @@ export default function EditMenu() {
             setIsDeleteLoading(false);
         }
     };
-
-    // --> Data fetching
-    useEffect(() => {
-        fetchDataByRoute(
-            ROUTES.getAllDish,
-            {
-                method: "GET",
-                next: { revalidate: 1200 }, // revalidate every 2 minutes
-            },
-            setDishes
-        );
-    }, []);
 
     // * -----------------------------
     return (

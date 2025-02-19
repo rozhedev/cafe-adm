@@ -1,4 +1,5 @@
 export const APP_NAME = "Teiwaz Cafe";
+export const NEXT_REVALIDATE_INTERVAL = 0; // value in seconds
 
 // --> INIT STATES
 // * Forms
@@ -10,8 +11,8 @@ export const AUTH_FORM_INIT = {
 export const DISH_FORM_INIT = {
     dish: "",
     ingredients: "",
-    price: 0,
-    quantity: 0,
+    price: "",
+    quantity: "",
 };
 
 // * Modals
@@ -66,6 +67,10 @@ export const UI_CONTENT = {
         confirm: {
             default: "Подтверждаю",
             loading: "Подтверждение...",
+        },
+        checkout: {
+            default: "Оформить заказ",
+            loading: "Оформление...",
         },
     },
     success: {

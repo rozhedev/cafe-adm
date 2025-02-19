@@ -39,6 +39,7 @@ export const replaceStatusLabels = (status: string): string => {
     if (status === OrderStatuses.ordered) return OrderStatusesLabels.ordered;
     if (status === OrderStatuses.payed) return OrderStatusesLabels.payed;
     if (status === OrderStatuses.completed) return OrderStatusesLabels.completed;
+    if (status === OrderStatuses.delivered) return OrderStatusesLabels.delivered;
     return OrderStatusesLabels.unknown;
 };
 

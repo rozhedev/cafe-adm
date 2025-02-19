@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { BooleanValObjMap, StringValObjMap, TDish } from "@/types";
 import { useBusket, useDishes } from "@/providers";
 import { fetchDataByRoute } from "@/helpers";
-import { MENU_MODALS_INIT, OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
+import { MENU_MODALS_INIT, NEXT_REVALIDATE_INTERVAL, OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
 import { FormController, ModalWithoutFooter } from "@/ui";
 import { useToast } from "@/components/Toast";
 import { MenuItem } from "@/components/MenuItem";
@@ -16,7 +16,7 @@ export default function CafeMenu() {
     const { addToast } = useToast();
     const { refreshCart } = useBusket();
 
-    const [dishes, setDishes] = useDishes();
+    const [dishes, setDishes, refreshDishes] = useDishes();
     const [orderedProduct, setOrderedProduct] = useState<TDish | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(MENU_MODALS_INIT);
     const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +29,6 @@ export default function CafeMenu() {
         try {
             setIsLoading(true);
             if (orderedProduct === null) return console.log("Dish not added");
-            console.log(formData.address);
 
             const res = await fetch(ROUTES.addOrder, {
                 method: "POST",
@@ -51,14 +50,7 @@ export default function CafeMenu() {
                 addToast(UI_CONTENT.success.order.added, "success");
                 setIsModalOpen(MENU_MODALS_INIT);
                 refreshCart();
-                fetchDataByRoute(
-                    ROUTES.getAllDish,
-                    {
-                        method: "GET",
-                        next: { revalidate: 1200 },
-                    },
-                    setDishes
-                );
+                await refreshDishes();
                 return;
             }
         } catch (error) {
@@ -77,7 +69,7 @@ export default function CafeMenu() {
             ROUTES.getAllDish,
             {
                 method: "GET",
-                next: { revalidate: 1200 },
+                next: { revalidate: NEXT_REVALIDATE_INTERVAL },
             },
             setDishes
         );

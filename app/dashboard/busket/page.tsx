@@ -54,7 +54,7 @@ export default function Busket() {
                             disabled={isLoading || userBalance < totalPrice}
                             className={`w-full ${isLoading || userBalance < totalPrice ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"} text-white py-3 rounded-md transition-colors duration-200`}
                         >
-                            {isLoading ? "Оформление..." : "Оформить заказ"}
+                            {isLoading ? UI_CONTENT.btn.checkout.loading : UI_CONTENT.btn.checkout.default}
                         </button>
                     </div>
                 </>

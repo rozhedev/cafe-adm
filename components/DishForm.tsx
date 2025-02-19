@@ -1,9 +1,9 @@
 import React, { FC } from "react";
-import { TDish } from "@/types";
+import { StringValObjMap, TDish } from "@/types";
 import { FormController } from "@/ui";
 
 type TDishForm = {
-    formData: TDish;
+    formData: StringValObjMap;  // use mappimg for prevent errors
     setFormData: any;
     formFields: Array<any>;
     isLoading: boolean;

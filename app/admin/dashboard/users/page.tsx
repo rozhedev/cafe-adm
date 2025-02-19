@@ -2,7 +2,7 @@
 import React, { useEffect, useState, type FormEvent } from "react";
 import { useUsersInfo } from "@/providers";
 import { BooleanValObjMap, TUserInfo } from "@/types";
-import { EDIT_USER_MODALS_INIT, userInfoColumns, editUserActionOptions, ModalIds, ROUTES, UI_CONTENT } from "@/data";
+import { EDIT_USER_MODALS_INIT, userInfoColumns, editUserActionOptions, ModalIds, ROUTES, UI_CONTENT, NEXT_REVALIDATE_INTERVAL } from "@/data";
 import { fetchDataByRoute } from "@/helpers";
 import { FormController, ModalWithoutFooter } from "@/ui";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
@@ -24,7 +24,7 @@ export default function Users() {
             ROUTES.getUsersRole,
             {
                 method: "GET",
-                next: { revalidate: 1200 }, // revalidate every 2 minutes
+                next: { revalidate: NEXT_REVALIDATE_INTERVAL },
             },
             setUsersInfo
         );
@@ -34,7 +34,7 @@ export default function Users() {
             ROUTES.getUsersRole,
             {
                 method: "GET",
-                next: { revalidate: 1200 },
+                next: { revalidate: NEXT_REVALIDATE_INTERVAL },
             },
             setUsersInfo
         );

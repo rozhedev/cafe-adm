@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { BooleanValObjMap, TOrder } from "@/types";
 import { useAdmOrders } from "@/providers";
-import { ordersColumns, orderActionOptions, ROUTES, UI_CONTENT, ModalIds, DISH_MODALS_INIT, ORDER_MODALS_INIT } from "@/data";
+import { ordersColumns, orderActionOptions, ROUTES, UI_CONTENT, ModalIds, DISH_MODALS_INIT, ORDER_MODALS_INIT, NEXT_REVALIDATE_INTERVAL } from "@/data";
 import { fetchDataByRoute, formatOrders } from "@/helpers";
 import { ModalWithFooter } from "@/ui";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
@@ -23,7 +23,7 @@ export default function Orders() {
             ROUTES.getAllOrders,
             {
                 method: "GET",
-                next: { revalidate: 1200 }, // revalidate every 2 minutes
+                next: { revalidate: NEXT_REVALIDATE_INTERVAL },
             },
             setAdmOrders,
             (orders) => formatOrders(orders)
@@ -73,7 +73,6 @@ export default function Orders() {
     const handleAction = async (status: string, order: TOrder) => {
         const id = String(order._id) || "";
         setOrderId(id);
-        console.log(status);
         if (status !== ModalIds.delete) await handleUpdateStatus(id, status);
         else {
             setIsModalOpen({ ...ORDER_MODALS_INIT, delete: true });
@@ -86,7 +85,7 @@ export default function Orders() {
             ROUTES.getAllOrders,
             {
                 method: "GET",
-                next: { revalidate: 1200 }, // revalidate every 2 minutes
+                next: { revalidate: NEXT_REVALIDATE_INTERVAL },
             },
             setAdmOrders,
             (orders) => formatOrders(orders)
