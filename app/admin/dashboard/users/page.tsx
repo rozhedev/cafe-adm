@@ -1,17 +1,15 @@
 "use client";
-import React, { useEffect, useState, type FormEvent } from "react";
+import React, { useState, type FormEvent } from "react";
 import { useUsersInfo } from "@/providers";
 import { BooleanValObjMap, TUserInfo } from "@/types";
-import { EDIT_USER_MODALS_INIT, userInfoColumns, editUserActionOptions, ModalIds, ROUTES, UI_CONTENT, NEXT_REVALIDATE_INTERVAL } from "@/data";
-import { fetchDataByRoute } from "@/helpers";
+import { EDIT_USER_MODALS_INIT, userInfoColumns, editUserActionOptions, ModalIds, ROUTES, UI_CONTENT } from "@/data";
 import { FormController, ModalWithoutFooter } from "@/ui";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
 import { useToast } from "@/components/Toast";
 
 export default function Users() {
     const { addToast } = useToast();
-
-    const [usersInfo, setUsersInfo] = useUsersInfo();
+    const [usersInfo, setUsersInfo, refreshUsersInfo] = useUsersInfo();
     const [userId, setUserId] = useState<string>("");
     const [balance, setBalance] = useState<string>("");
 
@@ -19,26 +17,7 @@ export default function Users() {
     const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(EDIT_USER_MODALS_INIT);
 
     // * Data fetching
-    useEffect(() => {
-        fetchDataByRoute(
-            ROUTES.getUsersRole,
-            {
-                method: "GET",
-                next: { revalidate: NEXT_REVALIDATE_INTERVAL },
-            },
-            setUsersInfo
-        );
-    }, []);
-    const handleTableUpdate = () => {
-        fetchDataByRoute(
-            ROUTES.getUsersRole,
-            {
-                method: "GET",
-                next: { revalidate: NEXT_REVALIDATE_INTERVAL },
-            },
-            setUsersInfo
-        );
-    };
+    const handleTableUpdate = () => refreshUsersInfo();
 
     // * Edit balance
     const handleEditBalance = async (e: FormEvent) => {

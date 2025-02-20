@@ -1,9 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BooleanValObjMap, TOrder } from "@/types";
-import { useAdmOrders } from "@/providers";
-import { ordersColumns, orderActionOptions, ROUTES, UI_CONTENT, ModalIds, DISH_MODALS_INIT, ORDER_MODALS_INIT, NEXT_REVALIDATE_INTERVAL } from "@/data";
-import { fetchDataByRoute, formatOrders } from "@/helpers";
+import { useOrders } from "@/providers";
+import { ordersColumns, orderActionOptions, ROUTES, UI_CONTENT, ModalIds, DISH_MODALS_INIT, ORDER_MODALS_INIT } from "@/data";
 import { ModalWithFooter } from "@/ui";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
 import { useToast } from "@/components/Toast";
@@ -11,23 +10,14 @@ import { useToast } from "@/components/Toast";
 // * Default page - Orders
 export default function Orders() {
     const { addToast } = useToast();
-    const [admOrders, setAdmOrders] = useAdmOrders();
+    const [admOrders, setAdmOrders, refreshOrders] = useOrders();
     const [orderId, setOrderId] = useState<string>("");
 
     const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(ORDER_MODALS_INIT);
     const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
 
     // --> Handlers
-    const handleTableUpdate = () =>
-        fetchDataByRoute(
-            ROUTES.getAllOrders,
-            {
-                method: "GET",
-                next: { revalidate: NEXT_REVALIDATE_INTERVAL },
-            },
-            setAdmOrders,
-            (orders) => formatOrders(orders)
-        );
+    const handleTableUpdate = () => refreshOrders();
 
     // * Update
     const handleUpdateStatus = async (id: string, status: string) => {
@@ -78,19 +68,6 @@ export default function Orders() {
             setIsModalOpen({ ...ORDER_MODALS_INIT, delete: true });
         }
     };
-
-    // --> Data fetching
-    useEffect(() => {
-        fetchDataByRoute(
-            ROUTES.getAllOrders,
-            {
-                method: "GET",
-                next: { revalidate: NEXT_REVALIDATE_INTERVAL },
-            },
-            setAdmOrders,
-            (orders) => formatOrders(orders)
-        );
-    }, []);
 
     // * -----------------------------
     return (

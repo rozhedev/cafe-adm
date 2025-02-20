@@ -13,9 +13,8 @@ export default function Home() {
     const [dishes] = useDishes();
     const role = session?.user?.role;
 
-    const handleAddToCart = (dish: TDish) => {
-        console.log("Добавлено в корзину:", dish);
-    };
+    // Handler is required for MenuItem component
+    const handleAddToCart = (dish: TDish) => {};
     if (session) {
         if (role === ROLES.user) redirect(ROUTES.dash);
         if (role === ROLES.admin) redirect(ROUTES.admDash);

@@ -1,10 +1,9 @@
 "use client";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useSession } from "next-auth/react";
 import { BooleanValObjMap, StringValObjMap, TDish } from "@/types";
 import { useBusket, useDishes } from "@/providers";
-import { fetchDataByRoute } from "@/helpers";
-import { MENU_MODALS_INIT, NEXT_REVALIDATE_INTERVAL, OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
+import { MENU_MODALS_INIT, OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
 import { FormController, ModalWithoutFooter } from "@/ui";
 import { useToast } from "@/components/Toast";
 import { MenuItem } from "@/components/MenuItem";
@@ -16,7 +15,7 @@ export default function CafeMenu() {
     const { addToast } = useToast();
     const { refreshCart } = useBusket();
 
-    const [dishes, setDishes, refreshDishes] = useDishes();
+    const [dishes, , refreshDishes] = useDishes();
     const [orderedProduct, setOrderedProduct] = useState<TDish | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(MENU_MODALS_INIT);
     const [isLoading, setIsLoading] = useState(false);
@@ -64,23 +63,12 @@ export default function CafeMenu() {
         setOrderedProduct(dish);
     };
 
-    useEffect(() => {
-        fetchDataByRoute(
-            ROUTES.getAllDish,
-            {
-                method: "GET",
-                next: { revalidate: NEXT_REVALIDATE_INTERVAL },
-            },
-            setDishes
-        );
-    }, []);
-
     return (
         <div className="w-full">
             <div className="flex gap-5">
                 <div className="container mx-auto px-4 py-8">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {dishes &&
+                        {dishes.length > 0 &&
                             dishes.map((dish) => (
                                 <MenuItem
                                     key={dish._id?.toString()}

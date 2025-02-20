@@ -66,6 +66,7 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
 
             try {
                 const parsedItems = JSON.parse(savedItems);
+                // Additional check for prevent mismatch types
                 setItems(Array.isArray(parsedItems) ? parsedItems : []);
             } catch (e) {
                 console.error("Error parsing saved cart items:", e);

@@ -5,12 +5,12 @@ import { v4 as uuidv4 } from "uuid";
 import { formatOrders } from "@/helpers";
 import { OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
 import { TOrder } from "@/types";
-import { useUserOrders } from "@/providers";
+import { useOrders } from "@/providers";
 import { UserOrderItem } from "@/components/UserOrderItem";
 
 export default function Orders() {
     const { data: session, status } = useSession();
-    const [userOrders, setUserOrders] = useUserOrders();
+    const [userOrders, setUserOrders] = useOrders();
 
     const [name, setName] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -50,20 +50,21 @@ export default function Orders() {
         }
     }, [status, session?.user?.name]);
 
-    const handleOrdersUpdate = () => {
-        fetchOrdersByUserName(name);
-    };
+    const handleOrdersUpdate = () => fetchOrdersByUserName(name);
 
     return (
         <div className="w-full">
-            <div className="form-elem-size flex gap-5">
-                <button
-                    type="button"
-                    onClick={handleOrdersUpdate}
-                    className="max-w-48 my-4 btn--sm btn--accent"
-                >
-                    {UI_CONTENT.btn.update.default}
-                </button>
+            <div className="form-elem-size flex gap-5 my-4">
+                <div className="flex flex-col gap-3">
+                    <button
+                        type="button"
+                        onClick={handleOrdersUpdate}
+                        className="max-w-48 btn--sm btn--accent"
+                    >
+                        {UI_CONTENT.btn.update.default}
+                    </button>
+                    <span className="text-sm">* Неоплаченные заказы отображаюся в корзине</span>
+                </div>
             </div>
             <div>
                 {isLoading ? (
