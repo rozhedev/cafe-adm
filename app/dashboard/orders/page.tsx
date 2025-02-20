@@ -10,6 +10,8 @@ import { UserOrderItem } from "@/components/UserOrderItem";
 
 export default function Orders() {
     const { data: session, status } = useSession();
+    const username = session?.user?.name as string;
+
     const [userOrders, setUserOrders] = useOrders();
 
     const [name, setName] = useState<string>("");
@@ -39,18 +41,15 @@ export default function Orders() {
         }
     };
 
+    // √ Correct updated
     useEffect(() => {
-        if (status === "authenticated") {
-            const username = session?.user?.name as string;
-            if (username) {
-                fetchOrdersByUserName(username);
-                setName(username);
-                localStorage.setItem("orders", JSON.stringify(userOrders));
-            }
-        }
+        if (!username && status !== "authenticated") return;
+        fetchOrdersByUserName(username);
+        setName(username);
+        localStorage.setItem("orders", JSON.stringify(userOrders));
     }, [status, session?.user?.name]);
 
-    const handleOrdersUpdate = () => fetchOrdersByUserName(name);
+    const handleOrdersUpdate = () => fetchOrdersByUserName(username);
 
     return (
         <div className="w-full">

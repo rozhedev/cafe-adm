@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Dish, Order, User } from "@/models";
 import { TDish, TUser } from "@/types";
+import { revalidatePath } from "next/cache";
+import { ROUTES } from "@/data";
 
 export async function POST(req: Request) {
     try {
@@ -10,7 +12,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
         }
         await connectDB();
-        
+
         // Existing check if sended incorrect userId
         const existedUser = (await User.findById(user)) as TUser;
         if (!existedUser) {
@@ -59,6 +61,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: "Error when updating user" }, { status: 500 });
         }
 
+        revalidatePath(ROUTES.dash);
         return NextResponse.json({ message: "Order created successfully", orderId: newOrder._id }, { status: 201 });
     } catch (error) {
         console.error("Registration error:", error);

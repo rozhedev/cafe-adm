@@ -1,9 +1,10 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { OrderStatuses } from "@/data";
+import { OrderStatuses, ROUTES } from "@/data";
 import { connectDB } from "@/lib/mongodb";
 import { authOptions } from "@/lib/nextauth";
 import { Order, User } from "@/models";
+import { revalidatePath } from "next/cache";
 
 export async function POST(req: Request) {
     try {
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
             session.user.balance = updatedUser.balance;
         }
 
+        revalidatePath("/", "layout");
         return NextResponse.json(
             {
                 message: "Orders processed successfully",

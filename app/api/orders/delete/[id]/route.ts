@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models";
+import { revalidatePath } from "next/cache";
+import { ROUTES } from "@/data";
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
     await connectDB();
@@ -12,6 +14,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
         if (!deletedOrder) {
             return NextResponse.json({ error: "Order not found" }, { status: 404 });
         }
+
+        revalidatePath(ROUTES.admDash);
         return NextResponse.json({ message: "Order deleted successfully" }, { status: 200 });
     } catch (error) {
         console.error("Deleted order error:", error);

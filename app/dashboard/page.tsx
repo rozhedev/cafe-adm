@@ -49,7 +49,7 @@ export default function CafeMenu() {
                 addToast(UI_CONTENT.success.order.added, "success");
                 setIsModalOpen(MENU_MODALS_INIT);
                 refreshCart();
-                await refreshDishes();
+                refreshDishes();
                 return;
             }
         } catch (error) {

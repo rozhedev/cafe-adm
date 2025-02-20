@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import { Order, User } from "@/models";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -17,6 +18,7 @@ export async function POST(req: NextRequest) {
 
         const orders = await Order.find({ user: user._id, status: { $in: [...status] } });
     
+        revalidatePath("/", "layout");
         return NextResponse.json(orders || [], { status: 200 });
     } catch (error) {
         console.error("Get users list error:", error);

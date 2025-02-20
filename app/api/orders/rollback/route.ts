@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Dish, Order } from "@/models";
+import { revalidatePath } from "next/cache";
 
 export async function POST(req: NextRequest, res: NextResponse) {
     await connectDB();
@@ -16,6 +17,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
         if (!deletedOrder) {
             return NextResponse.json({ error: "Order not found" }, { status: 404 });
         }
+
+        revalidatePath("/", "layout");
         return NextResponse.json({ message: "Successfully rollback" }, { status: 200 });
     } catch (error) {
         console.error("Deleted order error:", error);

@@ -1,5 +1,7 @@
+import { ROUTES } from "@/data";
 import { connectDB } from "@/lib/mongodb";
 import { Dish } from "@/models";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest) {
@@ -19,6 +21,8 @@ export async function PUT(req: NextRequest) {
         if (!updatedDish) {
             return NextResponse.json({ error: "Dish not found" }, { status: 404 });
         }
+
+        revalidatePath(ROUTES.admDashEditMenu);
         return NextResponse.json(updatedDish, { status: 200 });
     } catch (error) {
         console.error("Failed to update dish:", error);

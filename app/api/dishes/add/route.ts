@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Dish } from "@/models";
+import { revalidatePath } from "next/cache";
+import { ROUTES } from "@/data";
 
 export async function POST(req: Request) {
     try {
@@ -22,6 +24,7 @@ export async function POST(req: Request) {
             quantity,
         });
 
+        revalidatePath(ROUTES.admDashEditMenu);
         return NextResponse.json({ message: "Dish created succesfully" }, { status: 201 });
     } catch (error) {
         console.error("Creating dish error:", error);
