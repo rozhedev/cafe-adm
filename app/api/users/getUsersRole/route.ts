@@ -1,15 +1,17 @@
-import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { ROLES } from "@/data";
 import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models";
+import { revalidateLayout } from "@/app/actions";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
     await connectDB();
     try {
         const usersList = await User.find({ role: ROLES.user }).select("name balance activeOrders").populate("activeOrders");
 
-        revalidatePath("/", "layout");
+        await revalidateLayout();
         return NextResponse.json(usersList, {
             status: 200,
             headers: {

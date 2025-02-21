@@ -53,7 +53,7 @@ export default function Users() {
         }
     };
 
-    // * -----------------------------
+    // -----------------------------
     return (
         <div className="w-[50%]">
             <div className="form-elem-size">

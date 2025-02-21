@@ -120,7 +120,7 @@ export default function EditMenu() {
         }
     };
 
-    // * -----------------------------
+    // -----------------------------
     return (
         <div className="mb-8 w-full flex gap-10 justify-between items-start">
             <div className="w-full flex flex-col">

@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/mongodb";
 import { Dish } from "@/models";
+import { revalidateLayout } from "@/app/actions";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
     await connectDB();
     try {
         const dishList = await Dish.find({});
 
-        revalidatePath("/", "layout");
+        await revalidateLayout();
         return NextResponse.json(dishList, {
             status: 200,
             headers: {

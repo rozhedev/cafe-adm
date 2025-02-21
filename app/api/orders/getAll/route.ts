@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models";
+import { revalidateLayout } from "@/app/actions";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
     await connectDB();
     try {
         const ordersList = await Order.find({}).populate("user", "name").exec();
 
-        revalidatePath("/", "layout");
+        await revalidateLayout();
         return NextResponse.json(ordersList, {
             status: 200,
             headers: {

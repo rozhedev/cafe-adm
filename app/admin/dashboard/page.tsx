@@ -69,7 +69,7 @@ export default function Orders() {
         }
     };
 
-    // * -----------------------------
+    // -----------------------------
     return (
         <div className="w-full">
             <div className="form-elem-size flex gap-5">
