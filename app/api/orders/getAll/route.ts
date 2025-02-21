@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Order } from "@/models";
 import { revalidateLayout } from "@/app/actions";
 
+// ! force-dynamic flag is necessary for correct data update in production build
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
@@ -13,10 +14,6 @@ export async function GET(req: NextRequest) {
         await revalidateLayout();
         return NextResponse.json(ordersList, {
             status: 200,
-            headers: {
-                "Cache-Control": "no-store, no-cache, must-revalidate",
-                Expires: "0",
-            },
         });
     } catch (error) {
         console.error("Get dish list error:", error);

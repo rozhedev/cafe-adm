@@ -11,7 +11,7 @@ import { ResponsiveTable } from "@/components/ResponsiveTable";
 
 export default function EditMenu() {
     const { addToast } = useToast();
-    const [dishes, setDishes, refreshDishes] = useDishes();
+    const [dishes, , refreshDishes] = useDishes();
 
     const [dishId, setDishId] = useState<string>("");
     const [addFormData, setAddFormData] = useState<StringValObjMap>(DISH_FORM_INIT);

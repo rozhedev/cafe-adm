@@ -1,3 +1,5 @@
+// ? Need to save & update busket state
+
 "use client";
 import React, { PropsWithChildren, createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -135,7 +137,7 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             const itemToRemove = items.find((item) => item._id?.toString() === itemId);
 
             if (!itemToRemove || !itemToRemove._id) {
-                // If no orderId or item not found, just remove from local state
+                // If no orderId or item not found - remove from local state
                 setItems((prev) => prev.filter((item) => item._id?.toString() !== itemId));
                 return;
             }
@@ -165,7 +167,7 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
         }
     };
 
-    // Make function async  for prevent errors for other async operations
+    // Make function async for prevent errors for other async operations
     const clearBusket = async () => {
         try {
             setIsLoading(true);

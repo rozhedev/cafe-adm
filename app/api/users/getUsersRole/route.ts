@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models";
 import { revalidateLayout } from "@/app/actions";
 
+// ! force-dynamic flag is necessary for correct data update in production build
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
@@ -14,10 +15,6 @@ export async function GET(req: NextRequest) {
         await revalidateLayout();
         return NextResponse.json(usersList, {
             status: 200,
-            headers: {
-                "Cache-Control": "no-store, no-cache, must-revalidate",
-                Expires: "0",
-            },
         });
     } catch (error) {
         console.error("Get users list error:", error);

@@ -1,5 +1,5 @@
 import React from "react";
-import { StateAction, TOrder } from "@/types";
+import { StateAction } from "@/types";
 import { OrderStatuses, OrderStatusesLabels } from "@/data";
 
 export const cleanObjFromEmptyVal = (obj: any) => Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== ""));

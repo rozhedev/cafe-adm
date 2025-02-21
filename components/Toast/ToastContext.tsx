@@ -13,7 +13,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const id = uuidv4();
         setToasts((prev) => [...prev, { id, message, type }]);
 
-        // Automatically delete after 3 seconds
+        // Automatically delete after 4 seconds
         setTimeout(() => {
             removeToast(id);
         }, 4000);

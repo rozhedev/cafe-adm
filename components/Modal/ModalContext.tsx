@@ -5,8 +5,8 @@ import { ModalId, ModalState, ModalContextType } from "./types";
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
-// TODO Integrate in fututre releases
-// Provider component remains the same
+// TODO Integrate in future releases
+
 export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [modals, setModals] = useState<Record<ModalId, ModalState>>({});
 
@@ -31,7 +31,6 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return <ModalContext.Provider value={{ modals, openModal, closeModal, getModalState }}>{children}</ModalContext.Provider>;
 };
 
-// Custom hook remains the same
 export const useModal = (modalId: ModalId) => {
     const context = useContext(ModalContext);
     if (!context) {
@@ -49,7 +48,6 @@ export const useModal = (modalId: ModalId) => {
     };
 };
 
-// Updated HOC types
 type ModalComponentProps = {
     title: string;
 } & Record<string, any>;
@@ -57,7 +55,6 @@ type ModalComponentProps = {
 type WithFooterProps<P extends ModalComponentProps> = P & FooterProps;
 type WithoutFooterProps<P extends ModalComponentProps> = P;
 
-// Fixed Modal HOC
 export function withModalContext<P extends ModalComponentProps>(WrappedComponent: React.ComponentType<P>, includeFooter: boolean, modalId: string) {
     return function ModalHOCWithContext(props: typeof includeFooter extends true ? WithFooterProps<P> : WithoutFooterProps<P>) {
         const { isOpen, closeModal } = useModal(modalId);
