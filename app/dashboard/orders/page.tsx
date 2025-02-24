@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { v4 as uuidv4 } from "uuid";
 import { formatOrders } from "@/helpers";
-import { OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
+import { OrderStatuses, ROUTES, StorageKeys, UI_CONTENT } from "@/data";
 import { TOrder } from "@/types";
 import { useOrders } from "@/providers";
 import { UserOrderItem } from "@/components/UserOrderItem";
@@ -11,10 +11,7 @@ import { UserOrderItem } from "@/components/UserOrderItem";
 export default function Orders() {
     const { data: session, status } = useSession();
     const username = session?.user?.name as string;
-
     const [userOrders, setUserOrders] = useOrders();
-
-    const [name, setName] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const fetchOrdersByUserName = async (username: string) => {
@@ -44,12 +41,15 @@ export default function Orders() {
     // √ Correct updated
     useEffect(() => {
         if (!username && status !== "authenticated") return;
-        fetchOrdersByUserName(username);
-        setName(username);
-        localStorage.setItem("orders", JSON.stringify(userOrders));
+        if (localStorage.getItem(StorageKeys.orders)) {
+            setUserOrders(JSON.parse(localStorage.getItem(StorageKeys.orders) as string));
+        } else fetchOrdersByUserName(username);
     }, [status, session?.user?.name]);
 
-    const handleOrdersUpdate = () => fetchOrdersByUserName(username);
+    const handleOrdersUpdate = () => {
+        fetchOrdersByUserName(username);
+        localStorage.setItem(StorageKeys.orders, JSON.stringify(userOrders));
+    };
 
     return (
         <div className="w-full">

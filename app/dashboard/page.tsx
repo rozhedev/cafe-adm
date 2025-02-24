@@ -1,10 +1,9 @@
 "use client";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React from "react";
 import { useSession } from "next-auth/react";
-import { BooleanValObjMap, StringValObjMap, TDish } from "@/types";
+import { TDish } from "@/types";
 import { useBusket, useDishes } from "@/providers";
-import { MENU_MODALS_INIT, OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
-import { FormController, ModalWithoutFooter } from "@/ui";
+import { OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
 import { useToast } from "@/components/Toast";
 import { MenuItem } from "@/components/MenuItem";
 
@@ -16,18 +15,10 @@ export default function CafeMenu() {
     const { refreshCart } = useBusket();
 
     const [dishes, , refreshDishes] = useDishes();
-    const [orderedProduct, setOrderedProduct] = useState<TDish | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(MENU_MODALS_INIT);
-    const [isLoading, setIsLoading] = useState(false);
-    const [formData, setFormData] = useState<StringValObjMap>({
-        address: "",
-    });
 
-    const handleAddOrder = async (e: FormEvent) => {
-        e.preventDefault();
+    const handleAddOrder = async (item: TDish) => {
         try {
-            setIsLoading(true);
-            if (orderedProduct === null) return console.log("Dish not added");
+            addToast("Добавление заказа...", "info");
 
             const res = await fetch(ROUTES.addOrder, {
                 method: "POST",
@@ -35,32 +26,28 @@ export default function CafeMenu() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    dish: orderedProduct.dish,
+                    dish: item.dish,
                     quantity: 1,
-                    price: orderedProduct.price,
+                    price: item.price,
                     status: OrderStatuses.ordered,
                     user: userid,
-                    address: formData.address,
+                    address: UI_CONTENT.err.cart.unknownAddress,
                     createdAt: Date.now(),
                 }),
             });
 
             if (res.ok) {
                 addToast(UI_CONTENT.success.order.added, "success");
-                setIsModalOpen(MENU_MODALS_INIT);
                 refreshCart();
                 refreshDishes();
                 return;
             }
         } catch (error) {
             console.error("Error when adding order:", error);
-        } finally {
-            setIsLoading(false);
         }
     };
     const handleAddToCart = (dish: TDish) => {
-        setIsModalOpen({ ...isModalOpen, add: true });
-        setOrderedProduct(dish);
+        handleAddOrder(dish);
     };
 
     return (
@@ -80,52 +67,6 @@ export default function CafeMenu() {
                     </div>
                 </div>
             </div>
-            <ModalWithoutFooter
-                title={UI_CONTENT.confirmAction.buy}
-                onClose={() => setIsModalOpen({ ...isModalOpen, add: false })}
-                isOpen={isModalOpen.add}
-            >
-                <div className="my-4">
-                    <h3>
-                        {UI_CONTENT.confirmActionDescr.buy} {UI_CONTENT.confirmActionDescr.addressNotice}
-                    </h3>
-                    <form
-                        onSubmit={handleAddOrder}
-                        className="flex flex-col items-center mt-3 gap-4"
-                    >
-                        <FormController
-                            wrapperClass="w-full"
-                            className="w-full"
-                            htmlLabel=""
-                            id="address"
-                            name="address"
-                            type="text"
-                            required
-                            placeholder="ул. Ростиславская 15..."
-                            minLength={10}
-                            aria-label="Адрес"
-                            value={formData.name}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, address: e.target.value })}
-                        />
-                        <div className="w-full flex justify-around gap-4">
-                            <button
-                                type="button"
-                                className="flex-1 btn--sm !text-gray-800 font-medium border-2 bg-slate-100 border-blue-800 hover:border-blue-600"
-                                onClick={() => setIsModalOpen({ ...isModalOpen, add: false })}
-                            >
-                                Закрыть
-                            </button>
-                            <button
-                                type="submit"
-                                className="flex-1 btn--sm btn--primary-blue"
-                                disabled={isLoading}
-                            >
-                                {isLoading ? UI_CONTENT.btn.confirm.loading : UI_CONTENT.btn.confirm.default}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </ModalWithoutFooter>
         </div>
     );
 }

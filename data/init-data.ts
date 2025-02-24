@@ -29,8 +29,8 @@ export const ORDER_MODALS_INIT = {
     delete: false,
 };
 
-export const MENU_MODALS_INIT = {
-    add: false,
+export const BUSKET_MODALS_INIT = {
+    confirm: false,
 };
 
 // --> Content
@@ -105,6 +105,7 @@ export const UI_CONTENT = {
             unknown: "Ошибка при добавлении в корзину",
             clear: "Ошибка при очистке корзины",
             empty: "Корзина пуста",
+            unknownAddress: "Товар в корзине, адрес не указан",
         },
         order: {
             unknown: "Ошибка при оформлении заказа",

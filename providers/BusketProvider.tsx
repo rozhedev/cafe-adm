@@ -3,9 +3,9 @@
 "use client";
 import React, { PropsWithChildren, createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { TDish, TDishArr } from "@/types";
+import { StringValObjMap, TDish, TDishArr } from "@/types";
 import { useToast } from "@/components/Toast";
-import { OrderStatuses, ROUTES, UI_CONTENT } from "@/data";
+import { OrderStatuses, ROUTES, StorageKeys, UI_CONTENT } from "@/data";
 
 export type TBusketContextState = {
     items: TDishArr;
@@ -13,7 +13,7 @@ export type TBusketContextState = {
     removeItem: (itemId: string) => void;
     clearBusket: () => void;
     totalPrice: number;
-    checkout: () => Promise<void>;
+    checkout: (formData: StringValObjMap) => Promise<void>;
     isLoading: boolean;
     refreshCart: () => void;
 };
@@ -63,7 +63,7 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             fetchOrders();
         } else {
             // If no user is logged in, try to get items from localStorage
-            const savedItems = localStorage.getItem("busket");
+            const savedItems = localStorage.getItem(StorageKeys.busket);
             if (!savedItems) return;
 
             try {
@@ -72,7 +72,7 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
                 setItems(Array.isArray(parsedItems) ? parsedItems : []);
             } catch (e) {
                 console.error("Error parsing saved cart items:", e);
-                localStorage.removeItem("busket");
+                localStorage.removeItem(StorageKeys.busket);
             }
         }
     }, [username, fetchOrders]);
@@ -80,9 +80,9 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
     // Update localStorage and calculate total price when items change
     useEffect(() => {
         if (items.length > 0) {
-            localStorage.setItem("busket", JSON.stringify(items));
+            localStorage.setItem(StorageKeys.busket, JSON.stringify(items));
         } else {
-            localStorage.removeItem("busket");
+            localStorage.removeItem(StorageKeys.busket);
         }
 
         const total = items.reduce((sum, item) => sum + +(item.price || 0), 0);
@@ -173,7 +173,7 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
             setIsLoading(true);
 
             if (items.length > 0) setItems([]);
-            if (localStorage.getItem("busket")) localStorage.removeItem("busket");
+            if (localStorage.getItem(StorageKeys.busket)) localStorage.removeItem(StorageKeys.busket);
         } catch (error) {
             console.error("Error clearing basket:", error);
             addToast(UI_CONTENT.err.cart.clear, "error");
@@ -182,7 +182,8 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
         }
     };
 
-    const checkout = async () => {
+    // Checkout
+    const checkout = async (formData: StringValObjMap) => {
         try {
             if (!userId) {
                 addToast(UI_CONTENT.err.auth.required, "error");
@@ -193,6 +194,9 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
                 return;
             }
 
+            if (!Object.values(formData).length) {
+                addToast("Form data is not provided", "error");
+            }
             setIsLoading(true);
             const orderIds = items.map((item) => item._id).filter((id) => id !== undefined);
 
@@ -205,6 +209,7 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
                     orderIds,
                     totalPrice,
                     userId,
+                    formData,
                 }),
             });
 
@@ -218,6 +223,8 @@ export const BusketProvider = ({ children }: PropsWithChildren) => {
                     },
                 });
                 addToast(UI_CONTENT.success.order.payed, "success");
+
+                if (localStorage.getItem(StorageKeys.busket)) localStorage.removeItem(StorageKeys.busket);
                 clearBusket();
                 return;
             }

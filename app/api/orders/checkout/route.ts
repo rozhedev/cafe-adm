@@ -8,7 +8,7 @@ import { revalidatePath } from "next/cache";
 
 export async function POST(req: Request) {
     try {
-        const { orderIds, totalPrice, userId } = await req.json();
+        const { orderIds, totalPrice, userId, formData } = await req.json();
 
         if (!orderIds || !Array.isArray(orderIds) || orderIds.length === 0 || !userId) {
             return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
         }
 
         // Update all orders to "payed" status
-        const updatePromises = orderIds.map((orderId) => Order.findByIdAndUpdate(orderId, { status: OrderStatuses.payed }));
+        const updatePromises = orderIds.map((orderId) => Order.findByIdAndUpdate(orderId, { status: OrderStatuses.payed, $set: { address: formData?.address } }));
 
         await Promise.all(updatePromises);
 

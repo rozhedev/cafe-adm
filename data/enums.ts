@@ -19,6 +19,12 @@ export enum OrderStatusesLabels {
     unknown = "Нет данных",
 }
 
+export enum StorageKeys {
+    orders = "orders",
+    busket = "busket",
+};
+export type StorageKeysUnion = `${StorageKeys}`;
+
 export enum ROLES {
     user = "user",
     admin = "admin",

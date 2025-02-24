@@ -52,7 +52,7 @@ input[type=number] {
 }
 
 .btn--disabled {
-    @apply disabled:bg-gray-600 disabled:border-2 disabled:border-gray-600 disabled:cursor-not-allowed;
+    @apply hover:bg-gray-600 disabled:bg-gray-600 disabled:border-gray-600 disabled:cursor-not-allowed;
 }
 
 .burger-btn {

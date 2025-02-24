@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 type MenuItemProps = {
     item: TDish;
     isAuthenticated: boolean;
+    isLoading?: boolean;
     onAddToCart: (dish: TDish) => void;
 };
 
-export const MenuItem: React.FC<MenuItemProps> = ({ item, isAuthenticated, onAddToCart }) => {
+export const MenuItem: React.FC<MenuItemProps> = ({ item, isAuthenticated, isLoading = false, onAddToCart }) => {
     const router = useRouter();
 
     const handleButtonClick = () => {
@@ -30,8 +31,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, isAuthenticated, onAdd
                 </div>
             </div>
             <button
+                disabled={isLoading}
                 onClick={handleButtonClick}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200 mt-auto"
+                className="w-full bg-blue-600 hover:bg-blue-700 btn--disabled mt-auto text-white py-2 px-4 rounded-md transition-colors duration-200"
             >
                 {isAuthenticated ? "Добавить в корзину" : "Войти для заказа"}
             </button>
