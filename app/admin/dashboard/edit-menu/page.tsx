@@ -1,23 +1,26 @@
 "use client";
-import React, { useEffect, useState, type FormEvent } from "react";
-import { BooleanValObjMap, StringValObjMap } from "@/types";
-import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, DISH_MODALS_INIT, ModalIds } from "@/data";
+import React, { useState, type FormEvent } from "react";
+import { StringValObjMap } from "@/types";
+import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, ModalIds } from "@/data";
 import { cleanObjFromEmptyVal } from "@/helpers";
 import { useDishes } from "@/providers";
-import { ModalWithoutFooter, ModalWithFooter } from "@/ui";
 import { useToast } from "@/components/Toast";
 import { DishForm } from "@/components/DishForm";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
+import { useModal, DeleteDishModal, EditDishModal } from "@/components/Modal";
 
 export default function EditMenu() {
-    const { addToast } = useToast();
+    // Hooks
     const [dishes, , refreshDishes] = useDishes();
+    const { addToast } = useToast();
+    const { openModal: openEditModal, closeModal: closeEditModal } = useModal(ModalIds.editDish);
+    const { openModal: openDeleteModal, isOpen: isDeleteModalOpen, closeModal: closeDeleteModal } = useModal(ModalIds.deleteDish);
 
+    // State
     const [dishId, setDishId] = useState<string>("");
     const [addFormData, setAddFormData] = useState<StringValObjMap>(DISH_FORM_INIT);
     const [editFormData, setEditFormData] = useState<StringValObjMap>(DISH_FORM_INIT);
 
-    const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(DISH_MODALS_INIT);
     const [isAddLoading, setIsAddLoading] = useState<boolean>(false);
     const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
     const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
@@ -28,12 +31,9 @@ export default function EditMenu() {
     const handleAction = (action: string, item: any) => {
         const id = String(item._id) || "";
         setDishId(id);
-        if (action === ModalIds.delete) {
-            setIsModalOpen({ ...DISH_MODALS_INIT, [ModalIds.delete]: true });
-        }
-        if (action === ModalIds.edit) {
-            setIsModalOpen({ ...DISH_MODALS_INIT, [ModalIds.edit]: true });
-        }
+
+        if (action === ModalIds.editDish) openEditModal();
+        if (action === ModalIds.deleteDish) openDeleteModal();
     };
 
     // * Add dish
@@ -87,7 +87,8 @@ export default function EditMenu() {
             if (res.ok) {
                 addToast(UI_CONTENT.success.dish.updated, "success");
                 setEditFormData(DISH_FORM_INIT);
-                setIsModalOpen(DISH_MODALS_INIT);
+                closeEditModal();
+
                 await refreshDishes();
                 return;
             }
@@ -108,7 +109,8 @@ export default function EditMenu() {
             });
             if (res.ok) {
                 addToast(UI_CONTENT.success.dish.deleted, "success");
-                setIsModalOpen(DISH_MODALS_INIT);
+                closeDeleteModal();
+
                 await refreshDishes();
                 return;
             }
@@ -146,41 +148,27 @@ export default function EditMenu() {
                     setFormData={setAddFormData}
                     onSubmit={handleAddDish}
                     formFields={dishFormControllers}
-                    isLoading={isAddLoading}
-                    btnLoadLabel={UI_CONTENT.btn.add.loading}
-                    btnDefaultLabel={UI_CONTENT.btn.add.default}
+                    label={isAddLoading ? UI_CONTENT.btn.add.loading : UI_CONTENT.btn.add.default}
                 />
             </div>
 
-            {/* // --> Modals */}
-            <ModalWithFooter
+            {/* // * Modals */}
+            <DeleteDishModal
                 title={UI_CONTENT.confirmAction.delete.dish}
-                onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.delete]: false })}
-                isOpen={isModalOpen[ModalIds.delete]}
+                onClose={openDeleteModal}
+                isOpen={isDeleteModalOpen}
                 actionLabel={isDeleteLoading ? UI_CONTENT.btn.delete.loading : UI_CONTENT.btn.delete.default}
                 actionBtnClassname="btn--primary-red"
                 onAction={handleDelete}
-            >
-                <div className="my-4">{UI_CONTENT.confirmActionDescr.delete.dish}</div>
-            </ModalWithFooter>
-            <ModalWithoutFooter
+            />
+            <EditDishModal
                 title={UI_CONTENT.confirmAction.edit.dish}
-                onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.edit]: false })}
-                isOpen={isModalOpen[ModalIds.edit]}
-            >
-                <div className="my-4">{UI_CONTENT.confirmActionDescr.edit.dish}</div>
-
-                {/* //* Edit form */}
-                <DishForm
-                    formData={editFormData}
-                    setFormData={setEditFormData}
-                    onSubmit={handleEditDish}
-                    formFields={dishFormControllers}
-                    isLoading={isEditLoading}
-                    btnLoadLabel={UI_CONTENT.btn.edit.loading}
-                    btnDefaultLabel={UI_CONTENT.btn.edit.default}
-                />
-            </ModalWithoutFooter>
+                confirmDescr={UI_CONTENT.confirmActionDescr.edit.dish}
+                formData={editFormData}
+                setEditFormData={setEditFormData}
+                label={isEditLoading ? UI_CONTENT.btn.edit.loading : UI_CONTENT.btn.edit.default}
+                onSubmit={handleEditDish}
+            />
         </div>
     );
 }

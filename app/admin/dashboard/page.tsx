@@ -1,19 +1,19 @@
 "use client";
 import React, { useState } from "react";
-import { BooleanValObjMap, TOrder } from "@/types";
+import { TOrder } from "@/types";
 import { useOrders } from "@/providers";
-import { ordersColumns, orderActionOptions, ROUTES, UI_CONTENT, ModalIds, DISH_MODALS_INIT, ORDER_MODALS_INIT } from "@/data";
-import { ModalWithFooter } from "@/ui";
+import { ordersColumns, orderActionOptions, ROUTES, UI_CONTENT, ModalIds } from "@/data";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
 import { useToast } from "@/components/Toast";
+import { DeleteOrderModal, useModal } from "@/components/Modal";
 
 // * Default page - Orders
 export default function Orders() {
     const { addToast } = useToast();
-    const [admOrders, setAdmOrders, refreshOrders] = useOrders();
-    const [orderId, setOrderId] = useState<string>("");
+    const { openModal: openDeleteOrder, isOpen: isDeleteOrderOpen, closeModal: closeDeleteOrder } = useModal(ModalIds.deleteOrder);
+    const [admOrders, , refreshOrders] = useOrders();
 
-    const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(ORDER_MODALS_INIT);
+    const [orderId, setOrderId] = useState<string>("");
     const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
 
     // --> Handlers
@@ -49,7 +49,7 @@ export default function Orders() {
             });
             if (res.ok) {
                 addToast(UI_CONTENT.success.dish.deleted, "success");
-                setIsModalOpen(DISH_MODALS_INIT);
+                closeDeleteOrder();
                 return;
             }
             addToast(UI_CONTENT.err.dish.deleted, "error");
@@ -63,9 +63,10 @@ export default function Orders() {
     const handleAction = async (status: string, order: TOrder) => {
         const id = String(order._id) || "";
         setOrderId(id);
-        if (status !== ModalIds.delete) await handleUpdateStatus(id, status);
+        if (status !== ModalIds.deleteOrder) await handleUpdateStatus(id, status);
         else {
-            setIsModalOpen({ ...ORDER_MODALS_INIT, delete: true });
+            console.log(id);
+            openDeleteOrder();
         }
     };
 
@@ -88,16 +89,16 @@ export default function Orders() {
                 data={admOrders}
                 onAction={handleAction}
             />
-            <ModalWithFooter
-                title={UI_CONTENT.confirmAction.delete.order}
-                onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.delete]: false })}
-                isOpen={isModalOpen[ModalIds.delete]}
+
+            {/* // * Modal */}
+            <DeleteOrderModal
+                title={UI_CONTENT.confirmActionDescr.delete.order}
+                onClose={closeDeleteOrder}
+                isOpen={isDeleteOrderOpen}
                 actionLabel={isDeleteLoading ? UI_CONTENT.btn.delete.loading : UI_CONTENT.btn.delete.default}
                 actionBtnClassname="btn--primary-red"
                 onAction={handleDeleteOrder}
-            >
-                <div className="my-4">{UI_CONTENT.confirmActionDescr.delete.order}</div>
-            </ModalWithFooter>
+            />
         </div>
     );
 }

@@ -74,24 +74,24 @@ export const orderActionOptions: TActionOptionsArr = [
         label: OrderStatusesLabels.completed,
     },
     {
-        id: "delete",
+        id: ModalIds.deleteOrder,
         label: "Удалить",
     },
 ];
 export const dishActionOptions: TActionOptionsArr = [
     {
-        id: ModalIds.edit,
+        id: ModalIds.editDish,
         label: UI_CONTENT.btn.edit.default,
     },
     {
-        id: ModalIds.delete,
+        id: ModalIds.deleteDish,
         label: UI_CONTENT.btn.delete.default,
     },
 ];
 export const editUserActionOptions = [
     // TODO Add change orders functionality in next release
     {
-        id: ModalIds.balance,
+        id: ModalIds.editBalance,
         label: UI_CONTENT.btn.editBalance.default,
     },
 ];

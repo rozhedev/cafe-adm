@@ -1,20 +1,21 @@
 "use client";
 import React, { useState, type FormEvent } from "react";
 import { useUsersInfo } from "@/providers";
-import { BooleanValObjMap, TUserInfo } from "@/types";
-import { EDIT_USER_MODALS_INIT, userInfoColumns, editUserActionOptions, ModalIds, ROUTES, UI_CONTENT } from "@/data";
-import { FormController, ModalWithoutFooter } from "@/ui";
+import { TUserInfo } from "@/types";
+import { userInfoColumns, editUserActionOptions, ModalIds, ROUTES, UI_CONTENT } from "@/data";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
 import { useToast } from "@/components/Toast";
+import { useModal } from "@/components/Modal";
+import { EditBalanceModal } from "@/components/Modal/AvailableModals";
 
 export default function Users() {
     const { addToast } = useToast();
-    const [usersInfo, setUsersInfo, refreshUsersInfo] = useUsersInfo();
+    const { openModal: openBalanceModal, closeModal: closeBalanceModal } = useModal(ModalIds.editBalance);
+    const [usersInfo, , refreshUsersInfo] = useUsersInfo();
+
     const [userId, setUserId] = useState<string>("");
     const [balance, setBalance] = useState<string>("");
-
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isModalOpen, setIsModalOpen] = useState<BooleanValObjMap>(EDIT_USER_MODALS_INIT);
 
     // * Data fetching
     const handleTableUpdate = () => refreshUsersInfo();
@@ -34,7 +35,7 @@ export default function Users() {
             if (res.ok) {
                 addToast(UI_CONTENT.success.balanceChanged, "success");
                 setBalance("");
-                setIsModalOpen(EDIT_USER_MODALS_INIT);
+                closeBalanceModal();
                 return;
             }
             addToast(UI_CONTENT.err.balanceChanged, "error");
@@ -48,9 +49,8 @@ export default function Users() {
     const handleAction = (action: string, item: TUserInfo) => {
         const id = String(item._id) || "";
         setUserId(id);
-        if (action === ModalIds.balance) {
-            setIsModalOpen({ ...EDIT_USER_MODALS_INIT, [ModalIds.balance]: true });
-        }
+
+        if (action === ModalIds.editBalance) openBalanceModal();
     };
 
     // -----------------------------
@@ -72,27 +72,14 @@ export default function Users() {
                 onAction={handleAction}
                 options={editUserActionOptions}
             />
-            <ModalWithoutFooter
+            <EditBalanceModal
                 title={UI_CONTENT.confirmAction.edit.balance}
-                onClose={() => setIsModalOpen({ ...isModalOpen, [ModalIds.balance]: false })}
-                isOpen={isModalOpen[ModalIds.balance]}
-            >
-                <form onSubmit={handleEditBalance}>
-                    <FormController
-                        htmlLabel={UI_CONTENT.confirmActionDescr.edit.balance}
-                        value={balance}
-                        onChange={(e) => setBalance(e.target.value)}
-                    />
-                    <div className="form-elem-size">
-                        <button
-                            type="submit"
-                            className="mt-4 btn btn--accent"
-                        >
-                            {isLoading ? UI_CONTENT.btn.editBalance.loading : UI_CONTENT.btn.editBalance.default}
-                        </button>
-                    </div>
-                </form>
-            </ModalWithoutFooter>
+                onSubmit={handleEditBalance}
+                htmlLabel={UI_CONTENT.confirmActionDescr.edit.balance}
+                balance={balance}
+                onBalanceChange={(e: any) => setBalance(e.target.value)}
+                label={isLoading ? UI_CONTENT.btn.editBalance.loading : UI_CONTENT.btn.editBalance.default}
+            />
         </div>
     );
 }

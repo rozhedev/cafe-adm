@@ -32,8 +32,10 @@ export enum ROLES {
 export type RolesUnion = `${ROLES}`;
 
 export enum ModalIds {
-    balance = "balance",
-    delete = "delete",
-    edit = "edit",
+    confirmOrder = "confirm-order",
+    editBalance = "edit-balance",
+    deleteOrder = "delete-order",
+    deleteDish = "delete-dish",
+    editDish = "edit-dish",
 }
 export type ModalIdsUnion = `${ModalIds}`;

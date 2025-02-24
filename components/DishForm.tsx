@@ -3,16 +3,14 @@ import { StringValObjMap, TDish } from "@/types";
 import { FormController } from "@/ui";
 
 type TDishForm = {
-    formData: StringValObjMap;  // use mappimg for prevent errors
+    formData: StringValObjMap; // use mappimg for prevent errors
     setFormData: any;
     formFields: Array<any>;
-    isLoading: boolean;
-    btnLoadLabel: string;
-    btnDefaultLabel: string;
+    label: string;
     onSubmit: (e: React.FormEvent) => Promise<void>;
 };
 
-export const DishForm: FC<TDishForm> = ({ formData, setFormData, formFields, isLoading, btnLoadLabel, btnDefaultLabel, onSubmit }) => {
+export const DishForm: FC<TDishForm> = ({ formData, setFormData, formFields, label, onSubmit }) => {
     const handleChange = (fieldId: keyof TDish) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData((prev: any) => ({
             ...prev,
@@ -51,7 +49,7 @@ export const DishForm: FC<TDishForm> = ({ formData, setFormData, formFields, isL
                     type="submit"
                     className="mt-4 btn btn--accent"
                 >
-                    {isLoading ? btnLoadLabel : btnDefaultLabel}
+                    {label}
                 </button>
             </div>
         </form>

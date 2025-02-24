@@ -15,24 +15,6 @@ export const DISH_FORM_INIT = {
     quantity: "",
 };
 
-// * Modals
-export const DISH_MODALS_INIT = {
-    edit: false,
-    delete: false,
-};
-
-export const EDIT_USER_MODALS_INIT = {
-    balance: false,
-};
-
-export const ORDER_MODALS_INIT = {
-    delete: false,
-};
-
-export const BUSKET_MODALS_INIT = {
-    confirm: false,
-};
-
 // --> Content
 export const UI_CONTENT = {
     btn: {
