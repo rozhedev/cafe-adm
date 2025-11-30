@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, type FormEvent } from "react";
-import { StringValObjMap } from "@/types";
 import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, ModalIds } from "@/data";
-import { cleanObjFromEmptyVal } from "@/helpers";
+import { appendFormData, cleanObjFromEmptyVal } from "@/helpers";
 import { useDishes } from "@/providers";
 import { useToast } from "@/components/Toast";
 import { DishForm } from "@/components/DishForm";
 import { ResponsiveTable } from "@/components/ResponsiveTable";
 import { useModal, DeleteDishModal, EditDishModal } from "@/components/Modal";
+import { StringValObjMap } from "@/types";
 
 export default function EditMenu() {
     // Hooks
@@ -25,6 +25,10 @@ export default function EditMenu() {
     const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
     const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
 
+    // File handling states
+    const [preview, setPreview] = useState<string | null>(null);
+    const [file, setFile] = useState<File | null>(null);
+
     // --> Handlers
     const handleTableUpdate = () => refreshDishes();
 
@@ -39,19 +43,33 @@ export default function EditMenu() {
     // * Add dish
     const handleAddDish = async (e: FormEvent) => {
         e.preventDefault();
+        if (!file) return;
+
         setIsAddLoading(true);
+
         try {
+            const formData = new FormData();
+            appendFormData(formData, { ...addFormData, image: file });
+
             const res = await fetch(ROUTES.addDish, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(addFormData),
+                body: formData,
             });
+            const data = await res.json();
 
             if (res.ok) {
+                console.log(`Успешно загружено. ID: ${addFormData.dish}`);
                 addToast(UI_CONTENT.success.dish.added, "success");
                 setAddFormData(DISH_FORM_INIT);
+
+                // Очистка формы через 2 секунды
+                setTimeout(() => {
+                    setPreview(null);
+                    setFile(null);
+                    const input = document.getElementById("fileInput") as HTMLInputElement;
+                    if (input) input.value = "";
+                }, 2000);
+
                 await refreshDishes();
                 return;
             }
@@ -63,6 +81,7 @@ export default function EditMenu() {
             setIsAddLoading(false);
         }
     };
+
     // * Edit dish
     const handleEditDish = async (e: FormEvent) => {
         e.preventDefault();
@@ -149,6 +168,10 @@ export default function EditMenu() {
                     onSubmit={handleAddDish}
                     formFields={dishFormControllers}
                     label={isAddLoading ? UI_CONTENT.btn.add.loading : UI_CONTENT.btn.add.default}
+                    preview={preview}
+                    setPreview={setPreview}
+                    file={file}
+                    setFile={setFile}
                 />
             </div>
 

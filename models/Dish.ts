@@ -27,11 +27,22 @@ const dishSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
-        // Загружай изображения на sirv.com а оттуда уже кидай ссылку
-        // image: {
-        //     type: String,
-        //     required: true,
-        // }
+        img_title: {
+            type: String,
+            required: true,
+        },
+        data: {
+            type: Buffer, // Saved as Buffer
+            required: true,
+        },
+        contentType: {
+            type: String,
+            required: true,
+        },
+        size: {
+            type: Number,
+            required: true,
+        },
     },
     { timestamps: true, collection: COL_DISHES }
 );
