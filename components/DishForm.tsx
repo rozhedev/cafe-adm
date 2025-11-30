@@ -1,16 +1,17 @@
 import React, { FC } from "react";
 import { StringValObjMap, TDish } from "@/types";
 import { FormController } from "@/ui";
+import ImageForm, { TImageForm } from "./ImageForm";
 
 type TDishForm = {
-    formData: StringValObjMap; // use mappimg for prevent errors
+    formData: StringValObjMap; // use mapping for prevent errors
     setFormData: any;
     formFields: Array<any>;
     label: string;
     onSubmit: (e: React.FormEvent) => Promise<void>;
-};
+} & TImageForm;
 
-export const DishForm: FC<TDishForm> = ({ formData, setFormData, formFields, label, onSubmit }) => {
+export const DishForm: FC<TDishForm> = ({ formData, setFormData, formFields, label, onSubmit, preview, setPreview, file, setFile }) => {
     const handleChange = (fieldId: keyof TDish) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData((prev: any) => ({
             ...prev,
@@ -44,6 +45,13 @@ export const DishForm: FC<TDishForm> = ({ formData, setFormData, formFields, lab
                     onChange={handleChange("ingredients")}
                 />
             </div>
+            <ImageForm
+                preview={preview}
+                setPreview={setPreview}
+                file={file}
+                setFile={setFile}
+            />
+
             <div className="form-elem-size">
                 <button
                     type="submit"

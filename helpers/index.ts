@@ -43,6 +43,16 @@ export const replaceStatusLabels = (status: string): string => {
     return OrderStatusesLabels.unknown;
 };
 
+// Form data iterator
+export function appendFormData(formData: any, data: any) {
+    for (const [key, value] of Object.entries(data)) {
+        formData.append(key, value);
+    }
+}
+
+// Использование:
+const formData = new FormData();
+
 // --> Get current Date & Time
 export function formatUnixTimestamp(unixTimestamp: string | number, dateSep: string, timeSep: string): string {
     // Check the data type

@@ -48,7 +48,10 @@ export type TDish = {
     ingredients: string;
     price: number;
     quantity: number;
-    // image: string;
+    img_title: string;
+    data: Buffer;
+    contentType: string;
+    size: number;
 };
 export type TDishArr = TDish[];
 
