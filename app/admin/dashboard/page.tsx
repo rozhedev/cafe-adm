@@ -65,7 +65,6 @@ export default function Orders() {
         setOrderId(id);
         if (status !== ModalIds.deleteOrder) await handleUpdateStatus(id, status);
         else {
-            console.log(id);
             openDeleteOrder();
         }
     };

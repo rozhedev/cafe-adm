@@ -74,6 +74,7 @@ export default function Users() {
             />
             <EditBalanceModal
                 title={UI_CONTENT.confirmAction.edit.balance}
+                onClose={closeBalanceModal}
                 onSubmit={handleEditBalance}
                 htmlLabel={UI_CONTENT.confirmActionDescr.edit.balance}
                 balance={balance}

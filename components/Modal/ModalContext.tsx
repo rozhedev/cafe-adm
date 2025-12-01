@@ -1,11 +1,8 @@
-import { ModalWithFooter, ModalWithoutFooter } from "@/ui";
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { BaseModalProps, FooterProps } from "@/ui/Modal";
+import { ModalWithFooter, ModalWithoutFooter, BaseModalProps, FooterProps } from "@/components/Modal/Modal";
 import { ModalId, ModalState, ModalContextType } from "./types";
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
-
-// TODO Integrate in future releases
 
 export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [modals, setModals] = useState<Record<ModalId, ModalState>>({});
@@ -18,6 +15,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     };
 
     const closeModal = (modalId: ModalId) => {
+        // if (handler && handler !== null) handler();
         setModals((prev) => ({
             ...prev,
             [modalId]: { isOpen: false },
@@ -59,6 +57,13 @@ export function withModalContext<P extends ModalComponentProps>(WrappedComponent
     return function ModalHOCWithContext(props: typeof includeFooter extends true ? WithFooterProps<P> : WithoutFooterProps<P>) {
         const { isOpen, closeModal } = useModal(modalId);
 
+        // // * For clean data when modal was closed without submitting
+        const extendedClose = () => {
+            // if (handler && handler !== null) handler();
+            console.log("closed in extended close");
+            closeModal();
+        };
+
         if (includeFooter) {
             const { actionLabel, actionBtnClassname, onAction, haveCloseBtn, title, ...componentProps } = props as WithFooterProps<P>;
 
@@ -66,7 +71,7 @@ export function withModalContext<P extends ModalComponentProps>(WrappedComponent
                 <ModalWithFooter
                     title={title}
                     isOpen={isOpen}
-                    onClose={closeModal}
+                    onClose={extendedClose}
                     actionLabel={actionLabel}
                     actionBtnClassname={actionBtnClassname}
                     onAction={onAction}
@@ -83,7 +88,7 @@ export function withModalContext<P extends ModalComponentProps>(WrappedComponent
             <ModalWithoutFooter
                 title={title}
                 isOpen={isOpen}
-                onClose={closeModal}
+                onClose={extendedClose}
             >
                 <WrappedComponent {...(componentProps as P)} />
             </ModalWithoutFooter>
@@ -99,4 +104,3 @@ export function withModalContext<P extends ModalComponentProps>(WrappedComponent
 // const ConfirmOrderModal = withModalContext<ConfirmOrderModalProps>(() => <div className="my-4">{UI_CONTENT.confirmActionDescr.buy}</div>, true, "confirm-action");
 
 // const { openModal } = useModal('add-order');
-

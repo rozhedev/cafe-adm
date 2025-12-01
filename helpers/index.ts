@@ -1,5 +1,5 @@
 import React from "react";
-import { StateAction } from "@/types";
+import { StateAction, StringValObjMap } from "@/types";
 import { OrderStatuses, OrderStatusesLabels } from "@/data";
 
 export const cleanObjFromEmptyVal = (obj: any) => Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== ""));
@@ -43,15 +43,24 @@ export const replaceStatusLabels = (status: string): string => {
     return OrderStatusesLabels.unknown;
 };
 
-// Form data iterator
-export function appendFormData(formData: any, data: any) {
+// --> Form data iterator
+export const appendFormData = (formData: any, data: any) => {
     for (const [key, value] of Object.entries(data)) {
         formData.append(key, value);
     }
-}
+};
 
-// Использование:
-const formData = new FormData();
+// --> Data cleaner (uses when clicked to close btn)
+export const clearFormData = (formDataStateAction: StateAction<StringValObjMap>, formInit: StringValObjMap) => formDataStateAction(formInit);
+
+export const clearImgPreview = (previewStateAction: StateAction<string | null>, fileStateAction: StateAction<File | null>, inputID: string, timeout: number = 2000) =>
+    setTimeout(() => {
+        previewStateAction(null);
+        fileStateAction(null);
+        // Clear input type file
+        const input = document.getElementById(inputID) as HTMLInputElement;
+        if (input) input.value = "";
+    }, timeout);
 
 // --> Get current Date & Time
 export function formatUnixTimestamp(unixTimestamp: string | number, dateSep: string, timeSep: string): string {

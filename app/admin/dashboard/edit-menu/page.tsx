@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, type FormEvent } from "react";
 import { ROUTES, UI_CONTENT, DISH_FORM_INIT, dishInfoColumns, dishFormControllers, dishActionOptions, ModalIds } from "@/data";
-import { appendFormData, cleanObjFromEmptyVal } from "@/helpers";
+import { appendFormData, clearFormData, clearImgPreview, cleanObjFromEmptyVal } from "@/helpers";
 import { useDishes } from "@/providers";
 import { useToast } from "@/components/Toast";
 import { DishForm } from "@/components/DishForm";
@@ -10,6 +10,12 @@ import { useModal, DeleteDishModal, EditDishModal } from "@/components/Modal";
 import { StringValObjMap } from "@/types";
 
 export default function EditMenu() {
+    // function clearEditData() {
+    //     console.log("closed in clearEditData");
+    //     // clearImgPreview(setEditPreview, setEditFile, "fileInput", 2000);
+    //     closeEditModal();
+    // }
+
     // Hooks
     const [dishes, , refreshDishes] = useDishes();
     const { addToast } = useToast();
@@ -26,8 +32,10 @@ export default function EditMenu() {
     const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false);
 
     // File handling states
-    const [preview, setPreview] = useState<string | null>(null);
-    const [file, setFile] = useState<File | null>(null);
+    const [addPreview, setAddPreview] = useState<string | null>(null);
+    const [addFile, setAddFile] = useState<File | null>(null);
+    const [editPreview, setEditPreview] = useState<string | null>(null);
+    const [editFile, setEditFile] = useState<File | null>(null);
 
     // --> Handlers
     const handleTableUpdate = () => refreshDishes();
@@ -43,13 +51,13 @@ export default function EditMenu() {
     // * Add dish
     const handleAddDish = async (e: FormEvent) => {
         e.preventDefault();
-        if (!file) return;
+        if (!addFile) return;
 
         setIsAddLoading(true);
 
         try {
             const formData = new FormData();
-            appendFormData(formData, { ...addFormData, image: file });
+            appendFormData(formData, { ...addFormData, image: addFile });
 
             const res = await fetch(ROUTES.addDish, {
                 method: "POST",
@@ -58,22 +66,19 @@ export default function EditMenu() {
             const data = await res.json();
 
             if (res.ok) {
-                console.log(`Успешно загружено. ID: ${addFormData.dish}`);
                 addToast(UI_CONTENT.success.dish.added, "success");
+                // clearFormData(setAddFormData, DISH_FORM_INIT);
                 setAddFormData(DISH_FORM_INIT);
 
-                // Очистка формы через 2 секунды
-                setTimeout(() => {
-                    setPreview(null);
-                    setFile(null);
-                    const input = document.getElementById("fileInput") as HTMLInputElement;
-                    if (input) input.value = "";
-                }, 2000);
+                // Clear preview after 2 seconds
+                clearImgPreview(setAddPreview, setAddFile, "fileInput", 2000);
 
                 await refreshDishes();
                 return;
             }
             addToast(UI_CONTENT.err.dish.added, "error");
+
+            // clearFormData(setAddFormData, DISH_FORM_INIT);
             setAddFormData(DISH_FORM_INIT);
         } catch (error) {
             console.error("Create new dish error:", error);
@@ -105,13 +110,15 @@ export default function EditMenu() {
 
             if (res.ok) {
                 addToast(UI_CONTENT.success.dish.updated, "success");
-                setEditFormData(DISH_FORM_INIT);
-                closeEditModal();
 
+                setEditFormData(DISH_FORM_INIT);
+                // clearEditData();
                 await refreshDishes();
                 return;
             }
             addToast(UI_CONTENT.err.dish.updated, "error");
+
+            // clearFormData(setAddFormData, DISH_FORM_INIT);
             setEditFormData(DISH_FORM_INIT);
         } catch (error) {
             console.error("Edit dish error:", error);
@@ -168,10 +175,10 @@ export default function EditMenu() {
                     onSubmit={handleAddDish}
                     formFields={dishFormControllers}
                     label={isAddLoading ? UI_CONTENT.btn.add.loading : UI_CONTENT.btn.add.default}
-                    preview={preview}
-                    setPreview={setPreview}
-                    file={file}
-                    setFile={setFile}
+                    preview={addPreview}
+                    setPreview={setAddPreview}
+                    file={addFile}
+                    setFile={setAddFile}
                 />
             </div>
 
@@ -191,6 +198,10 @@ export default function EditMenu() {
                 setEditFormData={setEditFormData}
                 label={isEditLoading ? UI_CONTENT.btn.edit.loading : UI_CONTENT.btn.edit.default}
                 onSubmit={handleEditDish}
+                preview={editPreview}
+                setPreview={setEditPreview}
+                file={editFile}
+                setFile={setEditFile}
             />
         </div>
     );

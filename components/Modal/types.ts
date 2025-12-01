@@ -8,6 +8,7 @@ export interface ModalState {
 export interface ModalContextType {
     modals: Record<ModalId, ModalState>;
     openModal: (modalId: ModalId, data?: any) => void;
+    // handler?: () => void
     closeModal: (modalId: ModalId) => void;
     getModalState: (modalId: ModalId) => ModalState;
 }

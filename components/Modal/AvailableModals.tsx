@@ -3,7 +3,9 @@ import { dishFormControllers, ModalIds } from "@/data";
 import { StringValObjMap } from "@/types";
 import { withModalContext } from "./ModalContext";
 import { DishForm } from "@/components/DishForm";
+import { TImageForm } from "@/components/ImageForm";
 import { FormController } from "@/ui";
+import { ModalId } from "./types";
 
 type DeleteModalProps = {
     title: string;
@@ -23,6 +25,7 @@ export const DeleteOrderModal = withModalContext(({ title }: DeleteModalProps) =
 // --> Edit balance
 type EditBalanceModalProps = {
     title: string;
+    onClose: (modalId: ModalId) => void;
     onSubmit: (e: FormEvent) => Promise<void>;
     htmlLabel: string;
     balance: string;
@@ -49,7 +52,7 @@ export const EditBalanceModal = withModalContext(
         </form>
     ),
     false,
-    ModalIds.editBalance
+    ModalIds.editBalance,
 );
 
 // --> Edit dish
@@ -60,22 +63,27 @@ type EditDishModalProps = {
     formData: StringValObjMap;
     onSubmit: (e: FormEvent<Element>) => Promise<void>;
     setEditFormData: any;
-};
+} & TImageForm;
+
 export const EditDishModal = withModalContext(
-    ({ confirmDescr, formData, setEditFormData, label, onSubmit }: EditDishModalProps) => (
+    ({ confirmDescr, label, formData, onSubmit, setEditFormData, preview, setPreview, file, setFile }: EditDishModalProps) => (
         <>
             <div className="my-4">{confirmDescr}</div>
             <DishForm
+                label={label}
                 formData={formData}
                 setFormData={setEditFormData}
                 onSubmit={onSubmit}
                 formFields={dishFormControllers}
-                label={label}
+                preview={preview}
+                setPreview={setPreview}
+                file={file}
+                setFile={setFile}
             />
         </>
     ),
     false,
-    ModalIds.editDish
+    ModalIds.editDish,
 );
 
 // --> Confirm order
@@ -123,5 +131,5 @@ export const ConfirmOrderModal = withModalContext(
         </div>
     ),
     false,
-    ModalIds.confirmOrder
+    ModalIds.confirmOrder,
 );
